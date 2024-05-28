@@ -1,0 +1,19 @@
+<Project>
+
+  <!-- CDPx Pipeline provides an assembly info file with versions.  The file, however, is not marked in any way as
+       auto-generated, so VS analyzers detect errors in it.  By copying the file to a .generated.cs extension, VS
+       analyzers will ignore it. -->
+  <ItemGroup>
+    <PipelineFiles Include="$(SolutionDir)\.version\PipelineAssemblyInfo.cs" />
+  </ItemGroup>
+  <Target Name="PlacePipelineAssemblyInfo" BeforeTargets="CoreCompile">
+    <Copy
+        SkipUnchangedFiles="true"
+        SourceFiles="@(PipelineFiles)"
+        DestinationFiles="@(PipelineFiles->'$(SolutionDir)\.version\%(Filename).generated%(Extension)')" />
+  </Target>
+  
+  <!-- By default projects will have no Package target -->
+  <Target Name="Package" />
+
+</Project>

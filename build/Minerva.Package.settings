@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <Platform>AnyCPU</Platform>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <OutputPath>$(SolutionDir)\drop\$(Configuration)\package</OutputPath>
+    <ServiceGroupRoot>$(OutputPath)\ServiceGroupRoot</ServiceGroupRoot>
+    <PackageLocation>$(ServiceGroupRoot)\bin\$(MSBuildProjectName)</PackageLocation>
+    <IntermediateOutputPath>$(SolutionDir)\obj\$(Configuration)\package</IntermediateOutputPath>
+    <VersionLabel>$([System.DateTime]::UtcNow.ToString("yyyy-MM-ddZ"))_$([System.Guid]::NewGuid().ToString("N"))</VersionLabel>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableStyleCop>false</EnableStyleCop>
+  </PropertyGroup>
+
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+
+</Project>
