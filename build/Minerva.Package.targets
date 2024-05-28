@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <Target Name="ReplaceVersionLabels" AfterTargets="Package">
-    <Exec Command="powershell.exe -NonInteractive -File &quot;$(SolutionDir)build\ReplaceVersionLabels.ps1&quot; -RootPath &quot;$(ServiceGroupRoot)&quot; -Label &quot;$(VersionLabel)&quot;" />
-  </Target>
-
-</Project>
