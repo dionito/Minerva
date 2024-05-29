@@ -67,4 +67,9 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 
+	<!-- Project is excluded from coverage since it is a UI for testing-->
+	<PropertyGroup>
+		<ExcludeFromCodeCoverage>true</ExcludeFromCodeCoverage>
+	</PropertyGroup>
+
 </Project>
