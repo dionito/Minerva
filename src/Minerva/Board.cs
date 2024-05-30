@@ -69,8 +69,16 @@ public class Board
         { "p", 0ul },
     };
 
+    /// <summary>
+    /// Gets the combined bitboard for all black pieces.
+    /// This property performs a bitwise OR operation on the bitboards of all black pieces.
+    /// </summary>
     public ulong BlackPiecesBitBoard => this.BlackPieces.Values.Aggregate((a, b) => a | b);
 
+    /// <summary>
+    /// Gets the combined bitboard for all pieces on the board.
+    /// This property performs a bitwise OR operation on the bitboards of all black and white pieces.
+    /// </summary>
     public ulong OccupiedBitBoard => this.BlackPiecesBitBoard | this.WhitePiecesBitBoard;
 
     /// <summary>
@@ -86,6 +94,10 @@ public class Board
         { "P", 0ul },
     };
 
+    /// <summary>
+    /// Gets the combined bitboard for all white pieces.
+    /// This property performs a bitwise OR operation on the bitboards of all white pieces.
+    /// </summary>
     public ulong WhitePiecesBitBoard => this.WhitePieces.Values.Aggregate((a, b) => a | b);
 
     /// <summary>
@@ -117,24 +129,40 @@ public class Board
         return this.files[file] & this.ranks[rank];
     }
 
+    /// <summary>
+    /// Initializes the chess board to the standard starting position.
+    /// This method sets the bitboards for both black and white pieces.
+    /// </summary>
     public void InitializeGameStartingBoard()
     {
-        // Black pieces
+        // Initialize black pieces
+        // Rooks are placed on a8 and h8
         this.BlackPieces["r"] = this.GetSquareBitBoard("a8") | this.GetSquareBitBoard("h8");
+        // Knights are placed on b8 and g8
         this.BlackPieces["n"] = this.GetSquareBitBoard("b8") | this.GetSquareBitBoard("g8");
+        // Bishops are placed on c8 and f8
         this.BlackPieces["b"] = this.GetSquareBitBoard("c8") | this.GetSquareBitBoard("f8");
+        // Queen is placed on d8
         this.BlackPieces["q"] = this.GetSquareBitBoard("d8");
+        // King is placed on e8
         this.BlackPieces["k"] = this.GetSquareBitBoard("e8");
+        // Pawns are placed on a7 to h7
         this.BlackPieces["p"] = this.GetSquareBitBoard("a7") | this.GetSquareBitBoard("b7") |
             this.GetSquareBitBoard("c7") | this.GetSquareBitBoard("d7") | this.GetSquareBitBoard("e7") |
             this.GetSquareBitBoard("f7") | this.GetSquareBitBoard("g7") | this.GetSquareBitBoard("h7");
 
-        // White pieces
+        // Initialize white pieces
+        // Rooks are placed on a1 and h1
         this.WhitePieces["R"] = this.GetSquareBitBoard("a1") | this.GetSquareBitBoard("h1");
+        // Knights are placed on b1 and g1
         this.WhitePieces["N"] = this.GetSquareBitBoard("b1") | this.GetSquareBitBoard("g1");
+        // Bishops are placed on c1 and f1
         this.WhitePieces["B"] = this.GetSquareBitBoard("c1") | this.GetSquareBitBoard("f1");
+        // Queen is placed on d1
         this.WhitePieces["Q"] = this.GetSquareBitBoard("d1");
+        // King is placed on e1
         this.WhitePieces["K"] = this.GetSquareBitBoard("e1");
+        // Pawns are placed on a2 to h2
         this.WhitePieces["P"] = this.GetSquareBitBoard("a2") | this.GetSquareBitBoard("b2") |
             this.GetSquareBitBoard("c2") | this.GetSquareBitBoard("d2") | this.GetSquareBitBoard("e2") |
             this.GetSquareBitBoard("f2") | this.GetSquareBitBoard("g2") | this.GetSquareBitBoard("h2");
