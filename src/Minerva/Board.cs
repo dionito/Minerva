@@ -41,6 +41,18 @@ public class Board
     public const ulong Rank8 = 0xFF00000000000000ul;
 
     /// <summary>
+    /// Represents the combined bitboard for all black pieces.
+    /// This field should be updated whenever the black pieces change.
+    /// </summary>
+    ulong blackPiecesBitBoard;
+
+    /// <summary>
+    /// Represents the combined bitboard for all white pieces.
+    /// This field should be updated whenever the white pieces change.
+    /// </summary>
+    ulong whitePiecesBitBoard;
+
+    /// <summary>
     /// Represents the files of the chess board.
     /// </summary>
     readonly ulong[] files = 
@@ -73,7 +85,7 @@ public class Board
     /// Gets the combined bitboard for all black pieces.
     /// This property performs a bitwise OR operation on the bitboards of all black pieces.
     /// </summary>
-    public ulong BlackPiecesBitBoard => this.BlackPieces.Values.Aggregate((a, b) => a | b);
+    public ulong BlackPiecesBitBoard => this.blackPiecesBitBoard;
 
     /// <summary>
     /// Gets the combined bitboard for all pieces on the board.
@@ -98,7 +110,7 @@ public class Board
     /// Gets the combined bitboard for all white pieces.
     /// This property performs a bitwise OR operation on the bitboards of all white pieces.
     /// </summary>
-    public ulong WhitePiecesBitBoard => this.WhitePieces.Values.Aggregate((a, b) => a | b);
+    public ulong WhitePiecesBitBoard => this.whitePiecesBitBoard;
 
     /// <summary>
     /// This method returns the bitboard for a given square represented by
@@ -137,34 +149,52 @@ public class Board
     {
         // Initialize black pieces
         // Rooks are placed on a8 and h8
-        this.BlackPieces["r"] = this.GetSquareBitBoard("a8") | this.GetSquareBitBoard("h8");
+        this.BlackPieces["r"] = Rank8 & FileA | Rank8 & FileH;
         // Knights are placed on b8 and g8
-        this.BlackPieces["n"] = this.GetSquareBitBoard("b8") | this.GetSquareBitBoard("g8");
+        this.BlackPieces["n"] = Rank8 & FileB | Rank8 & FileG;
         // Bishops are placed on c8 and f8
-        this.BlackPieces["b"] = this.GetSquareBitBoard("c8") | this.GetSquareBitBoard("f8");
+        this.BlackPieces["b"] = Rank8 & FileC | Rank8 & FileF;
         // Queen is placed on d8
-        this.BlackPieces["q"] = this.GetSquareBitBoard("d8");
+        this.BlackPieces["q"] = Rank8 & FileD;
         // King is placed on e8
-        this.BlackPieces["k"] = this.GetSquareBitBoard("e8");
+        this.BlackPieces["k"] = Rank8 & FileE;
         // Pawns are placed on a7 to h7
-        this.BlackPieces["p"] = this.GetSquareBitBoard("a7") | this.GetSquareBitBoard("b7") |
-            this.GetSquareBitBoard("c7") | this.GetSquareBitBoard("d7") | this.GetSquareBitBoard("e7") |
-            this.GetSquareBitBoard("f7") | this.GetSquareBitBoard("g7") | this.GetSquareBitBoard("h7");
+        this.BlackPieces["p"] = Rank7;
 
         // Initialize white pieces
         // Rooks are placed on a1 and h1
-        this.WhitePieces["R"] = this.GetSquareBitBoard("a1") | this.GetSquareBitBoard("h1");
+        this.WhitePieces["R"] = Rank1 & FileA | Rank1 & FileH;
         // Knights are placed on b1 and g1
-        this.WhitePieces["N"] = this.GetSquareBitBoard("b1") | this.GetSquareBitBoard("g1");
+        this.WhitePieces["N"] = Rank1 & FileB | Rank1 & FileG;
         // Bishops are placed on c1 and f1
-        this.WhitePieces["B"] = this.GetSquareBitBoard("c1") | this.GetSquareBitBoard("f1");
+        this.WhitePieces["B"] = Rank1 & FileC | Rank1 & FileF;
         // Queen is placed on d1
-        this.WhitePieces["Q"] = this.GetSquareBitBoard("d1");
+        this.WhitePieces["Q"] = Rank1 & FileD;
         // King is placed on e1
-        this.WhitePieces["K"] = this.GetSquareBitBoard("e1");
+        this.WhitePieces["K"] = Rank1 & FileE;
         // Pawns are placed on a2 to h2
-        this.WhitePieces["P"] = this.GetSquareBitBoard("a2") | this.GetSquareBitBoard("b2") |
-            this.GetSquareBitBoard("c2") | this.GetSquareBitBoard("d2") | this.GetSquareBitBoard("e2") |
-            this.GetSquareBitBoard("f2") | this.GetSquareBitBoard("g2") | this.GetSquareBitBoard("h2");
+        this.WhitePieces["P"] = Rank2;
+
+        this.UpdateBitBoards();
+    }
+
+    /// <summary>
+    /// Updates the bitboards for black and white pieces.
+    /// This method should be called whenever the pieces change.
+    /// It performs a bitwise OR operation on the bitboards of all pieces of the same color.
+    /// </summary>
+    void UpdateBitBoards()
+    {
+        this.blackPiecesBitBoard = 0;
+        foreach (var piece in this.BlackPieces.Values)
+        {
+            this.blackPiecesBitBoard |= piece;
+        }
+
+        this.whitePiecesBitBoard = 0;
+        foreach (var piece in this.WhitePieces.Values)
+        {
+            this.whitePiecesBitBoard |= piece;
+        }
     }
 }
