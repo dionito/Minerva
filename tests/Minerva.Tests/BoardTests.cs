@@ -45,7 +45,7 @@ public class BoardTests
         typeof(ArgumentException),
         "Invalid rank. (Parameter 'square')",
         DisplayName = "Invalid Rank")]
-    public void SquareThrowsTheRightArgumentExceptions(string? square, Type exceptionType, string message)
+    public void GetSquareBitBoardThrowsTheRightArgumentExceptions(string square, Type exceptionType, string message)
     {
         var board = new Board();
         ArgumentException exception = Assert.ThrowsException<ArgumentException>(
@@ -56,12 +56,15 @@ public class BoardTests
     }
 
     [TestMethod]
-    public void SquareThrowsArgumentNullExceptionWhenSquareIsNull()
+    public void GetSquareBitBoardThrowsArgumentNullExceptionWhenSquareIsNull()
     {
         var board = new Board();
+        string? nullSquare = null;
+        #pragma warning disable CS8604 // Possible null reference argument.
         ArgumentNullException exception = Assert.ThrowsException<ArgumentNullException>(
-            () => board.GetSquareBitBoard(null),
+            () => board.GetSquareBitBoard(nullSquare),
             "Wrong exception type.");
+        #pragma warning restore CS8604 // Possible null reference argument.
         Assert.AreEqual("square", exception.ParamName);
         Assert.AreEqual("Value cannot be null. (Parameter 'square')", exception.Message);
     }
@@ -153,4 +156,100 @@ public class BoardTests
             board.WhitePieces["P"],
             "White pawns");
     }
+
+    [TestMethod]
+    public void SetActiveColorSetsTheRightColor()
+    {
+        var board = new Board();
+
+        // Test setting the active color to white
+        board.SetActiveColor('w');
+        Assert.AreEqual('w', board.ActiveColor);
+
+        // Test setting the active color to black
+        board.SetActiveColor('b');
+        Assert.AreEqual('b', board.ActiveColor);
+    }
+
+    [TestMethod]
+    [DataRow('a', DisplayName = "Invalid color a")]
+    [DataRow('z', DisplayName = "Invalid color z")]
+    [DataRow('W', DisplayName = "Invalid color W")]
+    [DataRow('B', DisplayName = "Invalid color B")]
+    public void SetActiveColorThrowsExceptionWithInvalidColor(char color)
+    {
+        var board = new Board();
+        Exception exception = Assert.ThrowsException<ArgumentException>(() => board.SetActiveColor(color));
+        Assert.AreEqual("Invalid active color. (Parameter 'activeColor')", exception.Message);
+    }
+
+    [TestMethod]
+    public void SetCastlingRightsSetsTheRightRights()
+    {
+        var board = new Board();
+
+        // Test setting the castling rights to "KQkq"
+        board.SetCastlingRights("KQkq");
+        Assert.AreEqual("KQkq", board.CastlingRights);
+
+        // Test setting the castling rights to "-"
+        board.SetCastlingRights("-");
+        Assert.AreEqual("-", board.CastlingRights);
+    }
+
+    [TestMethod]
+    [DataRow("KQk", DisplayName = "Valid castling rights KQk")]
+    [DataRow("q", DisplayName = "Valid castling rights q")]
+    [DataRow("Kk", DisplayName = "Valid castling rights Kk")]
+    public void SetCastlingRightsDoesNotThrowWithValidRights(string castlingRights)
+    {
+        var board = new Board();
+        board.SetCastlingRights(castlingRights);
+        Assert.AreEqual(castlingRights, board.CastlingRights);
+    }
+
+    [TestMethod]
+    [DataRow("KQkqx", DisplayName = "Invalid castling rights KQkqx")]
+    [DataRow("KQkqK", DisplayName = "Invalid castling rights KQkqK")]
+    [DataRow("KQkqkq", DisplayName = "Invalid castling rights KQkqkq")]
+    public void SetCastlingRightsThrowsExceptionWithInvalidRights(string castlingRights)
+    {
+        var board = new Board();
+        Assert.ThrowsException<ArgumentException>(() => board.SetCastlingRights(castlingRights));
+    }
+
+    [TestMethod]
+    public void SetPieceAtSetsTheRightPieceAtTheRightPlace()
+    {
+        var board = new Board();
+
+        // Set a black pawn at e5
+        board.SetPieceAt(5, 5, 'p');
+        Assert.AreEqual(board.GetSquareBitBoard("e5"), board.BlackPieces["p"]);
+
+        // Set a white knight at b1
+        board.SetPieceAt(2, 1, 'N');
+        Assert.AreEqual(board.GetSquareBitBoard("b1"), board.WhitePieces["N"]);
+    }
+
+    [TestMethod]
+    [DataRow(0, 1, 'p', DisplayName = "File to low")]
+    [DataRow(9, 1, 'p', DisplayName = "File to high")]
+    [DataRow(1, 0, 'p', DisplayName = "Row to low")]
+    [DataRow(1, 9, 'p', DisplayName = "Row to High")]
+    public void SetPieceAtThrowsHighWithInvalidFileOrRank(int file, int rank, char piece)
+    {
+        var board = new Board();
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => board.SetPieceAt(file, rank, piece));
+    }
+
+    [TestMethod]
+    [DataRow(1, 1, 'x', DisplayName = "Invalid black piece.")]
+    [DataRow(1, 1, 'X', DisplayName = "Invalid white piece.")]
+    public void SetPieceAtThrowsExceptionWithInvalidPiece(int file, int rank, char piece)
+    {
+        var board = new Board();
+        Assert.ThrowsException<ArgumentException>(() => board.SetPieceAt(file, rank, piece));
+    }
+
 }

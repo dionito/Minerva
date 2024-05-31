@@ -1,4 +1,24 @@
-﻿namespace Minerva;
+﻿/*
+ * Copyright (C) 2024 dionito
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
+
+namespace Minerva;
 
 
 /// <summary>
@@ -47,12 +67,6 @@ public class Board
     ulong blackPiecesBitBoard;
 
     /// <summary>
-    /// Represents the combined bitboard for all white pieces.
-    /// This field should be updated whenever the white pieces change.
-    /// </summary>
-    ulong whitePiecesBitBoard;
-
-    /// <summary>
     /// Represents the files of the chess board.
     /// </summary>
     readonly ulong[] files = 
@@ -67,6 +81,12 @@ public class Board
     {
         Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8,
     };
+
+    /// <summary>
+    /// Represents the combined bitboard for all white pieces.
+    /// This field should be updated whenever the white pieces change.
+    /// </summary>
+    ulong whitePiecesBitBoard;
 
     /// <summary>
     /// Represents the bitboards for the black pieces.
@@ -86,6 +106,17 @@ public class Board
     /// This property performs a bitwise OR operation on the bitboards of all black pieces.
     /// </summary>
     public ulong BlackPiecesBitBoard => this.blackPiecesBitBoard;
+
+    /// <summary>
+    /// Gets or sets the castling rights for both white and black.
+    /// The rights are represented as a string with the following possible values:
+    /// "K" - White can castle kingside
+    /// "Q" - White can castle queenside
+    /// "k" - Black can castle kingside
+    /// "q" - Black can castle queenside
+    /// "-"  - Neither side can castle
+    /// </summary>
+    public string CastlingRights { get; private set; } = "KQkq";
 
     /// <summary>
     /// Gets the combined bitboard for all pieces on the board.
@@ -113,11 +144,17 @@ public class Board
     public ulong WhitePiecesBitBoard => this.whitePiecesBitBoard;
 
     /// <summary>
+    /// Gets or sets the active color, which is the color that has the next move.
+    /// </summary>
+    /// <value>The active color is either 'w' for white or 'b' for black.</value>
+    public char ActiveColor { get; private set; } = 'w';
+
+    /// <summary>
     /// This method returns the bitboard for a given square represented by
     /// its standard chess notation.
     /// </summary>
     /// <param name="square">The square in standard chess notation.</param>
-    public ulong GetSquareBitBoard(string? square)
+    public ulong GetSquareBitBoard(string square)
     {
         if (square == null)  { throw new ArgumentNullException(nameof(square)); }
 
@@ -174,6 +211,101 @@ public class Board
         this.WhitePieces["K"] = Rank1 & FileE;
         // Pawns are placed on a2 to h2
         this.WhitePieces["P"] = Rank2;
+
+        this.UpdateBitBoards();
+    }
+
+    /// <summary>
+    /// Sets the active color for the next move on the chess board.
+    /// </summary>
+    /// <param name="activeColor">The active color. 'w' for white and 'b' for black.</param>
+    /// <exception cref="ArgumentException">Thrown when an invalid color is provided.</exception>
+    public void SetActiveColor(char activeColor)
+    {
+        if (activeColor != 'w' && activeColor != 'b')
+        {
+            throw new ArgumentException("Invalid active color.", nameof(activeColor));
+        }
+
+        this.ActiveColor = activeColor;
+    }
+
+    /// <summary>
+    /// Sets the castling rights for both white and black.
+    /// The rights are represented as a string with the following possible values:
+    /// "K" - White can castle kingside
+    /// "Q" - White can castle queenside
+    /// "k" - Black can castle kingside
+    /// "q" - Black can castle queenside
+    /// "-"  - Neither side can castle
+    /// </summary>
+    /// <param name="castlingRights">The string representing the castling rights.</param>
+    /// <exception cref="ArgumentException">Thrown when an invalid castling rights string is provided.</exception>
+    public void SetCastlingRights(string castlingRights)
+    {
+        if (castlingRights == "-")
+        {
+            this.CastlingRights = castlingRights;
+            return;
+        }
+
+        if (castlingRights.Length > 4 || !Regex.IsMatch(castlingRights, "^[KQkq]+$"))
+        {
+            throw new ArgumentException("Invalid castling availability in FEN string.", nameof(castlingRights));
+        }
+
+        this.CastlingRights = castlingRights;
+    }
+
+    /// <summary>
+    /// Sets a piece at the specified location on the chess board.
+    /// </summary>
+    /// <param name="file">The file of the target location. Must be between 1 and 8 inclusive.</param>
+    /// <param name="rank">The rank of the target location. Must be between 1 and 8 inclusive.</param>
+    /// <param name="piece">The piece to set. Lowercase for black pieces, uppercase for white pieces.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the file or rank is
+    /// out of the valid range.</exception>
+    /// <exception cref="ArgumentException">Thrown when an invalid piece is provided.</exception>
+    public void SetPieceAt(int file, int rank, char piece)
+    {
+        if (file is <= 0 or > 8)
+        {
+            throw new ArgumentOutOfRangeException(nameof(file));
+        }
+
+        if (rank is <= 0 or > 8)
+        {
+            throw new ArgumentOutOfRangeException(nameof(rank));
+        }
+
+        if (!Regex.IsMatch(piece.ToString(), "^[rnbqkpRNBQKP]+$"))
+        {
+            throw new ArgumentException("Invalid piece.", nameof(piece));
+        }
+
+        ulong targetBitBoard = this.files[file - 1] & this.ranks[rank - 1];
+        if (char.IsLower(piece))
+        {
+            // Clear the bit at the target location for all black pieces
+            foreach (var key in this.BlackPieces.Keys.ToList())
+            {
+                this.BlackPieces[key] &= ~targetBitBoard;
+            }
+
+            // Set the bit at the target location for the specified piece
+            this.BlackPieces[piece.ToString()] |= targetBitBoard;
+        }
+        else
+        {
+            // Clear the bit at the target location for all white pieces
+            foreach (var key in this.WhitePieces.Keys.ToList())
+            {
+                this.WhitePieces[key] &= ~targetBitBoard;
+            }
+
+            // Set the bit at the target location for the specified piece
+            this.WhitePieces[piece.ToString()] |= targetBitBoard;
+        }
 
         this.UpdateBitBoards();
     }
