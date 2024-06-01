@@ -15,11 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace Minerva;
-
 
 /// <summary>
 /// Represents a chess board and its pieces using a set of bitboards.
@@ -60,6 +58,8 @@ public class Board
     public const ulong Rank7 = 0x00FF000000000000ul;
     public const ulong Rank8 = 0xFF00000000000000ul;
 
+    public const char EmptySquare = ' ';
+
     /// <summary>
     /// Represents the combined bitboard for all black pieces.
     /// This field should be updated whenever the black pieces change.
@@ -69,7 +69,7 @@ public class Board
     /// <summary>
     /// Represents the files of the chess board.
     /// </summary>
-    readonly ulong[] files = 
+    public static readonly ulong[] Files = 
     {
         FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH,
     };
@@ -77,7 +77,7 @@ public class Board
     /// <summary>
     /// Represents the ranks of the chess board.
     /// </summary>
-    readonly ulong[] ranks = 
+    public static readonly ulong[] Ranks = 
     {
         Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8,
     };
@@ -119,6 +119,28 @@ public class Board
     public string CastlingRights { get; private set; } = "KQkq";
 
     /// <summary>
+    /// Gets the en passant target square in Forsyth-Edwards Notation (FEN).
+    /// The en passant target square is the square where a pawn can be captured en passant.
+    /// This property is represented as a string with the following possible values:
+    /// </summary>
+    /// <value>
+    /// "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3" - for white pawns
+    /// "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6" - for black pawns
+    /// "-" - if there is no en passant target square
+    /// </value>
+    public string EnPassantTargetSquare { get; private set; } = "-";
+
+    /// <summary>
+    /// Gets the fullmove number.
+    /// </summary>
+    public int FullmoveNumber { get; private set; }
+
+    /// <summary>
+    /// Gets or sets the halfmove clock.
+    /// </summary>
+    public int HalfmoveClock { get; set; }
+
+    /// <summary>
     /// Gets the combined bitboard for all pieces on the board.
     /// This property performs a bitwise OR operation on the bitboards of all black and white pieces.
     /// </summary>
@@ -144,39 +166,10 @@ public class Board
     public ulong WhitePiecesBitBoard => this.whitePiecesBitBoard;
 
     /// <summary>
-    /// Gets or sets the active color, which is the color that has the next move.
+    /// Gets the active color, which is the color that has the next move.
     /// </summary>
     /// <value>The active color is either 'w' for white or 'b' for black.</value>
     public char ActiveColor { get; private set; } = 'w';
-
-    /// <summary>
-    /// This method returns the bitboard for a given square represented by
-    /// its standard chess notation.
-    /// </summary>
-    /// <param name="square">The square in standard chess notation.</param>
-    public ulong GetSquareBitBoard(string square)
-    {
-        if (square == null)  { throw new ArgumentNullException(nameof(square)); }
-
-        if (square.Length != 2)
-        {
-            throw new ArgumentException("Square notation must be 2 characters long.", nameof(square));
-        }
-
-        int file = char.ToLower(square[0]) - 'a';
-        if (file is < 0 or > 7)
-        {
-            throw new ArgumentException("Invalid file.", nameof(square));
-        }
-
-        var rank = square[1] - '1';
-        if (rank is < 0 or > 7)
-        {
-            throw new ArgumentException("Invalid rank.", nameof(square));
-        }
-
-        return this.files[file] & this.ranks[rank];
-    }
 
     /// <summary>
     /// Initializes the chess board to the standard starting position.
@@ -213,6 +206,47 @@ public class Board
         this.WhitePieces["P"] = Rank2;
 
         this.UpdateBitBoards();
+    }
+
+    /// <summary>
+    /// Gets the piece at the specified location on the chess board.
+    /// </summary>
+    /// <param name="file">The file of the target location. Must be between 1 and 8 inclusive.</param>
+    /// <param name="rank">The rank of the target location. Must be between 1 and 8 inclusive.</param>
+    /// <returns>The piece at the specified location. ' ' if the square is empty.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the file or rank is out of the valid range.
+    /// </exception>
+    public char GetPieceAt(int file, int rank)
+    {
+        if (file is <= 0 or > 8)
+        {
+            throw new ArgumentOutOfRangeException(nameof(file), "Must be between 1 and 8 inclusive.");
+        }
+
+        if (rank is <= 0 or > 8)
+        {
+            throw new ArgumentOutOfRangeException(nameof(file), "Must be between 1 and 8 inclusive.");
+        }
+
+        ulong targetBitBoard = Files[file - 1] & Ranks[rank - 1];
+        foreach (var piece in this.BlackPieces)
+        {
+            if ((piece.Value & targetBitBoard) != 0)
+            {
+                return piece.Key[0];
+            }
+        }
+
+        foreach (var piece in this.WhitePieces)
+        {
+            if ((piece.Value & targetBitBoard) != 0)
+            {
+                return piece.Key[0];
+            }
+        }
+
+        return EmptySquare;
     }
 
     /// <summary>
@@ -258,6 +292,84 @@ public class Board
     }
 
     /// <summary>
+    /// Sets the en passant target square on the chess board.
+    /// </summary>
+    /// <param name="enPassantTargetSquare">The en passant target square in Forsyth-Edwards Notation (FEN). 
+    /// This is the square where a pawn can be captured en passant. 
+    /// The value can be one of the following:
+    /// "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3" - for white pawns
+    /// "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6" - for black pawns
+    /// "-" - if there is no en passant target square
+    /// </param>
+    /// <exception cref="ArgumentException">Thrown when an invalid en passant target square is provided.</exception>
+    public void SetEnPassantTargetSquare(string enPassantTargetSquare)
+    {
+        if (enPassantTargetSquare == "-")
+        {
+            this.EnPassantTargetSquare = enPassantTargetSquare;
+            return;
+        }
+
+        if (enPassantTargetSquare.Length != 2 || enPassantTargetSquare[0] < 'a' || enPassantTargetSquare[0] > 'h' ||
+            (enPassantTargetSquare[1] != '3' && enPassantTargetSquare[1] != '6'))
+        {
+            throw new ArgumentException(
+                "Invalid en passant target square in FEN string.",
+                nameof(enPassantTargetSquare));
+        }
+
+        // validate there is a pawn in the correct square for the en passant target
+        int file = enPassantTargetSquare[0] - 'a';
+        int rank = enPassantTargetSquare[1] - '1';
+        rank = this.ActiveColor == 'w' ? rank - 1 : rank + 1;
+        ulong targetBitBoard = Files[file] & Ranks[rank];
+        if ((this.ActiveColor == 'b' && (this.WhitePieces["P"] & targetBitBoard) == 0) ||
+            (this.ActiveColor == 'w' && (this.BlackPieces["p"] & targetBitBoard) == 0))
+        {
+            throw new ArgumentException(
+                "Invalid en passant target square in FEN string. No pawn to be taken en passant found.",
+                nameof(enPassantTargetSquare));
+        }
+
+        this.EnPassantTargetSquare = enPassantTargetSquare;
+    }
+
+    /// <summary>
+    /// Sets the fullmove number. The fullmove number is the number of the full moves in a game.
+    /// It starts at 1, and is incremented after a black move.
+    /// </summary>
+    /// <param name="fullmoveNumber">The fullmove number. Must be 1 or greater.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the fullmove number
+    /// is less than 1.</exception>
+    public void SetFullmoveNumber(int fullmoveNumber)
+    {
+        if (fullmoveNumber < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(fullmoveNumber), "Fullmove number must be 1 or greater.");
+        }
+
+        this.FullmoveNumber = fullmoveNumber;
+    }
+
+    /// <summary>
+    /// Sets the halfmove clock.
+    /// </summary>
+    /// <param name="halfmoveClock">The halfmove clock. Must be between 0 and 50 inclusive.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the halfmove clock
+    /// is out of the valid range.</exception>
+    public void SetHalfmoveClock(int halfmoveClock)
+    {
+        if (halfmoveClock is < 0 or > 50)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(halfmoveClock),
+                "Halfmove clock must be between 0 and 50.");
+        }
+
+        this.HalfmoveClock = halfmoveClock;
+    }
+
+    /// <summary>
     /// Sets a piece at the specified location on the chess board.
     /// </summary>
     /// <param name="file">The file of the target location. Must be between 1 and 8 inclusive.</param>
@@ -283,7 +395,7 @@ public class Board
             throw new ArgumentException("Invalid piece.", nameof(piece));
         }
 
-        ulong targetBitBoard = this.files[file - 1] & this.ranks[rank - 1];
+        ulong targetBitBoard = Files[file - 1] & Ranks[rank - 1];
         if (char.IsLower(piece))
         {
             // Clear the bit at the target location for all black pieces
