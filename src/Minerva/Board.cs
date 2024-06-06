@@ -1,19 +1,19 @@
-﻿/*
- * Copyright (C) 2024 dionito
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+﻿// 
+// Copyright (C) 2024 dionito
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// 
 
 using System.Text.RegularExpressions;
 
@@ -209,6 +209,57 @@ public class Board
     }
 
     /// <summary>
+    /// Checks if a given square contains a piece of a specific color.
+    /// </summary>
+    /// <param name="file">The file of the square to check. Must be between 'a' and 'h' inclusive.</param>
+    /// <param name="rank">The rank of the square to check. Must be between 1 and 8 inclusive.</param>
+    /// <param name="color">The color of the piece to check for. 'w' for white and 'b' for black.</param>
+    /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
+    public bool ContainsColorPiece(char file, int rank, Color color)
+    {
+        return this.ContainsColorPiece(new Square($"{file}{rank}"), (char)color);
+    }
+
+    /// <summary>
+    /// Checks if a given square contains a piece of a specific color.
+    /// </summary>
+    /// <param name="square">The square to check.</param>
+    /// <param name="color">The color of the piece to check for. 'w' for white and 'b' for black.</param>
+    /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
+    public bool ContainsColorPiece(Square square, Color color)
+    {
+        return this.ContainsColorPiece(square, (char)color);
+    }
+
+    /// <summary>
+    /// Checks if a given square contains a piece of a specific color.
+    /// </summary>
+    /// <param name="file">The file of the square to check. Must be between 'a' and 'h' inclusive.</param>
+    /// <param name="rank">The rank of the square to check. Must be between 1 and 8 inclusive.</param>
+    /// <param name="color">The color of the piece to check for. 'w' for white and 'b' for black.</param>
+    /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
+    public bool ContainsColorPiece(char file, int rank, char color)
+    {
+        return this.ContainsColorPiece(new Square($"{file}{rank}"), color);
+    }
+
+    /// <summary>
+    /// Checks if a given square contains a piece of a specific color.
+    /// </summary>
+    /// <param name="square">The square to check.</param>
+    /// <param name="color">The color of the piece to check for. 'w' for white and 'b' for black.</param>
+    /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
+    public bool ContainsColorPiece(Square square, char color)
+    {
+        return color switch
+        {
+            'w' => (this.WhitePiecesBitBoard & square.BitBoard) != 0,
+            'b' => (this.BlackPiecesBitBoard & square.BitBoard) != 0,
+            _ => throw new ArgumentException($"Invalid color: {color}. Valid colors are 'b' or 'w'.", nameof(color)),
+        };
+    }
+
+    /// <summary>
     /// Gets the piece at the specified location on the chess board.
     /// </summary>
     /// <param name="file">The file of the target location. Must be between 1 and 8 inclusive.</param>
@@ -247,6 +298,27 @@ public class Board
         }
 
         return EmptySquare;
+    }
+
+    /// <summary>
+    /// Checks if a square on the board is empty.
+    /// </summary>
+    /// <param name="file">The file of the square to check. Must be between a and h inclusive.</param>
+    /// <param name="rank">The rank of the square to check. Must be between 1 and 8 inclusive.</param>
+    /// <returns>True if the square is empty, false otherwise.</returns>
+    public bool IsEmptySquare(char file, int rank)
+    {
+        return this.IsEmptySquare(new Square($"{file}{rank}"));
+    }
+
+    /// <summary>
+    /// Checks if a square on the board is empty.
+    /// </summary>
+    /// <param name="square">The square to check.</param>
+    /// <returns>True if the square is empty, false otherwise.</returns>
+    public bool IsEmptySquare(Square square)
+    {
+        return (this.OccupiedBitBoard & square.BitBoard) == 0;
     }
 
     /// <summary>

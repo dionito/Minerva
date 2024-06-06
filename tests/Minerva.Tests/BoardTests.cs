@@ -1,3 +1,5 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 namespace Minerva.Tests;
 
 [TestClass]
@@ -179,6 +181,41 @@ public class BoardTests : TestBase
     }
 
     [TestMethod]
+    public void ContainsColorPieceReturnsCorrectValues()
+    {
+        var board = new Board();
+        board.InitializeGameStartingBoard();
+
+        Assert.IsTrue(board.ContainsColorPiece(new Square("a8"), Color.Black));
+        Assert.IsFalse(board.ContainsColorPiece(new Square("a8"), Color.White));
+        Assert.IsTrue(board.ContainsColorPiece('b', 7, Color.Black));
+        Assert.IsFalse(board.ContainsColorPiece('b', 7, Color.White));
+        Assert.IsTrue(board.ContainsColorPiece(new Square("c8"), 'b'));
+        Assert.IsFalse(board.ContainsColorPiece(new Square("c8"), 'w'));
+        Assert.IsTrue(board.ContainsColorPiece('d', 7, 'b'));
+        Assert.IsFalse(board.ContainsColorPiece('d', 7, 'w'));
+
+        Assert.IsTrue(board.ContainsColorPiece(new Square("a1"), Color.White));
+        Assert.IsFalse(board.ContainsColorPiece(new Square("a1"), Color.Black));
+        Assert.IsTrue(board.ContainsColorPiece('b', 2, Color.White));
+        Assert.IsFalse(board.ContainsColorPiece('b', 2, Color.Black));
+        Assert.IsTrue(board.ContainsColorPiece(new Square("c1"), 'w'));
+        Assert.IsFalse(board.ContainsColorPiece(new Square("c1"), 'b'));
+        Assert.IsTrue(board.ContainsColorPiece('d', 2, 'w'));
+        Assert.IsFalse(board.ContainsColorPiece('d', 2, 'b'));
+    }
+
+    [TestMethod]
+    public void ContainsColorPiecesThrowsExceptionIfColorIsInvalid()
+    {
+        var board = new Board();
+        board.InitializeGameStartingBoard();
+        Exception exception =
+            Assert.ThrowsException<ArgumentException>(() => board.ContainsColorPiece(new Square("a1"), 'x'));
+        Assert.AreEqual("Invalid color: x. Valid colors are 'b' or 'w'. (Parameter 'color')", exception.Message);
+    }
+
+    [TestMethod]
     public void GetPieceAtReturnsEmptyForEmptySquare()
     {
         var board = new Board();
@@ -200,6 +237,29 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => board.GetPieceAt(1, 0)); // Invalid rank
+    }
+
+    [TestMethod]
+    public void IsEmptySquareReturnsCorrectValues()
+    {
+        var board = new Board();
+        board.InitializeGameStartingBoard();
+
+        for (int file = 1; file <= 8; file++)
+        {
+            for (int rank = 1; rank <= 8; rank++)
+            {
+                char fileChar = (char)('a' + file - 1); // Convert file from int to char
+                if (rank is < 3 or > 6)
+                {
+                    Assert.IsFalse(board.IsEmptySquare(fileChar, rank), "Not empty square.");
+                }
+                else
+                {
+                    Assert.IsTrue(board.IsEmptySquare(new Square(fileChar, rank)), "Empty square.");
+                }
+            }
+        }
     }
 
     [TestMethod]
