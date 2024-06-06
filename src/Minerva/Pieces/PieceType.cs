@@ -15,11 +15,14 @@
 //  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //  */
 
-namespace Minerva;
+namespace Minerva.Pieces;
 
-public enum Color
+public enum PieceType
 {
-    None = ' ',
-    Black = 'b',
-    White = 'w',
+    Bishop,
+    King,
+    Knight,
+    Pawn,
+    Queen,
+    Rook,
 }

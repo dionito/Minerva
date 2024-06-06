@@ -15,10 +15,13 @@
 //  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //  */
 
+using System.IO;
+using System.Numerics;
+
 namespace Minerva;
 
 /// <summary>
-/// Represents a square on a chess board using algebraic notation.
+/// Represents a square on a chess board using algebraic notation and BitBoards.
 /// </summary>
 /// <seealso href="https://en.wikipedia.org/wiki/Algebraic_notation_(chess)"/>
 public readonly struct Square
@@ -39,7 +42,7 @@ public readonly struct Square
     public ulong BitBoard { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Square"/> class.
+    /// Initializes a new instance of the <see cref="Square"/> struct using algegraic notation.
     /// </summary>
     /// <param name="file">The file (column) of the square.</param>
     /// <param name="rank">The rank (row) of the square.</param>
@@ -60,6 +63,24 @@ public readonly struct Square
         this.File = file;
         this.Rank = rank;
         this.BitBoard = Board.Files[file - 'a'] & Board.Ranks[rank - 1];
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Square"/> struct using a BitBoard representation.
+    /// </summary>
+    /// <param name="bitBoard">The BitBoard representation of the square.</param>
+    /// <exception cref="ArgumentException">Thrown when the BitBoard does not have exactly one bit set.</exception>
+    public Square(ulong bitBoard)
+    {
+        if (bitBoard == 0 || (bitBoard & (bitBoard - 1)) != 0)
+        {
+            throw new ArgumentException($"{nameof(bitBoard)} must have a single bit set.", nameof(bitBoard));
+        }
+
+        this.BitBoard = bitBoard;
+        int index = BitOperations.TrailingZeroCount(bitBoard);
+        this.File = (char)('h' - (index % 8));
+        this.Rank = 1 + (index / 8);
     }
 
     /// <summary>
@@ -93,6 +114,41 @@ public readonly struct Square
         this.BitBoard = Board.Files[file - 'a'] & Board.Ranks[rank - 1];
     }
 
+    public Square Move(Move move)
+    {
+        if (this.TryMove(move, out Square square))
+        {
+            return square;
+        }
+
+        throw new InvalidOperationException("The move is off the board.");
+    }
+
+    public bool TryMove(Move move, out Square square)
+    {
+        // Check if the move is off the board horizontally.
+        int fileIndex = this.File - 'a';
+        if (fileIndex + move.FileMove < 0 || fileIndex + move.FileMove > 7)
+        {
+            square = default;
+            return false;
+        }
+
+        // Check if the move is off the board vertically.
+        int rankIndex = this.Rank - 1;
+        if (rankIndex + move.RankMove < 0 || rankIndex + move.RankMove > 7)
+        {
+            square = default;
+            return false;
+        }
+
+        ulong bitBoard = this.BitBoard;
+        bitBoard = move.RankMove >= 0 ? bitBoard << 8 * move.RankMove : bitBoard >> -8 * move.RankMove;
+        bitBoard = move.FileMove >= 0 ? bitBoard >> move.FileMove : bitBoard << -move.FileMove;
+        square = new Square(bitBoard);
+        return true;
+    }
+
     /// <summary>
     /// Returns a string that represents the current square.
     /// </summary>
@@ -105,13 +161,13 @@ public readonly struct Square
     /// <param name="obj">The object to compare with the current object.</param>
     /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
     public override bool Equals(object? obj) =>
-        obj is Square square && this.File == square.File && this.Rank == square.Rank;
+        obj is Square square && this.BitBoard == square.BitBoard;
 
     /// <summary>
     /// Serves as the default hash function.
     /// </summary>
     /// <returns>A hash code for the current object.</returns>
-    public override int GetHashCode() => this.File.GetHashCode() ^ this.Rank.GetHashCode();
+    public override int GetHashCode() => this.BitBoard.GetHashCode();
 
     /// <summary>
     /// Determines whether two specified instances of Square are equal.

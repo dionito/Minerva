@@ -15,11 +15,19 @@
 //  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //  */
 
-namespace Minerva;
+namespace Minerva.Pieces;
 
-public enum Color
+public abstract class PieceBase
 {
-    None = ' ',
-    Black = 'b',
-    White = 'w',
+    protected PieceBase(PieceType type, Color color)
+    {
+        this.PieceType = type;
+        this.Color = color;
+    }
+
+    public Color Color { get; protected set; }
+
+    public PieceType PieceType { get; protected set; }
+
+    public abstract ulong[] GetPossibleMoves(ulong position, Board board);
 }

@@ -22,10 +22,6 @@ namespace Minerva;
 /// </summary>
 public static class ColorExtensions
 {
-    const char Black = 'b';
-    const char None = ' ';
-    const char White = 'w';
-
     /// <summary>
     /// Gets the opposite color of the provided Color enumeration.
     /// </summary>
@@ -43,23 +39,20 @@ public static class ColorExtensions
     /// </summary>
     /// <param name="color">The Color enumeration to convert.</param>
     /// <returns>The char representation of the Color enumeration.</returns>
-    public static char ToChar(this Color color) => color switch
-    {
-        Color.Black => Black,
-        Color.White => White,
-        _ => None,
-    };
+    public static char ToChar(this Color color) => (char)color;
 
     /// <summary>
     /// Converts a char representation of a Color to its corresponding Color enumeration.
     /// </summary>
     /// <param name="color">The char representation of a Color to convert.</param>
     /// <returns>The Color enumeration corresponding to the char representation.</returns>
-    public static Color ToColor(this char color) => color switch
+    public static Color ToColor(this char color)
     {
-        Black => Color.Black,
-        White => Color.White,
-        None => Color.None,
-        _ => throw new ArgumentOutOfRangeException(nameof(color), color, "Invalid color"),
-    };
+        if (Enum.IsDefined(typeof(Color), (int)color))
+        {
+            return (Color)color;
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(color), color, "Invalid color");
+    }
 }

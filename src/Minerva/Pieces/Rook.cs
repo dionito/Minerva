@@ -15,11 +15,16 @@
 //  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //  */
 
-namespace Minerva;
+namespace Minerva.Pieces;
 
-public enum Color
+public class Rook : PieceBase
 {
-    None = ' ',
-    Black = 'b',
-    White = 'w',
+    public Rook(Color color) : base(PieceType.Rook, color)
+    {
+    }
+
+    public override ulong[] GetPossibleMoves(ulong position, Board board)
+    {
+        throw new NotImplementedException();
+    }
 }
