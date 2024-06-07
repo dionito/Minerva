@@ -1,5 +1,4 @@
-﻿// 
-// Copyright (C) 2024 dionito
+﻿// Copyright (C) 2024 dionito
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +16,30 @@
 
 namespace Minerva.Pieces;
 
+/// <summary>
+/// Represents a rook piece in a chess game.
+/// </summary>
 public class Rook : PieceBase
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Rook"/> class with the specified color.
+    /// </summary>
+    /// <param name="color">The color of the queen.</param>
     public Rook(Color color) : base(PieceType.Rook, color)
     {
     }
 
+    /// <summary>
+    /// Gets all possible moves for the rook from  a given position on a given board.
+    /// </summary>
+    /// <param name="position">The current position of the rook.</param>
+    /// <param name="board">The current state of the chess board.</param>
+    /// <returns>An array of squares representing all possible moves for the rook.</returns>
     public override Square[] GetPossibleMoves(Square position, Board board)
     {
-        throw new NotImplementedException();
+        return this.GetValidMoves(position, Move.Up, board).Concat(
+            this.GetValidMoves(position, Move.Down, board)).Concat(
+            this.GetValidMoves(position, Move.Right, board)).Concat(
+            this.GetValidMoves(position, Move.Left, board)).ToArray();
     }
 }

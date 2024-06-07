@@ -1,5 +1,4 @@
-﻿// 
-// Copyright (C) 2024 dionito
+﻿// Copyright (C) 2024 dionito
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,25 +22,24 @@ namespace Minerva.Pieces;
 public class Bishop : PieceBase
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="Bishop"/> class.
+    /// Initializes a new instance of the <see cref="Bishop"/> class with the specified color.
     /// </summary>
-    /// <param name="color">The color of the bishop.</param>
+    /// <param name="color">The color of the queen.</param>
     public Bishop(Color color) : base(PieceType.Bishop, color)
     {
     }
 
     /// <summary>
-    /// Gets all possible moves for the bishop from its current position.
+    /// Gets all possible moves for the bishop from  a given position on a given board.
     /// </summary>
     /// <param name="position">The current position of the bishop.</param>
     /// <param name="board">The current state of the chess board.</param>
     /// <returns>An array of squares representing all possible moves for the bishop.</returns>
     public override Square[] GetPossibleMoves(Square position, Board board)
     {
-        return
-            this.GetValidMoves(position, Move.UpLeft, board).Concat(
-            this.GetValidMoves(position, Move.UpRight, board).Concat(
+        return this.GetValidMoves(position, Move.UpLeft, board).Concat(
+            this.GetValidMoves(position, Move.UpRight, board)).Concat(
             this.GetValidMoves(position, Move.DownLeft, board)).Concat(
-            this.GetValidMoves(position, Move.DownRight, board)).ToArray()).ToArray();
+            this.GetValidMoves(position, Move.DownRight, board)).ToArray();
     }
 }

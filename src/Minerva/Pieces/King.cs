@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // 
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Minerva.Pieces;
 
 public class King : PieceBase
@@ -25,6 +27,30 @@ public class King : PieceBase
 
     public override Square[] GetPossibleMoves(Square position, Board board)
     {
-        throw new NotImplementedException();
+        return this.GetValidMoves(position, Move.Up, board)
+            .Union(this.GetValidMoves(position, Move.Down, board))
+            .Union(this.GetValidMoves(position, Move.Right, board))
+            .Union(this.GetValidMoves(position, Move.Left, board))
+            .Union(this.GetValidMoves(position, Move.UpLeft, board))
+            .Union(this.GetValidMoves(position, Move.UpRight, board))
+            .Union(this.GetValidMoves(position, Move.DownLeft, board))
+            .Union(this.GetValidMoves(position, Move.DownRight, board))
+            .ToArray();
+    }
+
+    protected override IEnumerable<Square> GetValidMoves(Square position, Move direction, [NotNull] Board board)
+    {
+        if (position.TryMove(direction, out Square newPosition))
+        {
+            if ((board.OccupiedBitBoard & newPosition.BitBoard) == 0ul)
+            {
+                yield return newPosition;
+            }
+
+            if (board.ContainsColorPiece(newPosition, this.Color.Opposite()))
+            {
+                yield return newPosition;
+            }
+        }
     }
 }

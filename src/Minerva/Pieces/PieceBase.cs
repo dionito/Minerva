@@ -1,5 +1,4 @@
-﻿// 
-// Copyright (C) 2024 dionito
+﻿// Copyright (C) 2024 dionito
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // 
+
+using System.Diagnostics.CodeAnalysis;
 
 namespace Minerva.Pieces;
 
@@ -52,6 +53,18 @@ public abstract class PieceBase
     public abstract Square[] GetPossibleMoves(Square position, Board board);
 
     /// <summary>
+    /// Gets the bitboard representation of the possible moves for the piece.
+    /// </summary>
+    /// <param name="position">The current position of the piece.</param>
+    /// <param name="board">The current state of the chess board.</param>
+    /// <returns>A bitboard (ulong) where each bit represents a square on the
+    /// chess board. A set bit indicates that the piece can move to that square.</returns>
+    public ulong GetPossibleMovesBitBoard(Square position, Board board)
+    {
+        return this.GetPossibleMoves(position, board).Aggregate(0ul, (acc, square) => acc | square.BitBoard);
+    }
+
+    /// <summary>
     /// Gets the valid moves for the piece in a given direction.
     /// </summary>
     /// <param name="position">The current position of the piece.</param>
@@ -59,10 +72,9 @@ public abstract class PieceBase
     /// <param name="board">The current state of the chess board.</param>
     /// <returns>An enumerable collection of squares representing the valid
     /// moves for the piece in the given direction.</returns>
-    protected IEnumerable<Square> GetValidMoves(Square position, Move direction, Board board)
+    /// <exception cref="ArgumentNullException">Thrown when the provided board is null.</exception>
+    protected virtual IEnumerable<Square> GetValidMoves(Square position, Move direction, [NotNull] Board board)
     {
-        if (board == null) { throw new ArgumentNullException(nameof(board)); }
-
         while (position.TryMove(direction, out Square newPosition))
         {
             position = newPosition;
@@ -72,11 +84,7 @@ public abstract class PieceBase
                 continue;
             }
 
-            if (this.Color == Color.White && (board.BlackPiecesBitBoard & newPosition.BitBoard) != 0ul)
-            {
-                yield return newPosition;
-            }
-            else if (this.Color == Color.Black && (board.WhitePiecesBitBoard & newPosition.BitBoard) != 0ul)
+            if (board.ContainsColorPiece(newPosition, this.Color.Opposite()))
             {
                 yield return newPosition;
             }
