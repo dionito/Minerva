@@ -1,3 +1,18 @@
+// Copyright (C) 2024 dionito
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>
+
 namespace Minerva.Tests;
 
 [TestClass]
@@ -179,6 +194,41 @@ public class BoardTests : TestBase
     }
 
     [TestMethod]
+    public void ContainsColorPieceReturnsCorrectValues()
+    {
+        var board = new Board();
+        board.InitializeGameStartingBoard();
+
+        Assert.IsTrue(board.SquareContainPieceOfColor(new Square("a8"), Color.Black));
+        Assert.IsFalse(board.SquareContainPieceOfColor(new Square("a8"), Color.White));
+        Assert.IsTrue(board.SquareContainPieceOfColor('b', 7, Color.Black));
+        Assert.IsFalse(board.SquareContainPieceOfColor('b', 7, Color.White));
+        Assert.IsTrue(board.SquareContainPieceOfColor(new Square("c8"), 'b'));
+        Assert.IsFalse(board.SquareContainPieceOfColor(new Square("c8"), 'w'));
+        Assert.IsTrue(board.SquareContainPieceOfColor('d', 7, 'b'));
+        Assert.IsFalse(board.SquareContainPieceOfColor('d', 7, 'w'));
+
+        Assert.IsTrue(board.SquareContainPieceOfColor(new Square("a1"), Color.White));
+        Assert.IsFalse(board.SquareContainPieceOfColor(new Square("a1"), Color.Black));
+        Assert.IsTrue(board.SquareContainPieceOfColor('b', 2, Color.White));
+        Assert.IsFalse(board.SquareContainPieceOfColor('b', 2, Color.Black));
+        Assert.IsTrue(board.SquareContainPieceOfColor(new Square("c1"), 'w'));
+        Assert.IsFalse(board.SquareContainPieceOfColor(new Square("c1"), 'b'));
+        Assert.IsTrue(board.SquareContainPieceOfColor('d', 2, 'w'));
+        Assert.IsFalse(board.SquareContainPieceOfColor('d', 2, 'b'));
+    }
+
+    [TestMethod]
+    public void ContainsColorPiecesThrowsExceptionIfColorIsInvalid()
+    {
+        var board = new Board();
+        board.InitializeGameStartingBoard();
+        Exception exception =
+            Assert.ThrowsException<ArgumentException>(() => board.SquareContainPieceOfColor(new Square("a1"), 'x'));
+        Assert.AreEqual("Invalid color: x. Valid colors are 'b' or 'w'. (Parameter 'color')", exception.Message);
+    }
+
+    [TestMethod]
     public void GetPieceAtReturnsEmptyForEmptySquare()
     {
         var board = new Board();
@@ -200,6 +250,29 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => board.GetPieceAt(1, 0)); // Invalid rank
+    }
+
+    [TestMethod]
+    public void IsEmptySquareReturnsCorrectValues()
+    {
+        var board = new Board();
+        board.InitializeGameStartingBoard();
+
+        for (int file = 1; file <= 8; file++)
+        {
+            for (int rank = 1; rank <= 8; rank++)
+            {
+                char fileChar = (char)('a' + file - 1); // Convert file from int to char
+                if (rank is < 3 or > 6)
+                {
+                    Assert.IsFalse(board.IsEmptySquare(fileChar, rank), "Not empty square.");
+                }
+                else
+                {
+                    Assert.IsTrue(board.IsEmptySquare(new Square(fileChar, rank)), "Empty square.");
+                }
+            }
+        }
     }
 
     [TestMethod]
@@ -390,5 +463,4 @@ public class BoardTests : TestBase
         var board = new Board();
         Assert.ThrowsException<ArgumentException>(() => board.SetPieceAt(file, rank, piece));
     }
-
 }

@@ -1,19 +1,17 @@
-﻿/*
- * Copyright (C) 2024 dionito
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+﻿// Copyright (C) 2024 dionito
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 using System.Text.RegularExpressions;
 
@@ -61,12 +59,6 @@ public class Board
     public const char EmptySquare = ' ';
 
     /// <summary>
-    /// Represents the combined bitboard for all black pieces.
-    /// This field should be updated whenever the black pieces change.
-    /// </summary>
-    ulong blackPiecesBitBoard;
-
-    /// <summary>
     /// Represents the files of the chess board.
     /// </summary>
     public static readonly ulong[] Files = 
@@ -81,6 +73,12 @@ public class Board
     {
         Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8,
     };
+
+    /// <summary>
+    /// Represents the combined bitboard for all black pieces.
+    /// This field should be updated whenever the black pieces change.
+    /// </summary>
+    ulong blackPiecesBitBoard;
 
     /// <summary>
     /// Represents the combined bitboard for all white pieces.
@@ -100,12 +98,6 @@ public class Board
         { "k", 0ul },
         { "p", 0ul },
     };
-
-    /// <summary>
-    /// Gets the combined bitboard for all black pieces.
-    /// This property performs a bitwise OR operation on the bitboards of all black pieces.
-    /// </summary>
-    public ulong BlackPiecesBitBoard => this.blackPiecesBitBoard;
 
     /// <summary>
     /// Gets or sets the castling rights for both white and black.
@@ -160,16 +152,22 @@ public class Board
     };
 
     /// <summary>
-    /// Gets the combined bitboard for all white pieces.
-    /// This property performs a bitwise OR operation on the bitboards of all white pieces.
-    /// </summary>
-    public ulong WhitePiecesBitBoard => this.whitePiecesBitBoard;
-
-    /// <summary>
     /// Gets the active color, which is the color that has the next move.
     /// </summary>
     /// <value>The active color is either 'w' for white or 'b' for black.</value>
     public char ActiveColor { get; private set; } = 'w';
+
+    /// <summary>
+    /// Gets the combined bitboard for all black pieces.
+    /// This property performs a bitwise OR operation on the bitboards of all black pieces.
+    /// </summary>
+    public ulong BlackPiecesBitBoard => this.blackPiecesBitBoard;
+
+    /// <summary>
+    /// Gets the combined bitboard for all white pieces.
+    /// This property performs a bitwise OR operation on the bitboards of all white pieces.
+    /// </summary>
+    public ulong WhitePiecesBitBoard => this.whitePiecesBitBoard;
 
     /// <summary>
     /// Initializes the chess board to the standard starting position.
@@ -247,6 +245,27 @@ public class Board
         }
 
         return EmptySquare;
+    }
+
+    /// <summary>
+    /// Checks if a square on the board is empty.
+    /// </summary>
+    /// <param name="file">The file of the square to check. Must be between a and h inclusive.</param>
+    /// <param name="rank">The rank of the square to check. Must be between 1 and 8 inclusive.</param>
+    /// <returns>True if the square is empty, false otherwise.</returns>
+    public bool IsEmptySquare(char file, int rank)
+    {
+        return this.IsEmptySquare(new Square($"{file}{rank}"));
+    }
+
+    /// <summary>
+    /// Checks if a square on the board is empty.
+    /// </summary>
+    /// <param name="square">The square to check.</param>
+    /// <returns>True if the square is empty, false otherwise.</returns>
+    public bool IsEmptySquare(Square square)
+    {
+        return (this.OccupiedBitBoard & square.BitBoard) == 0;
     }
 
     /// <summary>
@@ -420,6 +439,57 @@ public class Board
         }
 
         this.UpdateBitBoards();
+    }
+
+    /// <summary>
+    /// Checks if a given square contains a piece of a specific color.
+    /// </summary>
+    /// <param name="file">The file of the square to check. Must be between 'a' and 'h' inclusive.</param>
+    /// <param name="rank">The rank of the square to check. Must be between 1 and 8 inclusive.</param>
+    /// <param name="color">The color of the piece to check for. 'w' for white and 'b' for black.</param>
+    /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
+    public bool SquareContainPieceOfColor(char file, int rank, Color color)
+    {
+        return this.SquareContainPieceOfColor(new Square($"{file}{rank}"), (char)color);
+    }
+
+    /// <summary>
+    /// Checks if a given square contains a piece of a specific color.
+    /// </summary>
+    /// <param name="square">The square to check.</param>
+    /// <param name="color">The color of the piece to check for. 'w' for white and 'b' for black.</param>
+    /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
+    public bool SquareContainPieceOfColor(Square square, Color color)
+    {
+        return this.SquareContainPieceOfColor(square, (char)color);
+    }
+
+    /// <summary>
+    /// Checks if a given square contains a piece of a specific color.
+    /// </summary>
+    /// <param name="file">The file of the square to check. Must be between 'a' and 'h' inclusive.</param>
+    /// <param name="rank">The rank of the square to check. Must be between 1 and 8 inclusive.</param>
+    /// <param name="color">The color of the piece to check for. 'w' for white and 'b' for black.</param>
+    /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
+    public bool SquareContainPieceOfColor(char file, int rank, char color)
+    {
+        return this.SquareContainPieceOfColor(new Square($"{file}{rank}"), color);
+    }
+
+    /// <summary>
+    /// Checks if a given square contains a piece of a specific color.
+    /// </summary>
+    /// <param name="square">The square to check.</param>
+    /// <param name="color">The color of the piece to check for. 'w' for white and 'b' for black.</param>
+    /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
+    public bool SquareContainPieceOfColor(Square square, char color)
+    {
+        return color switch
+        {
+            'w' => (this.WhitePiecesBitBoard & square.BitBoard) != 0,
+            'b' => (this.BlackPiecesBitBoard & square.BitBoard) != 0,
+            _ => throw new ArgumentException($"Invalid color: {color}. Valid colors are 'b' or 'w'.", nameof(color)),
+        };
     }
 
     /// <summary>
