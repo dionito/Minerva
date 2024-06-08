@@ -178,7 +178,7 @@ public class ForsythEdwardsNotationTests
         Assert.AreEqual("KQkq", board.CastlingRights, "Castling rights");
 
         // En passant target
-        Assert.AreEqual("-", board.EnPassantTargetSquare, "En passant target");
+        Assert.AreEqual("-", board.EnPassantTargetSquare.ToString(), "En passant target");
 
         // Halfmove clock
         Assert.AreEqual(0, board.HalfmoveClock, "Halfmove clock");

@@ -345,17 +345,17 @@ public class BoardTests : TestBase
         board.SetPieceAt(5, 4, 'P'); // set white pawn to e4
         board.SetActiveColor('b');
         board.SetEnPassantTargetSquare("e3");
-        Assert.AreEqual("e3", board.EnPassantTargetSquare, "White en passant failed.");
+        Assert.AreEqual("e3", board.EnPassantTargetSquare.ToString(), "White en passant failed.");
 
         // Test setting the en passant target square to "e5" after black pawn move
         board.SetPieceAt(5,5, 'p');
         board.SetActiveColor('w');
         board.SetEnPassantTargetSquare("e6");
-        Assert.AreEqual("e6", board.EnPassantTargetSquare, "Black en passant failed.");
+        Assert.AreEqual("e6", board.EnPassantTargetSquare.ToString(), "Black en passant failed.");
 
         // Test setting the en passant target square to "-"
         board.SetEnPassantTargetSquare("-");
-        Assert.AreEqual("-", board.EnPassantTargetSquare);
+        Assert.AreEqual("-", board.EnPassantTargetSquare.ToString());
     }
 
     [TestMethod]

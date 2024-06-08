@@ -241,6 +241,44 @@ public class PieceTests
                     new Square("e6").BitBoard |
                     new Square("e5").BitBoard,
             },
+            new
+            {
+                Name = "White pawn can take black pieces, but not white ones, opposite side",
+                Fen = "rnbqkbnr/pppp1ppp/8/8/8/2N1p3/PPPPPPPP/R1BQKBNR w KQkq - 0 1",
+                Piece = PieceFactory.CreatePiece(PieceType.Pawn, Color.White),
+                Position = new Square("d2"),
+                ExpectedMoves =
+                    new Square("d3").BitBoard |
+                    new Square("d4").BitBoard |
+                    new Square("e3").BitBoard,
+            },
+            new
+            {
+                Name = "Black pawn can take white pieces, but not black ones, opposite side",
+                Fen = "r1bqkbnr/pppppppp/2n1P3/8/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+                Piece = PieceFactory.CreatePiece(PieceType.Pawn, Color.Black),
+                Position = new Square("d7"),
+                ExpectedMoves =
+                    new Square("d5").BitBoard |
+                    new Square("d6").BitBoard |
+                    new Square("e6").BitBoard,
+            },
+            new
+            {
+                Name = "White pawn can take black pawn en passant",
+                Fen = "rnbqkbnr/pppp1ppp/8/3Pp3/4P3/8/PPP2PPP/RNBQKBNR w KQkq e6 0 2",
+                Piece = PieceFactory.CreatePiece(PieceType.Pawn, Color.White),
+                Position = new Square("d5"),
+                ExpectedMoves = new Square("e6").BitBoard | new Square("d6").BitBoard,
+            },
+            new
+            {
+                Name = "Black pawn can take white pawn en passant",
+                Fen = "rnbqkbnr/pp1ppppp/8/8/2pPPP2/8/PPP3PP/RNBQKBNR b KQkq d3 0 3",
+                Piece = PieceFactory.CreatePiece(PieceType.Pawn, Color.Black),
+                Position = new Square("c4"),
+                ExpectedMoves = new Square("c3").BitBoard | new Square("d3").BitBoard,
+            },
         };
 
         foreach (var scenario in scenarios)

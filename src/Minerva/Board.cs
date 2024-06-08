@@ -120,7 +120,7 @@ public class Board
     /// "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6" - for black pawns
     /// "-" - if there is no en passant target square
     /// </value>
-    public string EnPassantTargetSquare { get; private set; } = "-";
+    public Square EnPassantTargetSquare { get; private set; } = new();
 
     /// <summary>
     /// Gets the fullmove number.
@@ -325,7 +325,7 @@ public class Board
     {
         if (enPassantTargetSquare == "-")
         {
-            this.EnPassantTargetSquare = enPassantTargetSquare;
+            this.EnPassantTargetSquare = new Square();
             return;
         }
 
@@ -350,7 +350,7 @@ public class Board
                 nameof(enPassantTargetSquare));
         }
 
-        this.EnPassantTargetSquare = enPassantTargetSquare;
+        this.EnPassantTargetSquare = new Square(enPassantTargetSquare);
     }
 
     /// <summary>
