@@ -73,10 +73,11 @@ public class Pawn : PieceBase
 
         // Check for capturing moves regardless of whether the pawn can move forward
         // A pawn can capture a piece if it is located diagonally in front of the pawn (to the left or right)
-        foreach (var direction in new[] { this.standardMove + Move.Left, this.standardMove + Move.UpRight })
+        foreach (var direction in new[] { this.standardMove + Move.Left, this.standardMove + Move.Right })
         {
             if (position.TryMove(direction, out Square capturePosition) &&
-                board.SquareContainPieceOfColor(capturePosition, this.Color.Opposite()))
+                (board.SquareContainPieceOfColor(capturePosition, this.Color.Opposite()) ||
+                (board.EnPassantTargetSquare.BitBoard & capturePosition.BitBoard) != 0))
             {
                 yield return capturePosition;
             }

@@ -39,6 +39,17 @@ public readonly struct Square
     public ulong BitBoard { get; }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="Square"/> struct with default values.
+    /// </summary>
+    /// <remarks>When initialized via this constructor, <see cref="Square"/> represents no square.</remarks>
+    public Square()
+    {
+        this.File = '-';
+        this.Rank = 0;
+        this.BitBoard = 0;
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="Square"/> struct using algegraic notation.
     /// </summary>
     /// <param name="file">The file (column) of the square.</param>
@@ -164,7 +175,7 @@ public readonly struct Square
     /// Returns a string that represents the current square.
     /// </summary>
     /// <returns>A string that represents the current square using algebraic notation.</returns>
-    public override string ToString() => $"{this.File}{this.Rank}";
+    public override string ToString() => this.File == '-' ? "-" : $"{this.File}{this.Rank}";
 
     /// <summary>
     /// Determines whether the specified object is equal to the current object.
