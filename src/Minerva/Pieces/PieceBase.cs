@@ -11,10 +11,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// 
-
-using System.Diagnostics.CodeAnalysis;
+// along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 namespace Minerva.Pieces;
 
@@ -30,6 +27,11 @@ public abstract class PieceBase
     /// <param name="color">The color of the piece.</param>
     protected PieceBase(PieceType type, Color color)
     {
+        if (color == Color.None)
+        {
+            throw new ArgumentException($"Invalid piece color: '{Color.None}'.", nameof(color));
+        }
+
         this.PieceType = type;
         this.Color = color;
     }
@@ -73,7 +75,7 @@ public abstract class PieceBase
     /// <returns>An enumerable collection of squares representing the valid
     /// moves for the piece in the given direction.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the provided board is null.</exception>
-    protected virtual IEnumerable<Square> GetValidMoves(Square position, Move direction, [NotNull] Board board)
+    protected virtual IEnumerable<Square> GetValidMoves(Square position, Move direction, Board board)
     {
         while (position.TryMove(direction, out Square newPosition))
         {
@@ -84,7 +86,7 @@ public abstract class PieceBase
                 continue;
             }
 
-            if (board.ContainsColorPiece(newPosition, this.Color.Opposite()))
+            if (board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
             {
                 yield return newPosition;
             }

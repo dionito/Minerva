@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2024 Dioni de la Morena Morales
+﻿// Copyright (C) 2024 dionito
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,9 +14,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 using Minerva.Pieces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Minerva.Tests;
 
+[ExcludeFromCodeCoverage]
 public class PieceFactory
 {
     public static PieceBase CreatePiece(PieceType pieceType, Color pieceColor)
@@ -29,7 +31,7 @@ public class PieceFactory
             PieceType.King => new King(pieceColor),
             PieceType.Knight => new Knight(pieceColor),
             PieceType.Pawn => new Pawn(pieceColor),
-            _ => throw new ArgumentException("Invalid piece type.")
+            _ => throw new ArgumentException("Invalid piece type."),
         };
     }
 }

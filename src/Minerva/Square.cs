@@ -1,5 +1,4 @@
-﻿// 
-// Copyright (C) 2024 dionito
+﻿// Copyright (C) 2024 dionito
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,10 +11,8 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// 
+// along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-using System.IO;
 using System.Numerics;
 
 namespace Minerva;
@@ -114,6 +111,12 @@ public readonly struct Square
         this.BitBoard = Board.Files[file - 'a'] & Board.Ranks[rank - 1];
     }
 
+    /// <summary>
+    /// Moves from the curren square to square in the given direction.
+    /// </summary>
+    /// <param name="move">The direction and distance to move the square.</param>
+    /// <returns>The new square after the move.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the move is off the board.</exception>
     public Square Move(Move move)
     {
         if (this.TryMove(move, out Square square))
@@ -124,6 +127,14 @@ public readonly struct Square
         throw new InvalidOperationException("The move is off the board.");
     }
 
+    /// <summary>
+    /// Tries to move from the curren square to the square in the given direction.
+    /// </summary>
+    /// <param name="move">The direction and distance to move the square.</param>
+    /// <param name="square">When this method returns, contains the new square if the
+    /// move was successful, or the default value of <see cref="Square"/> if the move
+    /// was not successful.</param>
+    /// <returns>true if the square was successfully moved; otherwise, false.</returns>
     public bool TryMove(Move move, out Square square)
     {
         // Check if the move is off the board horizontally.
