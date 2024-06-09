@@ -21,6 +21,22 @@ namespace Minerva.Tests;
 public class PieceTests
 {
     [TestMethod]
+    public void NoPieceConstructorSetsCorrectPieceAndTypeColor()
+    {
+        var none = new NoPiece();
+        Assert.AreEqual(PieceType.None, none.PieceType, "Piece type.");
+        Assert.AreEqual(Color.None, none.Color, "Color");
+    }
+
+    [TestMethod]
+    public void NoPieceGetsNoMoves()
+    {
+        var none = new NoPiece();
+        var moves = none.GetPossibleMoves(new Square(), new Board());
+        CollectionAssert.AreEquivalent(Array.Empty<Square>(), moves, "Moves");
+    }
+
+    [TestMethod]
     [DataRow(Color.White, DisplayName = "White")]
     [DataRow(Color.Black, DisplayName = "Black")]
     public void BishopConstructorSetsCorrectPieceTypeAndColor(Color color)
@@ -34,13 +50,13 @@ public class PieceTests
     public void BishopGetPossibleMovesBitBoardReturnsCorrectMovesInEmptyBoard()
     {
         var bishop = new Bishop(Color.White);
-        var board = new Board(); 
+        var board = new Board();
         var position = new Square("d4");
 
         ulong possibleMoves = bishop.GetPossibleMovesBitBoard(position, board);
-        ulong exptectedMoves = new Square("c3").BitBoard | new Square("b2").BitBoard | 
-            new Square("a1").BitBoard | new Square("e5").BitBoard | new Square("f6").BitBoard | 
-            new Square("g7").BitBoard | new Square("h8").BitBoard | new Square("c5").BitBoard | 
+        ulong exptectedMoves = new Square("c3").BitBoard | new Square("b2").BitBoard |
+            new Square("a1").BitBoard | new Square("e5").BitBoard | new Square("f6").BitBoard |
+            new Square("g7").BitBoard | new Square("h8").BitBoard | new Square("c5").BitBoard |
             new Square("b6").BitBoard | new Square("a7").BitBoard | new Square("e3").BitBoard |
             new Square("f2").BitBoard | new Square("g1").BitBoard;
 
@@ -68,7 +84,7 @@ public class PieceTests
         var position = new Square("d4");
 
         ulong possibleMoves = king.GetPossibleMovesBitBoard(position, board);
-        ulong exptectedMoves = new Square("c3").BitBoard | new Square("d3").BitBoard | 
+        ulong exptectedMoves = new Square("c3").BitBoard | new Square("d3").BitBoard |
             new Square("e3").BitBoard | new Square("c4").BitBoard | new Square("e4").BitBoard |
             new Square("c5").BitBoard | new Square("d5").BitBoard | new Square("e5").BitBoard;
 
@@ -347,14 +363,14 @@ public class PieceTests
     }
 
     [TestMethod]
-    [DataRow(PieceType.Rook, Color.White, "a1", DisplayName = "White Rook")]
-    [DataRow(PieceType.Bishop, Color.White, "b1", DisplayName = "White Bishop")]
-    [DataRow(PieceType.Queen, Color.White, "d1", DisplayName = "White Queen")]
-    [DataRow(PieceType.King, Color.White, "e1", DisplayName = "White King")]
     [DataRow(PieceType.Rook, Color.Black, "a8", DisplayName = "Black Rook")]
     [DataRow(PieceType.Bishop, Color.Black, "b8", DisplayName = "Black Bishop")]
     [DataRow(PieceType.Queen, Color.Black, "d8", DisplayName = "Black Queen")]
     [DataRow(PieceType.King, Color.Black, "e8", DisplayName = "Black King")]
+    [DataRow(PieceType.Rook, Color.White, "a1", DisplayName = "White Rook")]
+    [DataRow(PieceType.Bishop, Color.White, "b1", DisplayName = "White Bishop")]
+    [DataRow(PieceType.Queen, Color.White, "d1", DisplayName = "White Queen")]
+    [DataRow(PieceType.King, Color.White, "e1", DisplayName = "White King")]
     public void SomePiecesCannotMoveOnAnInitialBoard(PieceType pieceType, Color pieceColor, string position)
     {
         var board = new Board();
@@ -362,5 +378,25 @@ public class PieceTests
         PieceBase piece = PieceFactory.CreatePiece(pieceType, pieceColor);
         Square square = new Square(position);
         Assert.AreEqual(0ul, piece.GetPossibleMovesBitBoard(square, board));
+    }
+
+    [TestMethod]
+    [DataRow(PieceType.Pawn, Color.Black, "p")]
+    [DataRow(PieceType.Rook, Color.Black, "r")]
+    [DataRow(PieceType.Knight, Color.Black, "n")]
+    [DataRow(PieceType.Bishop, Color.Black, "b")]
+    [DataRow(PieceType.Queen, Color.Black, "q")]
+    [DataRow(PieceType.King, Color.Black, "k")]
+    [DataRow(PieceType.Pawn, Color.White, "P")]
+    [DataRow(PieceType.Rook, Color.White, "R")]
+    [DataRow(PieceType.Knight, Color.White, "N")]
+    [DataRow(PieceType.Bishop, Color.White, "B")]
+    [DataRow(PieceType.Queen, Color.White, "Q")]
+    [DataRow(PieceType.King, Color.White, "K")]
+    [DataRow(PieceType.None, Color.None, " ")]
+    public void ToStringReturnsCorrectString(PieceType pieceType, Color color, string expected)
+    {
+        var piece = PieceFactory.CreatePiece(pieceType, color);
+        Assert.AreEqual(expected, piece.ToString());
     }
 }

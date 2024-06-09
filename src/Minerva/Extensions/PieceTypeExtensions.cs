@@ -19,6 +19,13 @@ namespace Minerva.Extensions;
 
 public static class PieceTypeExtensions
 {
+    /// <summary>
+    /// Converts a character to a PieceType.
+    /// </summary>
+    /// <param name="pieceType">The character to convert.</param>
+    /// <returns>The converted PieceType.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the character does not
+    /// represent a valid PieceType.</exception>
     public static PieceType ToPieceType(this char pieceType)
     {
         pieceType = char.ToLower(pieceType);
@@ -27,8 +34,13 @@ public static class PieceTypeExtensions
             return (PieceType)pieceType;
         }
 
-        throw new ArgumentOutOfRangeException(nameof(pieceType), pieceType, "Invalid piece type");
+        throw new ArgumentOutOfRangeException(nameof(pieceType), pieceType, "Invalid piece type.");
     }
 
+    /// <summary>
+    /// Converts a PieceType to a character.
+    /// </summary>
+    /// <param name="piece">The PieceType to convert.</param>
+    /// <returns>The converted character.</returns>
     public static char ToChar(this PieceType piece) => (char)piece;
 }

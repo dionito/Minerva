@@ -38,12 +38,9 @@ public abstract class PieceBase
         this.Color = color;
     }
 
-    protected PieceBase(char piece)
-    {
-        this.PieceType = piece.ToPieceType();
-        this.Color = char.IsUpper(piece) ? Color.White : Color.Black;
-    }
-
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PieceBase"/> class.
+    /// </summary>
     protected PieceBase()
     {
     }
@@ -95,6 +92,7 @@ public abstract class PieceBase
             if ((board.OccupiedBitBoard & newPosition.BitBoard) == 0ul)
             {
                 yield return newPosition;
+
                 continue;
             }
 
@@ -107,10 +105,20 @@ public abstract class PieceBase
         }
     }
 
+    /// <summary>
+    /// Returns a string that represents the current object.
+    /// </summary>
+    /// <returns>
+    /// A string that represents the current object. The string is the standard char representation
+    /// of the piece type,  where uppercase represents white pieces and lowercase represents black
+    /// pieces. 
+    /// </returns>
+    /// <example>"P" represents a white pawn, and "q" represents a black queen.</example>
     public override string ToString()
     {
         char pieceType = this.PieceType.ToChar();
         pieceType = this.Color == Color.White ? char.ToUpper(pieceType) : char.ToLower(pieceType);
-        return $"{this.Color.ToChar()}{pieceType}";
+        return $"{pieceType}";
     }
 }
+
