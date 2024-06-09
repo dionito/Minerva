@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+using Minerva.Extensions;
+
 namespace Minerva.Pieces;
 
 /// <summary>
@@ -34,6 +36,16 @@ public abstract class PieceBase
 
         this.PieceType = type;
         this.Color = color;
+    }
+
+    protected PieceBase(char piece)
+    {
+        this.PieceType = piece.ToPieceType();
+        this.Color = char.IsUpper(piece) ? Color.White : Color.Black;
+    }
+
+    protected PieceBase()
+    {
     }
 
     /// <summary>
@@ -93,5 +105,12 @@ public abstract class PieceBase
 
             yield break;
         }
+    }
+
+    public override string ToString()
+    {
+        char pieceType = this.PieceType.ToChar();
+        pieceType = this.Color == Color.White ? char.ToUpper(pieceType) : char.ToLower(pieceType);
+        return $"{this.Color.ToChar()}{pieceType}";
     }
 }

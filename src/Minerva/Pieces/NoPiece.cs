@@ -15,13 +15,16 @@
 
 namespace Minerva.Pieces;
 
-public enum PieceType
+public class NoPiece : PieceBase
 {
-    None = ' ',
-    Bishop = 'b',
-    King = 'k',
-    Knight = 'n',
-    Pawn = 'p',
-    Queen = 'q',
-    Rook = 'r',
+    public NoPiece()
+    {
+        this.PieceType = PieceType.None;
+        this.Color = Color.None;
+    }
+
+    public override Square[] GetPossibleMoves(Square position, Board board)
+    {
+        return Array.Empty<Square>();
+    }
 }

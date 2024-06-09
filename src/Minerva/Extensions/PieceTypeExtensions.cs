@@ -13,15 +13,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-namespace Minerva.Pieces;
+using Minerva.Pieces;
 
-public enum PieceType
+namespace Minerva.Extensions;
+
+public static class PieceTypeExtensions
 {
-    None = ' ',
-    Bishop = 'b',
-    King = 'k',
-    Knight = 'n',
-    Pawn = 'p',
-    Queen = 'q',
-    Rook = 'r',
+    public static PieceType ToPieceType(this char pieceType)
+    {
+        pieceType = char.ToLower(pieceType);
+        if (Enum.IsDefined(typeof(PieceType), (int)pieceType))
+        {
+            return (PieceType)pieceType;
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(pieceType), pieceType, "Invalid piece type");
+    }
+
+    public static char ToChar(this PieceType piece) => (char)piece;
 }
