@@ -207,7 +207,7 @@ public class Board
     }
 
     /// <summary>
-    /// Gets the piece at the specified location on the chess board.
+    /// Gets the piece at the specified square on the chess board.
     /// </summary>
     /// <param name="file">The file of the target location. Must be between 1 and 8 inclusive.</param>
     /// <param name="rank">The rank of the target location. Must be between 1 and 8 inclusive.</param>
@@ -227,20 +227,55 @@ public class Board
             throw new ArgumentOutOfRangeException(nameof(file), "Must be between 1 and 8 inclusive.");
         }
 
-        ulong targetBitBoard = Files[file - 1] & Ranks[rank - 1];
-        foreach (var piece in this.BlackPieces)
+        return this.GetPieceAt(Files[file - 1] & Ranks[rank - 1]);
+    }
+
+    /// <summary>
+    /// Gets the piece at the specified square on the chess board.
+    /// </summary>
+    /// <param name="square">The square to check.</param>
+    /// <returns>The piece at the specified square.</returns>
+    public char GetPieceAt(Square square)
+    {
+        return this.GetPieceAt(square.BitBoard);
+    }
+
+    /// <summary>
+    /// Gets the piece at the specified square on the chess board.
+    /// </summary>
+    /// <param name="square">The square to check in algebraic notation (e.g., "e4").</param>
+    /// <returns>The piece at the specified square.</returns>
+    public char GetPieceAt(string square)
+    {
+        return this.GetPieceAt(Files[square[0] - 'a'] & Ranks[square[1] - '1']);
+    }
+
+    /// <summary>
+    /// Gets the piece at the specified square on the chess board.
+    /// </summary>
+    /// <param name="bitBoard">The bitboard representation of the square to check.</param>
+    /// <returns>The piece at the specified square.</returns>
+    public char GetPieceAt(ulong bitBoard)
+    {
+        if ((this.blackPiecesBitBoard & bitBoard) != 0)
         {
-            if ((piece.Value & targetBitBoard) != 0)
+            foreach (KeyValuePair<string, ulong> pieceType in this.BlackPieces)
             {
-                return piece.Key[0];
+                if ((pieceType.Value & bitBoard) != 0)
+                {
+                    return pieceType.Key[0];
+                }
             }
         }
 
-        foreach (var piece in this.WhitePieces)
+        if ((this.whitePiecesBitBoard & bitBoard) != 0)
         {
-            if ((piece.Value & targetBitBoard) != 0)
+            foreach (KeyValuePair<string, ulong> pieceType in this.WhitePieces)
             {
-                return piece.Key[0];
+                if ((pieceType.Value & bitBoard) != 0)
+                {
+                    return pieceType.Key[0];
+                }
             }
         }
 
@@ -342,8 +377,8 @@ public class Board
         int rank = enPassantTargetSquare[1] - '1';
         rank = this.ActiveColor == 'w' ? rank - 1 : rank + 1;
         ulong targetBitBoard = Files[file] & Ranks[rank];
-        if ((this.ActiveColor == 'b' && (this.WhitePieces["P"] & targetBitBoard) == 0) ||
-            (this.ActiveColor == 'w' && (this.BlackPieces["p"] & targetBitBoard) == 0))
+        if ((this.ActiveColor == Color.Black.ToChar() && (this.WhitePieces["P"] & targetBitBoard) == 0) ||
+            (this.ActiveColor == Color.White.ToChar() && (this.BlackPieces["p"] & targetBitBoard) == 0))
         {
             throw new ArgumentException(
                 "Invalid en passant target square in FEN string. No pawn to be taken en passant found.",

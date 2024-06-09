@@ -80,6 +80,9 @@ Repository Bloat Risks
 *.zip
 *.DS_Store
 
+# VS Live Unit Test configuration file
+*.lutconfig
+
 ### Begin of VS ignore files from github ####
 
 ## Ignore Visual Studio temporary files, build results, and
