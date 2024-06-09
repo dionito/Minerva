@@ -31,6 +31,7 @@ public class PieceFactory
             PieceType.King => new King(pieceColor),
             PieceType.Knight => new Knight(pieceColor),
             PieceType.Pawn => new Pawn(pieceColor),
+            PieceType.None => new NoPiece(),
             _ => throw new ArgumentException("Invalid piece type."),
         };
     }
