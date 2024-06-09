@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-namespace Minerva;
+namespace Minerva.Extensions;
 
 /// <summary>
 /// Provides extension methods for the Color enumeration.
