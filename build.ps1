@@ -15,16 +15,28 @@ foreach ($targetName in $targetNames)
         {
             Write-Host "Restoring nuget packages"
             dotnet restore
+            if (!$?)
+            {
+                exit -1
+            }
         }
         elseif ($targetName -eq "build")
         {
             Write-Host "Building Minerva"
             dotnet build --no-restore --configuration $configuration
+            if (!$?)
+            {
+                exit -1
+            }
         }
         elseif ($targetName -eq "test")
         {
             Write-Host "Running tests"
             dotnet test --no-build --verbosity normal
+            if (!$?)
+            {
+                exit -1
+            }
         }
         elseif ($targetName -eq "codecoverage")
         {
