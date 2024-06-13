@@ -48,7 +48,8 @@ public class King : PieceBase
                 continue; // Skip composite flags and None
             }
 
-            if (position.TryMove(singleDirection, out ulong newPosition))
+            ulong newPosition = position.Move(singleDirection);
+            if (newPosition != 0)
             {
                 if ((board.OccupiedBitBoard & newPosition) == 0)
                 {

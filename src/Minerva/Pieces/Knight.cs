@@ -23,21 +23,6 @@ namespace Minerva.Pieces;
 public class Knight : PieceBase
 {
     /// <summary>
-    /// The possible moves for a knight.
-    /// </summary>
-    private static readonly MovingDirections[] KnightMoves =
-    {
-        MovingDirections.UpUpLeft,
-        MovingDirections.UpUpRight,
-        MovingDirections.DownDownLeft,
-        MovingDirections.DownDownRight,
-        MovingDirections.UpLeftLeft,
-        MovingDirections.DownLeftLeft,
-        MovingDirections.UpRightRight,
-        MovingDirections.DownRightRight,
-    };
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="Knight"/> class with the specified color.
     /// </summary>
     /// <param name="color">The color of the knight.</param>
@@ -58,20 +43,21 @@ public class Knight : PieceBase
     /// <returns>An enumerable collection of squares representing all the valid moves for the knight.</returns>
     protected ulong GetKnightMoves(ulong position, Board board)
     {
-        ulong result = 0;
-        foreach (MovingDirections knightMove in KnightMoves)
-        {
-            if (position.TryMove(knightMove, out ulong newPosition))
-            {
-                if (board.SquareContainPieceOfColor(newPosition, this.Color))
-                {
-                    continue;
-                }
+        //ulong result = 0;
+        //foreach (MovingDirections knightMove in KnightMoves)
+        //{
+        //    if (position.TryMove(knightMove, out ulong newPosition))
+        //    {
+        //        if (board.SquareContainPieceOfColor(newPosition, this.Color))
+        //        {
+        //            continue;
+        //        }
 
-                result |= newPosition;
-            }
-        }
+        //        result |= newPosition;
+        //    }
+        //}
 
-        return result;
+        //return result;
+        throw new NotImplementedException();
     }
 }

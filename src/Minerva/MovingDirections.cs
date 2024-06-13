@@ -67,46 +67,6 @@ public enum MovingDirections
     DownRight = 128,
 
     /// <summary>
-    /// Represents a knight move (L shaped) two squares up and one to the right on the chess board.
-    /// </summary>
-    UpUpRight = 256,
-
-    /// <summary>
-    /// Represents a knight move (L shaped) two squares up and one to the left on the chess board.
-    /// </summary>
-    UpUpLeft = 512,
-
-    /// <summary>
-    /// Represents a knight move (L shaped) two squares down and one to the right on the chess board.
-    /// </summary>
-    DownDownRight = 1024,
-
-    /// <summary>
-    /// Represents a knight move (L shaped) two squares down and one to the left on the chess board.
-    /// </summary>
-    DownDownLeft = 2048,
-
-    /// <summary>
-    /// Represents a knight move (L shaped) two squares to the right and one up on the chess board.
-    /// </summary>
-    UpRightRight = 4096,
-
-    /// <summary>
-    /// Represents a knight move (L shaped) two squares to the left and one up on the chess board.
-    /// </summary>
-    UpLeftLeft = 8192,
-
-    /// <summary>
-    /// Represents a knight move (L shaped) two squares to the right and one down on the chess board.
-    /// </summary>
-    DownRightRight = 16384,
-
-    /// <summary>
-    /// Represents a knight move (L shaped) two squares to the left and one down on the chess board.
-    /// </summary>
-    DownLeftLeft = 32768,
-
-    /// <summary>
     /// Represents all straight movement directions (up, down, right, left) on the chess board.
     /// </summary>
     Rook = Up | Down | Right | Left,

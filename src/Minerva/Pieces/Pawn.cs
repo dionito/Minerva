@@ -49,7 +49,8 @@ public class Pawn : PieceBase
         ulong result = 0;
 
         // Try to move the pawn forward
-        if (position.TryMove(this.standardMove, out ulong newPosition))
+        ulong newPosition = position.Move(this.standardMove);
+        if (newPosition != 0)
         {
             // If the square in front is empty, the pawn can move there
             if (board.IsEmptySquare(newPosition))
@@ -58,8 +59,9 @@ public class Pawn : PieceBase
 
                 // If the pawn is on its initial rank, it can also move two squares forward,
                 // provided both squares in front are empty
-                if ((position & this.initialRank) !=0 &&
-                    newPosition.TryMove(this.standardMove, out newPosition) &&
+                newPosition = newPosition.Move(this.standardMove);
+                if ((position & this.initialRank) != 0 &&
+                    newPosition != 0 &&
                     board.IsEmptySquare(newPosition))
                 {
                     result |= newPosition;
@@ -71,9 +73,10 @@ public class Pawn : PieceBase
         // A pawn can capture a piece if it is located diagonally in front of the pawn (to the left or right)
         foreach (var direction in this.captureMoves)
         {
-            if (position.TryMove(direction, out ulong capturePosition) &&
+            ulong capturePosition = position.Move(direction);
+            if (position != 0 &&
                 (board.SquareContainPieceOfColor(capturePosition, this.Color.Opposite()) ||
-                (board.EnPassantTargetSquare.BitBoard & capturePosition) != 0))
+                    (board.EnPassantTargetSquare.BitBoard & capturePosition) != 0))
             {
                 result |= capturePosition;
             }

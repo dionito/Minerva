@@ -78,21 +78,27 @@ public abstract class PieceBase
                 continue; // Skip composite flags and None
             }
 
-            while (position.TryMove(singleDirection, out ulong newPosition))
+            position = originalPosition;
+
+            ulong newPosition = position.Move(singleDirection);
+            while (newPosition != 0)
             {
-                position = newPosition;
                 if ((board.OccupiedBitBoard & newPosition) == 0)
                 {
                     result |= newPosition;
-                    continue;
                 }
-
-                if (board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
+                else
                 {
-                    result |= newPosition;
+                    if (board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
+                    {
+                        result |= newPosition;
+                    }
+
+                    break;
                 }
 
-                break;
+                position = newPosition;
+                newPosition = position.Move(singleDirection);
             }
 
             position = originalPosition;
