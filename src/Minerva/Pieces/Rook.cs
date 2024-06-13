@@ -28,17 +28,11 @@ public class Rook : PieceBase
     {
     }
 
-    /// <summary>
-    /// Gets all possible moves for the rook from  a given position on a given board.
-    /// </summary>
-    /// <param name="position">The current position of the rook.</param>
-    /// <param name="board">The current state of the chess board.</param>
-    /// <returns>An array of squares representing all possible moves for the rook.</returns>
-    public override Square[] GetPossibleMoves(Square position, Board board)
+    public override ulong GetPieceMoves(ulong position, Board board)
     {
-        return this.GetValidMoves(position, Move.Up, board).Concat(
-            this.GetValidMoves(position, Move.Down, board)).Concat(
-            this.GetValidMoves(position, Move.Right, board)).Concat(
-            this.GetValidMoves(position, Move.Left, board)).ToArray();
+        return this.GetValidMoves(
+            position,
+            MovingDirections.Rook,
+            board);
     }
 }

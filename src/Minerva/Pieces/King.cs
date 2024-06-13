@@ -30,47 +30,38 @@ public class King : PieceBase
     {
     }
 
-    /// <summary>
-    /// Gets all the possible moves for the king from a given position on a given board.
-    /// </summary>
-    /// <param name="position">The current position of the king.</param>
-    /// <param name="board">The current state of the chess board.</param>
-    /// <returns>An array of squares representing all the possible moves for the king.</returns>
-    public override Square[] GetPossibleMoves(Square position, Board board)
+    public override ulong GetPieceMoves(ulong position, Board board)
     {
-        return this.GetValidMoves(position, Move.Up, board)
-            .Union(this.GetValidMoves(position, Move.Down, board))
-            .Union(this.GetValidMoves(position, Move.Right, board))
-            .Union(this.GetValidMoves(position, Move.Left, board))
-            .Union(this.GetValidMoves(position, Move.UpLeft, board))
-            .Union(this.GetValidMoves(position, Move.UpRight, board))
-            .Union(this.GetValidMoves(position, Move.DownLeft, board))
-            .Union(this.GetValidMoves(position, Move.DownRight, board))
-            .ToArray();
+        return this.GetValidMoves(position, MovingDirections.KingAndQueen, board);
     }
 
-    /// <summary>
-    /// Gets all the valid moves for the king from a given position in a given direction on a given board.
-    /// </summary>
-    /// <param name="position">The current position of the king.</param>
-    /// <param name="direction">The direction of the move.</param>
-    /// <param name="board">The current state of the chess board.</param>
-    /// <returns>An enumerable collection of squares representing all the valid moves for the king
-    /// in the given direction.</returns>
-    protected override IEnumerable<Square> GetValidMoves(Square position, Move direction, Board board)
+    protected override ulong GetValidMoves(ulong position, MovingDirections direction, Board board)
     {
-        if (position.TryMove(direction, out Square newPosition))
+        ulong result = 0;
+        foreach (MovingDirections singleDirection in Enum.GetValues(typeof(MovingDirections)))
         {
-            if ((board.OccupiedBitBoard & newPosition.BitBoard) == 0ul)
+            if (singleDirection == MovingDirections.None || singleDirection == MovingDirections.Rook ||
+                singleDirection == MovingDirections.Bishop ||
+                singleDirection == MovingDirections.KingAndQueen ||
+                (direction & singleDirection) == 0)
             {
-                yield return newPosition;
-                yield break;
+                continue; // Skip composite flags and None
             }
 
-            if (board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
+            if (position.TryMove(singleDirection, out ulong newPosition))
             {
-                yield return newPosition;
+                if ((board.OccupiedBitBoard & newPosition) == 0)
+                {
+                    result |= newPosition;
+                }
+
+                if (board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
+                {
+                    result |= newPosition;
+                }
             }
         }
+
+        return result;
     }
 }

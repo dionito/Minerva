@@ -28,17 +28,11 @@ public class Bishop : PieceBase
     {
     }
 
-    /// <summary>
-    /// Gets all possible moves for the bishop from  a given position on a given board.
-    /// </summary>
-    /// <param name="position">The current position of the bishop.</param>
-    /// <param name="board">The current state of the chess board.</param>
-    /// <returns>An array of squares representing all possible moves for the bishop.</returns>
-    public override Square[] GetPossibleMoves(Square position, Board board)
+    public override ulong GetPieceMoves(ulong position, Board board)
     {
-        return this.GetValidMoves(position, Move.UpLeft, board).Concat(
-            this.GetValidMoves(position, Move.UpRight, board)).Concat(
-            this.GetValidMoves(position, Move.DownLeft, board)).Concat(
-            this.GetValidMoves(position, Move.DownRight, board)).ToArray();
+        return this.GetValidMoves(
+            position,
+            MovingDirections.Bishop,
+            board);
     }
 }

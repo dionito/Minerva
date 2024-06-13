@@ -13,14 +13,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-using Minerva.Pieces;
-using System.Diagnostics.CodeAnalysis;
+namespace Minerva.Pieces;
 
-namespace Minerva.Tests;
-
-[ExcludeFromCodeCoverage]
+/// <summary>
+/// Factory class for creating chess piece objects.
+/// </summary>
 public class PieceFactory
 {
+    /// <summary>
+    /// Creates a chess piece of the specified type and color.
+    /// </summary>
+    /// <param name="pieceType">The type of the piece to create.</param>
+    /// <param name="pieceColor">The color of the piece to create.</param>
+    /// <returns>A new chess piece of the specified type and color.</returns>
+    /// <exception cref="ArgumentException">Thrown when an invalid piece type is provided.</exception>
     public static PieceBase CreatePiece(PieceType pieceType, Color pieceColor)
     {
         return pieceType switch

@@ -32,8 +32,8 @@ public class PieceTests
     public void NoPieceGetsNoMoves()
     {
         var none = new NoPiece();
-        var moves = none.GetPossibleMoves(new Square(), new Board());
-        CollectionAssert.AreEquivalent(Array.Empty<Square>(), moves, "Moves");
+        var moves = none.GetPieceMoves(1ul, new Board());
+        Assert.AreEqual(0ul, moves, "Moves");
     }
 
     [TestMethod]
@@ -53,7 +53,7 @@ public class PieceTests
         var board = new Board();
         var position = new Square("d4");
 
-        ulong possibleMoves = bishop.GetPossibleMovesBitBoard(position, board);
+        ulong possibleMoves = bishop.GetPieceMoves(position.BitBoard, board);
         ulong exptectedMoves = new Square("c3").BitBoard | new Square("b2").BitBoard |
             new Square("a1").BitBoard | new Square("e5").BitBoard | new Square("f6").BitBoard |
             new Square("g7").BitBoard | new Square("h8").BitBoard | new Square("c5").BitBoard |
@@ -83,7 +83,7 @@ public class PieceTests
         var board = new Board();
         var position = new Square("d4");
 
-        ulong possibleMoves = king.GetPossibleMovesBitBoard(position, board);
+        ulong possibleMoves = king.GetPieceMoves(position.BitBoard, board);
         ulong exptectedMoves = new Square("c3").BitBoard | new Square("d3").BitBoard |
             new Square("e3").BitBoard | new Square("c4").BitBoard | new Square("e4").BitBoard |
             new Square("c5").BitBoard | new Square("d5").BitBoard | new Square("e5").BitBoard;
@@ -111,7 +111,7 @@ public class PieceTests
         var board = new Board();
         var position = new Square("d4");
 
-        ulong possibleMoves = knight.GetPossibleMovesBitBoard(position, board);
+        ulong possibleMoves = knight.GetPieceMoves(position.BitBoard, board);
         ulong exptectedMoves = new Square("b3").BitBoard | new Square("b5").BitBoard |
             new Square("c2").BitBoard | new Square("c6").BitBoard | new Square("e2").BitBoard |
             new Square("e6").BitBoard | new Square("f3").BitBoard | new Square("f5").BitBoard;
@@ -139,7 +139,7 @@ public class PieceTests
         var board = new Board();
         var position = new Square("d2");
 
-        ulong possibleMoves = pawn.GetPossibleMovesBitBoard(position, board);
+        ulong possibleMoves = pawn.GetPieceMoves(position.BitBoard, board);
         ulong exptectedMoves = new Square("d3").BitBoard | new Square("d4").BitBoard;
 
         Assert.AreEqual(exptectedMoves, possibleMoves, "Moves missmatch.");
@@ -299,10 +299,10 @@ public class PieceTests
 
         foreach (var scenario in scenarios)
         {
-            Console.WriteLine(scenario.Name);
+            Console.WriteLine($"Starting {scenario.Name}.");
             Board board = ForsythEdwardsNotation.GenerateBoard(scenario.Fen);
-            ulong possibleMoves = scenario.Piece.GetPossibleMovesBitBoard(scenario.Position, board);
-            Assert.AreEqual(scenario.ExpectedMoves, possibleMoves);
+            ulong possibleMoves = scenario.Piece.GetPieceMoves(scenario.Position.BitBoard, board);
+            Assert.AreEqual(scenario.ExpectedMoves, possibleMoves, scenario.Name);
         }
     }
 
@@ -325,9 +325,9 @@ public class PieceTests
         var board = new Board();
         var position = new Square("d4");
 
-        ulong possibleMoves = queen.GetPossibleMovesBitBoard(position, board);
-        ulong expectedPossibleMoves = bishop.GetPossibleMovesBitBoard(position, board) |
-            rook.GetPossibleMovesBitBoard(position, board);
+        ulong possibleMoves = queen.GetPieceMoves(position.BitBoard, board);
+        ulong expectedPossibleMoves = bishop.GetPieceMoves(position.BitBoard, board) |
+            rook.GetPieceMoves(position.BitBoard, board);
 
         Assert.AreEqual(expectedPossibleMoves, possibleMoves, "Moves missmatch.");
 
@@ -353,7 +353,7 @@ public class PieceTests
         var board = new Board();
         var position = new Square("d4");
 
-        ulong possibleMoves = rook.GetPossibleMovesBitBoard(position, board);
+        ulong possibleMoves = rook.GetPieceMoves(position.BitBoard, board);
         ulong expectedPossibleMoves = (Board.FileD | Board.Rank4) ^ position.BitBoard;
 
         Assert.AreEqual(expectedPossibleMoves, possibleMoves, "Moves mismatch");
@@ -364,11 +364,11 @@ public class PieceTests
 
     [TestMethod]
     [DataRow(PieceType.Rook, Color.Black, "a8", DisplayName = "Black Rook")]
-    [DataRow(PieceType.Bishop, Color.Black, "b8", DisplayName = "Black Bishop")]
+    [DataRow(PieceType.Bishop, Color.Black, "c8", DisplayName = "Black Bishop")]
     [DataRow(PieceType.Queen, Color.Black, "d8", DisplayName = "Black Queen")]
     [DataRow(PieceType.King, Color.Black, "e8", DisplayName = "Black King")]
     [DataRow(PieceType.Rook, Color.White, "a1", DisplayName = "White Rook")]
-    [DataRow(PieceType.Bishop, Color.White, "b1", DisplayName = "White Bishop")]
+    [DataRow(PieceType.Bishop, Color.White, "c1", DisplayName = "White Bishop")]
     [DataRow(PieceType.Queen, Color.White, "d1", DisplayName = "White Queen")]
     [DataRow(PieceType.King, Color.White, "e1", DisplayName = "White King")]
     public void SomePiecesCannotMoveOnAnInitialBoard(PieceType pieceType, Color pieceColor, string position)
@@ -377,7 +377,7 @@ public class PieceTests
         board.InitializeGameStartingBoard();
         PieceBase piece = PieceFactory.CreatePiece(pieceType, pieceColor);
         Square square = new Square(position);
-        Assert.AreEqual(0ul, piece.GetPossibleMovesBitBoard(square, board));
+        Assert.AreEqual(0ul, piece.GetPieceMoves(square.BitBoard, board));
     }
 
     [TestMethod]

@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+using Minerva.Extensions;
+
 namespace Minerva.Pieces;
 
 /// <summary>
@@ -23,16 +25,16 @@ public class Knight : PieceBase
     /// <summary>
     /// The possible moves for a knight.
     /// </summary>
-    private static readonly Move[] KnightMoves =
+    private static readonly MovingDirections[] KnightMoves =
     {
-        2 * Move.Up + Move.Left,
-        2 * Move.Up + Move.Right,
-        2 * Move.Down + Move.Left,
-        2 * Move.Down + Move.Right,
-        Move.Down + 2 * Move.Left,
-        Move.Down + 2 * Move.Right,
-        Move.Up + 2 * Move.Left,
-        Move.Up + 2 * Move.Right,
+        MovingDirections.UpUpLeft,
+        MovingDirections.UpUpRight,
+        MovingDirections.DownDownLeft,
+        MovingDirections.DownDownRight,
+        MovingDirections.UpLeftLeft,
+        MovingDirections.DownLeftLeft,
+        MovingDirections.UpRightRight,
+        MovingDirections.DownRightRight,
     };
 
     /// <summary>
@@ -43,15 +45,9 @@ public class Knight : PieceBase
     {
     }
 
-    /// <summary>
-    /// Gets all the possible moves for the knight from a given position on a given board.
-    /// </summary>
-    /// <param name="position">The current position of the knight.</param>
-    /// <param name="board">The current state of the chess board.</param>
-    /// <returns>An array of squares representing all the possible moves for the knight.</returns>
-    public override Square[] GetPossibleMoves(Square position, Board board)
+    public override ulong GetPieceMoves(ulong position, Board board)
     {
-        return this.GetKnightMoves(position, board).ToArray();
+        return this.GetKnightMoves(position, board);
     }
 
     /// <summary>
@@ -60,19 +56,22 @@ public class Knight : PieceBase
     /// <param name="position">The current position of the knight.</param>
     /// <param name="board">The current state of the chess board.</param>
     /// <returns>An enumerable collection of squares representing all the valid moves for the knight.</returns>
-    protected IEnumerable<Square> GetKnightMoves(Square position, Board board)
+    protected ulong GetKnightMoves(ulong position, Board board)
     {
-        foreach (Move knightMove in KnightMoves)
+        ulong result = 0;
+        foreach (MovingDirections knightMove in KnightMoves)
         {
-            if (position.TryMove(knightMove, out Square newPosition))
+            if (position.TryMove(knightMove, out ulong newPosition))
             {
                 if (board.SquareContainPieceOfColor(newPosition, this.Color))
                 {
                     continue;
                 }
 
-                yield return newPosition;
+                result |= newPosition;
             }
         }
+
+        return result;
     }
 }

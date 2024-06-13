@@ -56,53 +56,49 @@ public abstract class PieceBase
     public PieceType PieceType { get; protected set; }
 
     /// <summary>
-    /// When overridden in a derived class, gets the possible moves for the piece.
-    /// </summary>
-    /// <param name="position">The current position of the piece.</param>
-    /// <param name="board">The current state of the chess board.</param>
-    /// <returns>An array of squares representing the possible moves for the piece.</returns>
-    public abstract Square[] GetPossibleMoves(Square position, Board board);
-
-    /// <summary>
     /// Gets the bitboard representation of the possible moves for the piece.
     /// </summary>
     /// <param name="position">The current position of the piece.</param>
     /// <param name="board">The current state of the chess board.</param>
     /// <returns>A bitboard (ulong) where each bit represents a square on the
     /// chess board. A set bit indicates that the piece can move to that square.</returns>
-    public ulong GetPossibleMovesBitBoard(Square position, Board board)
-    {
-        return this.GetPossibleMoves(position, board).Aggregate(0ul, (acc, square) => acc | square.BitBoard);
-    }
+    public abstract ulong GetPieceMoves(ulong position, Board board);
 
-    /// <summary>
-    /// Gets the valid moves for the piece in a given direction.
-    /// </summary>
-    /// <param name="position">The current position of the piece.</param>
-    /// <param name="direction">The direction of the move.</param>
-    /// <param name="board">The current state of the chess board.</param>
-    /// <returns>An enumerable collection of squares representing the valid
-    /// moves for the piece in the given direction.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the provided board is null.</exception>
-    protected virtual IEnumerable<Square> GetValidMoves(Square position, Move direction, Board board)
+    protected virtual ulong GetValidMoves(ulong position, MovingDirections direction, Board board)
     {
-        while (position.TryMove(direction, out Square newPosition))
+        ulong result = 0;
+        ulong originalPosition = position;
+        foreach (MovingDirections singleDirection in Enum.GetValues(typeof(MovingDirections)))
         {
-            position = newPosition;
-            if ((board.OccupiedBitBoard & newPosition.BitBoard) == 0ul)
+            if (singleDirection == MovingDirections.None || singleDirection == MovingDirections.Rook ||
+                singleDirection == MovingDirections.Bishop ||
+                singleDirection == MovingDirections.KingAndQueen ||
+                (direction & singleDirection) == 0)
             {
-                yield return newPosition;
-
-                continue;
+                continue; // Skip composite flags and None
             }
 
-            if (board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
+            while (position.TryMove(singleDirection, out ulong newPosition))
             {
-                yield return newPosition;
+                position = newPosition;
+                if ((board.OccupiedBitBoard & newPosition) == 0)
+                {
+                    result |= newPosition;
+                    continue;
+                }
+
+                if (board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
+                {
+                    result |= newPosition;
+                }
+
+                break;
             }
 
-            yield break;
+            position = originalPosition;
         }
+
+        return result;
     }
 
     /// <summary>

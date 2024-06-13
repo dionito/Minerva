@@ -171,43 +171,6 @@ public class Board
     public ulong WhitePiecesBitBoard => this.whitePiecesBitBoard;
 
     /// <summary>
-    /// Initializes the chess board to the standard starting position.
-    /// This method sets the bitboards for both black and white pieces.
-    /// </summary>
-    public void InitializeGameStartingBoard()
-    {
-        // Initialize black pieces
-        // Rooks are placed on a8 and h8
-        this.BlackPieces["r"] = Rank8 & FileA | Rank8 & FileH;
-        // Knights are placed on b8 and g8
-        this.BlackPieces["n"] = Rank8 & FileB | Rank8 & FileG;
-        // Bishops are placed on c8 and f8
-        this.BlackPieces["b"] = Rank8 & FileC | Rank8 & FileF;
-        // Queen is placed on d8
-        this.BlackPieces["q"] = Rank8 & FileD;
-        // King is placed on e8
-        this.BlackPieces["k"] = Rank8 & FileE;
-        // Pawns are placed on a7 to h7
-        this.BlackPieces["p"] = Rank7;
-
-        // Initialize white pieces
-        // Rooks are placed on a1 and h1
-        this.WhitePieces["R"] = Rank1 & FileA | Rank1 & FileH;
-        // Knights are placed on b1 and g1
-        this.WhitePieces["N"] = Rank1 & FileB | Rank1 & FileG;
-        // Bishops are placed on c1 and f1
-        this.WhitePieces["B"] = Rank1 & FileC | Rank1 & FileF;
-        // Queen is placed on d1
-        this.WhitePieces["Q"] = Rank1 & FileD;
-        // King is placed on e1
-        this.WhitePieces["K"] = Rank1 & FileE;
-        // Pawns are placed on a2 to h2
-        this.WhitePieces["P"] = Rank2;
-
-        this.UpdateBitBoards();
-    }
-
-    /// <summary>
     /// Gets the piece at the specified square on the chess board.
     /// </summary>
     /// <param name="file">The file of the target location. Must be between 1 and 8 inclusive.</param>
@@ -284,6 +247,43 @@ public class Board
     }
 
     /// <summary>
+    /// Initializes the chess board to the standard starting position.
+    /// This method sets the bitboards for both black and white pieces.
+    /// </summary>
+    public void InitializeGameStartingBoard()
+    {
+        // Initialize black pieces
+        // Rooks are placed on a8 and h8
+        this.BlackPieces["r"] = Rank8 & FileA | Rank8 & FileH;
+        // Knights are placed on b8 and g8
+        this.BlackPieces["n"] = Rank8 & FileB | Rank8 & FileG;
+        // Bishops are placed on c8 and f8
+        this.BlackPieces["b"] = Rank8 & FileC | Rank8 & FileF;
+        // Queen is placed on d8
+        this.BlackPieces["q"] = Rank8 & FileD;
+        // King is placed on e8
+        this.BlackPieces["k"] = Rank8 & FileE;
+        // Pawns are placed on a7 to h7
+        this.BlackPieces["p"] = Rank7;
+
+        // Initialize white pieces
+        // Rooks are placed on a1 and h1
+        this.WhitePieces["R"] = Rank1 & FileA | Rank1 & FileH;
+        // Knights are placed on b1 and g1
+        this.WhitePieces["N"] = Rank1 & FileB | Rank1 & FileG;
+        // Bishops are placed on c1 and f1
+        this.WhitePieces["B"] = Rank1 & FileC | Rank1 & FileF;
+        // Queen is placed on d1
+        this.WhitePieces["Q"] = Rank1 & FileD;
+        // King is placed on e1
+        this.WhitePieces["K"] = Rank1 & FileE;
+        // Pawns are placed on a2 to h2
+        this.WhitePieces["P"] = Rank2;
+
+        this.UpdateBitBoards();
+    }
+
+    /// <summary>
     /// Checks if a square on the board is empty.
     /// </summary>
     /// <param name="file">The file of the square to check. Must be between a and h inclusive.</param>
@@ -301,7 +301,12 @@ public class Board
     /// <returns>True if the square is empty, false otherwise.</returns>
     public bool IsEmptySquare(Square square)
     {
-        return (this.OccupiedBitBoard & square.BitBoard) == 0;
+        return this.IsEmptySquare(square.BitBoard);
+    }
+
+    public bool IsEmptySquare(ulong square)
+    {
+        return (this.OccupiedBitBoard & square) == 0;
     }
 
     /// <summary>
@@ -520,11 +525,36 @@ public class Board
     /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
     public bool SquareContainPieceOfColor(Square square, char color)
     {
+        return this.SquareContainPieceOfColor(square.BitBoard, color);
+    }
+
+    /// <summary>
+    /// Checks if a square contains a piece of the specified color.
+    /// </summary>
+    /// <param name="square">The square to check, represented as a bitboard with a single bit set.</param>
+    /// <param name="color">The color to check for. Can be either 'w' for white or 'b' for black.</param>
+    /// <returns>true if the square contains a piece of the specified color; otherwise, false.</returns>
+    /// <exception cref="ArgumentException">Thrown when an invalid color is provided.</exception>
+    public bool SquareContainPieceOfColor(ulong square, Color color)
+    {
+        return this.SquareContainPieceOfColor(square, (char)color);
+    }
+
+    /// <summary>
+    /// Checks if a square contains a piece of the specified color.
+    /// </summary>
+    /// <param name="square">The square to check, represented as a bitboard with a single bit set.</param>
+    /// <param name="color">The color to check for. Can be either 'w' for white or 'b' for black.</param>
+    /// <returns>true if the square contains a piece of the specified color; otherwise, false.</returns>
+    /// <exception cref="ArgumentException">Thrown when an invalid color is provided.</exception>
+    public bool SquareContainPieceOfColor(ulong square, char color)
+    {
         return color switch
         {
-            'w' => (this.WhitePiecesBitBoard & square.BitBoard) != 0,
-            'b' => (this.BlackPiecesBitBoard & square.BitBoard) != 0,
-            _ => throw new ArgumentException($"Invalid color: {color}. Valid colors are 'b' or 'w'.", nameof(color)),
+            'w' => (this.WhitePiecesBitBoard & square) != 0,
+            'b' => (this.BlackPiecesBitBoard & square) != 0,
+            _ => throw new ArgumentException($"Invalid color: {color}. Valid colors are 'b' or 'w'."
+                , nameof(color)),
         };
     }
 
