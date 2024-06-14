@@ -30,7 +30,7 @@ public class Bishop : PieceBase
 
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        return this.GetValidMoves(
+        return this.GetPieceMoves(
             position,
             MovingDirections.Bishop,
             board);

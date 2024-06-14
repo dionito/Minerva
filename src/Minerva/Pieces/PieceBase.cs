@@ -64,7 +64,7 @@ public abstract class PieceBase
     /// chess board. A set bit indicates that the piece can move to that square.</returns>
     public abstract ulong GetPieceMoves(ulong position, Board board);
 
-    protected virtual ulong GetValidMoves(ulong position, MovingDirections direction, Board board)
+    protected virtual ulong GetPieceMoves(ulong position, MovingDirections direction, Board board)
     {
         ulong result = 0;
         ulong originalPosition = position;
@@ -105,6 +105,26 @@ public abstract class PieceBase
         }
 
         return result;
+    }
+
+    protected ulong PurgeIlegalMoves(
+        ulong from,
+        ulong toLocations,
+        Board board)
+    {
+        for (int i = 0; i < 64; i++)
+        {
+            ulong to = 1UL << i;
+            if ((toLocations & to) != 0)
+            {
+                if (!board.IsMoveLegal(from, to, this.Color))
+                {
+                    toLocations &= ~to;
+                }
+            }
+        }
+
+        return toLocations;
     }
 
     /// <summary>

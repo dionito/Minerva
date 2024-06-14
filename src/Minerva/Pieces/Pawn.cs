@@ -41,7 +41,8 @@ public class Pawn : PieceBase
 
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        return this.GetPawnMoves(position, board);
+        var moves = this.GetPawnMoves(position, board);
+        return this.PurgeIlegalMoves(position, moves, board);
     }
 
     protected ulong GetPawnMoves(ulong position, Board board)

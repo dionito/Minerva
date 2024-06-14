@@ -310,6 +310,19 @@ public class Board
     }
 
     /// <summary>
+    /// Determines if a move from one square to another is legal for a given color.
+    /// </summary>
+    /// <param name="from">The bitboard representing the starting square of the move.</param>
+    /// <param name="to">The bitboard representing the target square of the move.</param>
+    /// <param name="color">The color of the piece making the move.</param>
+    /// <returns>true if the move is legal; otherwise, false.</returns>
+    public bool IsMoveLegal(ulong from, ulong to, Color color)
+    {
+        // TODO: implement this method
+        return true;
+    }
+
+    /// <summary>
     /// Sets the active color for the next move on the chess board.
     /// </summary>
     /// <param name="activeColor">The active color. 'w' for white and 'b' for black.</param>

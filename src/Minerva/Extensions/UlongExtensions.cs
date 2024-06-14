@@ -48,9 +48,9 @@ public static class UlongExtensions
     /// <summary>
     /// Moves to a position one square down.
     /// </summary>
-    /// <param name="bitboard">The bitboard position to move.</param>
+    /// <param name="position">The bitboard position to move.</param>
     /// <returns>The new position after moving down, or zero if the move is not valid.</returns>
-    public static ulong MoveDown(this ulong bitboard) => (bitboard & NotRank1) >> 8;
+    public static ulong MoveDown(this ulong position) => (position & NotRank1) >> 8;
 
     /// <summary>
     /// Moves to a position two squares down and one square to the left (L shaped).
@@ -71,26 +71,26 @@ public static class UlongExtensions
     /// <summary>
     /// Moves to a position one square down and to the left.
     /// </summary>
-    /// <param name="bitboard">The bitboard of the position to move.</param>
+    /// <param name="position">The bitboard of the position to move.</param>
     /// <returns>The new position after moving down and to the left,
     /// or zero if the move is not valid.</returns>
-    public static ulong MoveDownLeft(this ulong bitboard) => (bitboard & NotFileA & NotRank1) >> 7;
+    public static ulong MoveDownLeft(this ulong position) => (position & NotFileA & NotRank1) >> 7;
 
     /// <summary>
     /// Moves to a position one square down and to the right.
     /// </summary>
-    /// <param name="bitboard">The bitboard of the position to move.</param>
+    /// <param name="position">The bitboard of the position to move.</param>
     /// <returns>The new position after moving down and to the right,
     /// or zero if the move is not valid.</returns>
-    public static ulong MoveDownRight(this ulong bitboard) => (bitboard & NotFileH & NotRank1) >> 9;
+    public static ulong MoveDownRight(this ulong position) => (position & NotFileH & NotRank1) >> 9;
 
     /// <summary>
     /// Moves to a position one square to the left.
     /// </summary>
-    /// <param name="bitboard">The bitboard of the position to move.</param>
+    /// <param name="position">The bitboard of the position to move.</param>
     /// <returns>The new position after moving to the left,
     /// or zero if the move is not valid.</returns>
-    public static ulong MoveLeft(this ulong bitboard) => (bitboard & NotFileA) << 1;
+    public static ulong MoveLeft(this ulong position) => (position & NotFileA) << 1;
 
     /// <summary>
     /// Moves to a position one square to the left and then one square down (L shaped).
@@ -111,10 +111,10 @@ public static class UlongExtensions
     /// <summary>
     /// Moves to a position one square to the right.
     /// </summary>
-    /// <param name="bitboard">The bitboard of the position to move.</param>
+    /// <param name="position">The bitboard of the position to move.</param>
     /// <returns>The new position after moving to the right,
     /// or zero if the move is not valid.</returns>
-    public static ulong MoveRight(this ulong bitboard) => (bitboard & NotFileH) >> 1;
+    public static ulong MoveRight(this ulong position) => (position & NotFileH) >> 1;
 
     /// <summary>
     /// Moves to a position one square to the right and then one square down (L shaped).
@@ -135,26 +135,26 @@ public static class UlongExtensions
     /// <summary>
     /// Moves to a position one square up.
     /// </summary>
-    /// <param name="bitboard">The bitboard of the position to move.</param>
+    /// <param name="position">The bitboard of the position to move.</param>
     /// <returns>The new position after moving up,
     /// or zero if the move is not valid.</returns>
-    public static ulong MoveUp(this ulong bitboard) => (bitboard & NotRank8) << 8;
+    public static ulong MoveUp(this ulong position) => (position & NotRank8) << 8;
 
     /// <summary>
     /// Moves to a position one square up and to the left.
     /// </summary>
-    /// <param name="bitboard">The bitboard of the position to move.</param>
+    /// <param name="position">The bitboard of the position to move.</param>
     /// <returns>The new position after moving up and to the left,
     /// or zero if the move is not valid.</returns>
-    public static ulong MoveUpLeft(this ulong bitboard) => (bitboard & NotFileA & NotRank8) << 9;
+    public static ulong MoveUpLeft(this ulong position) => (position & NotFileA & NotRank8) << 9;
 
     /// <summary>
     /// Moves to a position one square up and to the right.
     /// </summary>
-    /// <param name="bitboard">The bitboard of the position to move.</param>
+    /// <param name="position">The bitboard of the position to move.</param>
     /// <returns>The new position after moving up and to the right,
     /// or zero if the move is not valid.</returns>
-    public static ulong MoveUpRight(this ulong bitboard) => (bitboard & NotFileH & NotRank8) << 7;
+    public static ulong MoveUpRight(this ulong position) => (position & NotFileH & NotRank8) << 7;
 
     /// <summary>
     /// Moves to a position two squares up and one square to the left (L shaped).

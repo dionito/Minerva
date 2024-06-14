@@ -44,7 +44,8 @@ public class Knight : PieceBase
 
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        return this.GetKnightMoves(position, board);
+        var moves = this.GetKnightMoves(position, board);
+        return this.PurgeIlegalMoves(position, moves, board);
     }
 
     /// <summary>

@@ -30,9 +30,10 @@ public class Queen : PieceBase
 
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        return this.GetValidMoves(
+        var moves = this.GetPieceMoves(
             position,
             MovingDirections.KingAndQueen,
             board);
+        return this.PurgeIlegalMoves(position, moves, board);
     }
 }
