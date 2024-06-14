@@ -22,6 +22,18 @@ namespace Minerva.Pieces;
 /// </summary>
 public class Knight : PieceBase
 {
+    private static readonly MovingDirections[] KnightMoves = new MovingDirections[]
+    {
+        MovingDirections.Up | MovingDirections.UpLeft,
+        MovingDirections.Up | MovingDirections.UpRight,
+        MovingDirections.Down | MovingDirections.DownRight,
+        MovingDirections.Down | MovingDirections.DownLeft,
+        MovingDirections.Right | MovingDirections.UpRight,
+        MovingDirections.Right | MovingDirections.DownRight,
+        MovingDirections.Left | MovingDirections.UpLeft,
+        MovingDirections.Left | MovingDirections.DownLeft,
+    };
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Knight"/> class with the specified color.
     /// </summary>
@@ -43,21 +55,22 @@ public class Knight : PieceBase
     /// <returns>An enumerable collection of squares representing all the valid moves for the knight.</returns>
     protected ulong GetKnightMoves(ulong position, Board board)
     {
-        //ulong result = 0;
-        //foreach (MovingDirections knightMove in KnightMoves)
-        //{
-        //    if (position.TryMove(knightMove, out ulong newPosition))
-        //    {
-        //        if (board.SquareContainPieceOfColor(newPosition, this.Color))
-        //        {
-        //            continue;
-        //        }
+        // Possible perf. gains here by using the bit shifts directly, rather than
+        // calling the Move method with KnightMoves. However, the Move method is more readable.
+        ulong result = 0;
+        foreach (MovingDirections knightMove in KnightMoves)
+        {
+            ulong newPosition = position.Move(knightMove);
+            if (newPosition != 0)
+            {
+                if ((board.OccupiedBitBoard & newPosition) == 0 || 
+                    board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
+                {
+                    result |= newPosition;
+                }
+            }
+        }
 
-        //        result |= newPosition;
-        //    }
-        //}
-
-        //return result;
-        throw new NotImplementedException();
+        return result;
     }
 }
