@@ -80,7 +80,7 @@ public class PieceTests
     public void KingGetPossibleMovesBitBoardReturnsCorrectMovesInEmptyBoard()
     {
         var king = new King(Color.White);
-        var board = new Board();
+        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/3K4/8/8/8 w - - 0 1"); // King in d4
         var position = new Square("d4");
 
         ulong possibleMoves = king.GetPieceMoves(position.BitBoard, board);
@@ -108,7 +108,7 @@ public class PieceTests
     public void KnightGetPossibleMovesBitBoardReturnsCorrectMovesInEmptyBoard()
     {
         var knight = new Knight(Color.White);
-        var board = new Board();
+        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/3N4/8/8/8 w - - 0 1"); // Knigth in d4
         var position = new Square("d4");
 
         ulong possibleMoves = knight.GetPieceMoves(position.BitBoard, board);
@@ -136,7 +136,7 @@ public class PieceTests
     public void PawnGetPossibleMovesBitBoardReturnsCorrectMovesInEmptyBoard()
     {
         var pawn = new Pawn(Color.White);
-        var board = new Board();
+        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/8/8/3P4/8 w - - 0 1"); // Knigth in d4
         var position = new Square("d2");
 
         ulong possibleMoves = pawn.GetPieceMoves(position.BitBoard, board);
@@ -320,14 +320,16 @@ public class PieceTests
     public void QueenGetPossibleMovesReturnsCorrectMovesInEmptyBoard()
     {
         var queen = new Queen(Color.White);
-        var bishop = new Bishop(Color.White);
-        var rook = new Rook(Color.White);
-        var board = new Board();
+        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/3Q4/8/8/8 w - - 0 1"); // Queen in d4
         var position = new Square("d4");
 
         ulong possibleMoves = queen.GetPieceMoves(position.BitBoard, board);
-        ulong expectedPossibleMoves = bishop.GetPieceMoves(position.BitBoard, board) |
-            rook.GetPieceMoves(position.BitBoard, board);
+        ulong expectedPossibleMoves = (Board.FileD | Board.Rank4 | new Square("c3").BitBoard |
+            new Square("b2").BitBoard | new Square("a1").BitBoard | new Square("e5").BitBoard |
+            new Square("f6").BitBoard | new Square("g7").BitBoard | new Square("h8").BitBoard |
+            new Square("c5").BitBoard | new Square("b6").BitBoard | new Square("a7").BitBoard |
+            new Square("e3").BitBoard | new Square("f2").BitBoard | new Square("g1").BitBoard)
+            ^ position.BitBoard;
 
         Assert.AreEqual(expectedPossibleMoves, possibleMoves, "Moves missmatch.");
 
@@ -350,7 +352,7 @@ public class PieceTests
     public void RookGetPossibleMovesReturnsCorrectMovesInEmptyBoard()
     {
         var rook = new Rook(Color.Black);
-        var board = new Board();
+        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/3r4/8/8/8 w - - 0 1"); // rook in d4
         var position = new Square("d4");
 
         ulong possibleMoves = rook.GetPieceMoves(position.BitBoard, board);

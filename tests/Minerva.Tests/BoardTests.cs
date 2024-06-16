@@ -111,7 +111,7 @@ public class BoardTests : TestBase
     [TestMethod]
     public void BlackPiecesBitBoardIsCorrectAfterSettingBlackPieces()
     {
-        var board = new Board { BlackPieces = { ["p"] = 1ul } };
+        var board = new Board { BlackPieces = { ['p'] = 1ul } };
         ulong blackPiecesBitBoard = board.BlackPieces.Values.Aggregate((a, b) => a | b);
         Assert.AreEqual(1ul, blackPiecesBitBoard);
     }
@@ -130,45 +130,45 @@ public class BoardTests : TestBase
         // Black pieces
         Assert.AreEqual(
             board.GetSquareBitBoard("a8") | board.GetSquareBitBoard("h8"),
-            board.BlackPieces["r"],
+            board.BlackPieces['r'],
             "Black rocks");
         Assert.AreEqual(
             board.GetSquareBitBoard("b8") | board.GetSquareBitBoard("g8"),
-            board.BlackPieces["n"],
+            board.BlackPieces['n'],
             "Black knights");
         Assert.AreEqual(
             board.GetSquareBitBoard("c8") | board.GetSquareBitBoard("f8"),
-            board.BlackPieces["b"],
+            board.BlackPieces['b'],
             "Black bishops");
-        Assert.AreEqual(board.GetSquareBitBoard("d8"), board.BlackPieces["q"], "Black queen");
-        Assert.AreEqual(board.GetSquareBitBoard("e8"), board.BlackPieces["k"], "Black king");
+        Assert.AreEqual(board.GetSquareBitBoard("d8"), board.BlackPieces['q'], "Black queen");
+        Assert.AreEqual(board.GetSquareBitBoard("e8"), board.BlackPieces['k'], "Black king");
         Assert.AreEqual(
             board.GetSquareBitBoard("a7") | board.GetSquareBitBoard("b7") | board.GetSquareBitBoard("c7") |
             board.GetSquareBitBoard("d7") | board.GetSquareBitBoard("e7") | board.GetSquareBitBoard("f7") |
             board.GetSquareBitBoard("g7") | board.GetSquareBitBoard("h7"),
-            board.BlackPieces["p"],
+            board.BlackPieces['p'],
             "Black pawns");
 
         // White pieces
         Assert.AreEqual(
             board.GetSquareBitBoard("a1") | board.GetSquareBitBoard("h1"),
-            board.WhitePieces["R"],
+            board.WhitePieces['R'],
             "White rocks");
         Assert.AreEqual(
             board.GetSquareBitBoard("b1") | board.GetSquareBitBoard("g1"),
-            board.WhitePieces["N"],
+            board.WhitePieces['N'],
             "White knights");
         Assert.AreEqual(
             board.GetSquareBitBoard("c1") | board.GetSquareBitBoard("f1"),
-            board.WhitePieces["B"],
+            board.WhitePieces['B'],
             "White bishops");
-        Assert.AreEqual(board.GetSquareBitBoard("d1"), board.WhitePieces["Q"], "White queen");
-        Assert.AreEqual(board.GetSquareBitBoard("e1"), board.WhitePieces["K"], "White king");
+        Assert.AreEqual(board.GetSquareBitBoard("d1"), board.WhitePieces['Q'], "White queen");
+        Assert.AreEqual(board.GetSquareBitBoard("e1"), board.WhitePieces['K'], "White king");
         Assert.AreEqual(
             board.GetSquareBitBoard("a2") | board.GetSquareBitBoard("b2") | board.GetSquareBitBoard("c2") |
             board.GetSquareBitBoard("d2") | board.GetSquareBitBoard("e2") | board.GetSquareBitBoard("f2") |
             board.GetSquareBitBoard("g2") | board.GetSquareBitBoard("h2"),
-            board.WhitePieces["P"],
+            board.WhitePieces['P'],
             "White pawns");
     }
 
@@ -447,11 +447,11 @@ public class BoardTests : TestBase
 
         // Set a black pawn at e5
         board.SetPieceAt(5, 5, 'p');
-        Assert.AreEqual(board.GetSquareBitBoard("e5"), board.BlackPieces["p"]);
+        Assert.AreEqual(board.GetSquareBitBoard("e5"), board.BlackPieces['p']);
 
         // Set a white knight at b1
         board.SetPieceAt(2, 1, 'N');
-        Assert.AreEqual(board.GetSquareBitBoard("b1"), board.WhitePieces["N"]);
+        Assert.AreEqual(board.GetSquareBitBoard("b1"), board.WhitePieces['N']);
     }
 
     [TestMethod]

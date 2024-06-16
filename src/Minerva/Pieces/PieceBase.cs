@@ -112,9 +112,9 @@ public abstract class PieceBase
         ulong toLocations,
         Board board)
     {
+        ulong to = 1ul;
         for (int i = 0; i < 64; i++)
         {
-            ulong to = 1UL << i;
             if ((toLocations & to) != 0)
             {
                 if (!board.IsMoveLegal(from, to, this.Color))
@@ -122,6 +122,8 @@ public abstract class PieceBase
                     toLocations &= ~to;
                 }
             }
+
+            to = to << 1;
         }
 
         return toLocations;

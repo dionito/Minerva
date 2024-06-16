@@ -41,4 +41,20 @@ public class PieceFactory
             _ => throw new ArgumentException("Invalid piece type."),
         };
     }
+
+    public static PieceBase CreatePiece(char pieceType, Color pieceColor)
+    {
+        pieceType = char.ToLower(pieceType);
+        return pieceType switch
+        {
+            'b' => new Bishop(pieceColor),
+            'q' => new Queen(pieceColor),
+            'r' => new Rook(pieceColor),
+            'k' => new King(pieceColor),
+            'n' => new Knight(pieceColor),
+            'p' => new Pawn(pieceColor),
+            ' ' => new NoPiece(),
+            _ => throw new ArgumentException("Invalid piece type."),
+        };
+    }
 }
