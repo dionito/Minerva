@@ -288,9 +288,14 @@ public class Board
         this.UpdateBitBoards();
     }
 
-    static bool IsCheck(Dictionary<char, ulong> whitePieces, Dictionary<char, ulong> blackPieces, Color color)
+    public bool IsCheck()
     {
-        return false;
+        if (this.ActiveColor == 'w')
+        {
+            return (this.BlackAttacks & this.WhitePieces['K']) != 0;
+        }
+
+        return (this.WhiteAttacks & this.BlackPieces['k']) != 0;
     }
 
     /// <summary>
@@ -339,7 +344,8 @@ public class Board
         var blackPieces = new Dictionary<char, ulong>(this.BlackPieces);
 
         MovePiece(piece, color == Color.White ? whitePieces : blackPieces, from, to);
-        return !IsCheck(whitePieces, blackPieces, color);
+        return true;
+        // need to calculate if the king is in check after the move
     }
 
     static void MovePiece(char piece, Dictionary<char, ulong> pieces, ulong from, ulong to)

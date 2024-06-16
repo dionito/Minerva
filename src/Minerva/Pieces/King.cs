@@ -32,7 +32,11 @@ public class King : PieceBase
 
     public override ulong GetPieceAttacks(ulong position, Board board)
     {
-        ulong pieceAttacks = this.GetPieceMovesOrAttacks(position, MovingDirections.KingAndQueen, board, attacks: true);
+        ulong pieceAttacks = this.GetPieceMovesOrAttacks(
+            position,
+            MovingDirections.KingAndQueen,
+            board,
+            attacks: true);
         return this.PurgeIlegalMoves(position, pieceAttacks, board);
     }
 

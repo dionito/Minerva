@@ -33,7 +33,8 @@ public class Queen : PieceBase
         var attacks = this.GetPieceMovesOrAttacks(
             position,
             MovingDirections.KingAndQueen,
-            board);
+            board,
+            attacks: true);
         return this.PurgeIlegalMoves(position, attacks, board);
     }
 

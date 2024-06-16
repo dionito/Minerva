@@ -41,7 +41,18 @@ public class Pawn : PieceBase
 
     private ulong GetPawnAttacks(ulong position, Board board)
     {
-        throw new NotImplementedException();
+        ulong result = 0;
+
+        foreach (var direction in this.captureMoves)
+        {
+            ulong capturePosition = position.Move(direction);
+            if (capturePosition != 0)
+            {
+                result |= capturePosition;
+            }
+        }
+
+        return result;
     }
 
     protected ulong GetPawnMoves(ulong position, Board board)
