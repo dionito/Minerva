@@ -23,6 +23,11 @@ public class NoPiece : PieceBase
         this.Color = Color.None;
     }
 
+    public override ulong GetPieceAttacks(ulong position, Board board)
+    {
+        return 0;
+    }
+
     public override ulong GetPieceMoves(ulong position, Board board)
     {
         return 0;

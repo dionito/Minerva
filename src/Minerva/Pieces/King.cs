@@ -30,13 +30,23 @@ public class King : PieceBase
     {
     }
 
+    public override ulong GetPieceAttacks(ulong position, Board board)
+    {
+        ulong pieceAttacks = this.GetPieceMovesOrAttacks(position, MovingDirections.KingAndQueen, board, attacks: true);
+        return this.PurgeIlegalMoves(position, pieceAttacks, board);
+    }
+
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        ulong pieceMoves = this.GetPieceMoves(position, MovingDirections.KingAndQueen, board);
+        ulong pieceMoves = this.GetPieceMovesOrAttacks(position, MovingDirections.KingAndQueen, board, attacks: false);
         return this.PurgeIlegalMoves(position, pieceMoves, board);
     }
 
-    protected override ulong GetPieceMoves(ulong position, MovingDirections direction, Board board)
+    protected override ulong GetPieceMovesOrAttacks(
+        ulong position,
+        MovingDirections direction,
+        Board board,
+        bool attacks = false)
     {
         ulong result = 0;
         foreach (MovingDirections singleDirection in Enum.GetValues(typeof(MovingDirections)))
@@ -52,7 +62,7 @@ public class King : PieceBase
             ulong newPosition = position.Move(singleDirection);
             if (newPosition != 0)
             {
-                if ((board.OccupiedBitBoard & newPosition) == 0 || 
+                if (attacks || (board.OccupiedBitBoard & newPosition) == 0 ||
                     board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
                 {
                     result |= newPosition;

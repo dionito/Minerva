@@ -40,6 +40,8 @@ namespace Minerva;
 /// </summary>
 public class Board
 {
+    public const char EmptySquare = ' ';
+
     public const ulong FileA = 0x8080808080808080ul;
     public const ulong FileB = 0x4040404040404040ul;
     public const ulong FileC = 0x2020202020202020ul;
@@ -57,8 +59,6 @@ public class Board
     public const ulong Rank6 = 0x0000FF0000000000ul;
     public const ulong Rank7 = 0x00FF000000000000ul;
     public const ulong Rank8 = 0xFF00000000000000ul;
-
-    public const char EmptySquare = ' ';
 
     /// <summary>
     /// Represents the files of the chess board.
@@ -617,14 +617,14 @@ public class Board
         foreach (KeyValuePair<char, ulong> pieceKvp in this.BlackPieces)
         {
             this.BlackPiecesBitBoard |= pieceKvp.Value;
-            var piece = PieceFactory.CreatePiece(pieceKvp.Key, Color.Black);
+            var piece = PieceFactory.GetPiece(pieceKvp.Key);
             this.BlackAttacks |= piece.GetPieceMoves(pieceKvp.Value, this);
         }
 
         foreach (var pieceKvp in this.WhitePieces)
         {
             this.WhitePiecesBitBoard |= pieceKvp.Value;
-            var piece = PieceFactory.CreatePiece(pieceKvp.Key, Color.White);
+            var piece = PieceFactory.GetPiece(pieceKvp.Key);
             this.WhiteAttacks |= piece.GetPieceMoves(pieceKvp.Value, this);
         }
     }

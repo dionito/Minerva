@@ -55,6 +55,8 @@ public abstract class PieceBase
     /// </summary>
     public PieceType PieceType { get; protected set; }
 
+    public abstract ulong GetPieceAttacks(ulong position, Board board);
+
     /// <summary>
     /// Gets the bitboard representation of the possible moves for the piece.
     /// </summary>
@@ -64,7 +66,22 @@ public abstract class PieceBase
     /// chess board. A set bit indicates that the piece can move to that square.</returns>
     public abstract ulong GetPieceMoves(ulong position, Board board);
 
-    protected virtual ulong GetPieceMoves(ulong position, MovingDirections direction, Board board)
+    /// <summary>
+    /// Gets the bitboard representation of the possible moves for the piece based on its current
+    /// position and moving direction.
+    /// </summary>
+    /// <param name="position">The bitboard representing the current position of the piece.</param>
+    /// <param name="direction">The moving direction(s) to calculate the moves for.</param>
+    /// <param name="board">The current state of the chess board.</param>
+    /// <returns>A bitboard (ulong) where each bit represents a possible move destination square.
+    /// A set bit indicates that the piece can move to that square.</returns>
+    /// <remarks>This method works for pieces that can move an unlimited number of squares in the same
+    /// direction (rook, bishop and queen). Overrided for other pieces.</remarks>
+    protected virtual ulong GetPieceMovesOrAttacks(
+        ulong position,
+        MovingDirections direction,
+        Board board,
+        bool attacks = false)
     {
         ulong result = 0;
         ulong originalPosition = position;
@@ -89,7 +106,7 @@ public abstract class PieceBase
                 }
                 else
                 {
-                    if (board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
+                    if (attacks || board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
                     {
                         result |= newPosition;
                     }
@@ -107,6 +124,13 @@ public abstract class PieceBase
         return result;
     }
 
+    /// <summary>
+    /// Removes illegal moves from a set of potential move destinations.
+    /// </summary>
+    /// <param name="from">The bitboard representing the starting square of the move.</param>
+    /// <param name="toLocations">The bitboard representing potential destination squares.</param>
+    /// <param name="board">The current state of the chess board.</param>
+    /// <returns>A bitboard (ulong) representing the legal move destinations after removing illegal ones.</returns>
     protected ulong PurgeIlegalMoves(
         ulong from,
         ulong toLocations,

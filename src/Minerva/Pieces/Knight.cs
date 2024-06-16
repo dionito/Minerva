@@ -42,10 +42,16 @@ public class Knight : PieceBase
     {
     }
 
+    public override ulong GetPieceAttacks(ulong position, Board board)
+    {
+        var pieceAttacks = this.GetKnightMovesOrAttacks(position, board);
+        return this.PurgeIlegalMoves(position, pieceAttacks, board);
+    }
+
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        var moves = this.GetKnightMoves(position, board);
-        return this.PurgeIlegalMoves(position, moves, board);
+        var pieceMoves = this.GetKnightMovesOrAttacks(position, board);
+        return this.PurgeIlegalMoves(position, pieceMoves, board);
     }
 
     /// <summary>
@@ -54,7 +60,7 @@ public class Knight : PieceBase
     /// <param name="position">The current position of the knight.</param>
     /// <param name="board">The current state of the chess board.</param>
     /// <returns>An enumerable collection of squares representing all the valid moves for the knight.</returns>
-    protected ulong GetKnightMoves(ulong position, Board board)
+    protected ulong GetKnightMovesOrAttacks(ulong position, Board board, bool attacks = false)
     {
         // Possible perf. gains here by using the bit shifts directly, rather than
         // calling the Move method with KnightMoves. However, the Move method is more readable.
@@ -64,7 +70,7 @@ public class Knight : PieceBase
             ulong newPosition = position.Move(knightMove);
             if (newPosition != 0)
             {
-                if ((board.OccupiedBitBoard & newPosition) == 0 || 
+                if (attacks || (board.OccupiedBitBoard & newPosition) == 0 || 
                     board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
                 {
                     result |= newPosition;

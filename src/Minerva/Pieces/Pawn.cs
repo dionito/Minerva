@@ -39,10 +39,9 @@ public class Pawn : PieceBase
             : new[] { MovingDirections.DownLeft, MovingDirections.DownRight };
     }
 
-    public override ulong GetPieceMoves(ulong position, Board board)
+    private ulong GetPawnAttacks(ulong position, Board board)
     {
-        var moves = this.GetPawnMoves(position, board);
-        return this.PurgeIlegalMoves(position, moves, board);
+        throw new NotImplementedException();
     }
 
     protected ulong GetPawnMoves(ulong position, Board board)
@@ -84,5 +83,17 @@ public class Pawn : PieceBase
         }
 
         return result;
+    }
+
+    public override ulong GetPieceAttacks(ulong position, Board board)
+    {
+        ulong attacks = this.GetPawnAttacks(position, board);
+        return this.PurgeIlegalMoves(position, attacks, board);
+    }
+
+    public override ulong GetPieceMoves(ulong position, Board board)
+    {
+        ulong moves = this.GetPawnMoves(position, board);
+        return this.PurgeIlegalMoves(position, moves, board);
     }
 }

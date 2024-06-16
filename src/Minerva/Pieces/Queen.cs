@@ -28,9 +28,18 @@ public class Queen : PieceBase
     {
     }
 
+    public override ulong GetPieceAttacks(ulong position, Board board)
+    {
+        var attacks = this.GetPieceMovesOrAttacks(
+            position,
+            MovingDirections.KingAndQueen,
+            board);
+        return this.PurgeIlegalMoves(position, attacks, board);
+    }
+
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        var moves = this.GetPieceMoves(
+        var moves = this.GetPieceMovesOrAttacks(
             position,
             MovingDirections.KingAndQueen,
             board);

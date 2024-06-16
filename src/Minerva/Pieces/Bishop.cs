@@ -28,11 +28,22 @@ public class Bishop : PieceBase
     {
     }
 
+    public override ulong GetPieceAttacks(ulong position, Board board)
+    {
+        ulong pieceAttacks = this.GetPieceMovesOrAttacks(
+            position,
+            MovingDirections.Bishop,
+            board,
+            attacks: true);
+        return this.PurgeIlegalMoves(position, pieceAttacks, board);
+    }
+
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        return this.GetPieceMoves(
+        ulong pieceMoves = this.GetPieceMovesOrAttacks(
             position,
             MovingDirections.Bishop,
             board);
+        return this.PurgeIlegalMoves(position, pieceMoves, board);
     }
 }

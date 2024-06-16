@@ -18,8 +18,25 @@ namespace Minerva.Pieces;
 /// <summary>
 /// Factory class for creating chess piece objects.
 /// </summary>
-public class PieceFactory
+public static class PieceFactory
 {
+    private static readonly Dictionary<char, PieceBase> AllPieces = new()
+    {
+        { 'r', new Rook(Color.Black) },
+        { 'n', new Knight(Color.Black) },
+        { 'b', new Bishop(Color.Black) },
+        { 'q', new Queen(Color.Black) },
+        { 'k', new King(Color.Black) },
+        { 'p', new Pawn(Color.Black) },
+        { 'R', new Rook(Color.White) },
+        { 'N', new Knight(Color.White) },
+        { 'B', new Bishop(Color.White) },
+        { 'Q', new Queen(Color.White) },
+        { 'K', new King(Color.White) },
+        { 'P', new Pawn(Color.White) },
+        { ' ', new NoPiece() },
+    };
+
     /// <summary>
     /// Creates a chess piece of the specified type and color.
     /// </summary>
@@ -27,34 +44,16 @@ public class PieceFactory
     /// <param name="pieceColor">The color of the piece to create.</param>
     /// <returns>A new chess piece of the specified type and color.</returns>
     /// <exception cref="ArgumentException">Thrown when an invalid piece type is provided.</exception>
-    public static PieceBase CreatePiece(PieceType pieceType, Color pieceColor)
+    public static PieceBase GetPiece(PieceType pieceType, Color pieceColor)
     {
-        return pieceType switch
-        {
-            PieceType.Bishop => new Bishop(pieceColor),
-            PieceType.Queen => new Queen(pieceColor),
-            PieceType.Rook => new Rook(pieceColor),
-            PieceType.King => new King(pieceColor),
-            PieceType.Knight => new Knight(pieceColor),
-            PieceType.Pawn => new Pawn(pieceColor),
-            PieceType.None => new NoPiece(),
-            _ => throw new ArgumentException("Invalid piece type."),
-        };
+        var pieceChar = (char)pieceType;
+        return pieceColor == Color.White
+            ? AllPieces[char.ToUpper(pieceChar)]
+            : AllPieces[pieceChar];
     }
 
-    public static PieceBase CreatePiece(char pieceType, Color pieceColor)
+    public static PieceBase GetPiece(char pieceType)
     {
-        pieceType = char.ToLower(pieceType);
-        return pieceType switch
-        {
-            'b' => new Bishop(pieceColor),
-            'q' => new Queen(pieceColor),
-            'r' => new Rook(pieceColor),
-            'k' => new King(pieceColor),
-            'n' => new Knight(pieceColor),
-            'p' => new Pawn(pieceColor),
-            ' ' => new NoPiece(),
-            _ => throw new ArgumentException("Invalid piece type."),
-        };
+        return AllPieces[pieceType];
     }
 }

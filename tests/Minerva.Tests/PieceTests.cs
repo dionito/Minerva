@@ -14,6 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 using Minerva.Pieces;
+using System.Reflection;
 
 namespace Minerva.Tests;
 
@@ -50,7 +51,7 @@ public class PieceTests
     public void BishopGetPossibleMovesBitBoardReturnsCorrectMovesInEmptyBoard()
     {
         var bishop = new Bishop(Color.White);
-        var board = new Board();
+        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/3B4/8/8/8 w - - 0 1"); // Bishop in d4
         var position = new Square("d4");
 
         ulong possibleMoves = bishop.GetPieceMoves(position.BitBoard, board);
@@ -149,17 +150,20 @@ public class PieceTests
     }
 
     [TestMethod]
-    [DataRow(PieceType.Bishop, DisplayName = "Bishop")]
-    [DataRow(PieceType.King, DisplayName = "King")]
-    [DataRow(PieceType.Knight, DisplayName = "Knight")]
-    [DataRow(PieceType.Pawn, DisplayName = "Pawn")]
-    [DataRow(PieceType.Queen, DisplayName = "Queen")]
-    [DataRow(PieceType.Rook, DisplayName = "Rook")]
-    public void PiecesCannotBeCreatedWithoutAColor(PieceType pieceType)
+    [DataRow(typeof(Bishop), DisplayName = "Bishop")]
+    [DataRow(typeof(King), DisplayName = "King")]
+    [DataRow(typeof(Knight), DisplayName = "Knight")]
+    [DataRow(typeof(Pawn), DisplayName = "Pawn")]
+    [DataRow(typeof(Queen), DisplayName = "Queen")]
+    [DataRow(typeof(Rook), DisplayName = "Rook")]
+    public void PiecesCannotBeCreatedWithoutAColor(Type pieceType)
     {
+        ConstructorInfo? constructor = pieceType.GetConstructor(new[] { typeof(Color) });
+        Assert.IsNotNull(constructor, "constructor != null");
         Exception exception =
-            Assert.ThrowsException<ArgumentException>(() => PieceFactory.CreatePiece(pieceType, Color.None));
-        Assert.AreEqual($"Invalid piece color: '{Color.None}'. (Parameter 'color')", exception.Message);
+            Assert.ThrowsException<TargetInvocationException>(() => constructor.Invoke(new object[] { Color.None }));
+        Assert.IsInstanceOfType(exception.InnerException, typeof(ArgumentException));
+        Assert.AreEqual($"Invalid piece color: '{Color.None}'. (Parameter 'color')", exception.InnerException.Message);
     }
 
     [TestMethod]
@@ -171,7 +175,7 @@ public class PieceTests
             {
                 Name = "White queen can take black pieces, but not white ones",
                 Fen = "3k4/8/8/8/5K2/8/qB6/Qn6 w - - 0 1",
-                Piece = PieceFactory.CreatePiece(PieceType.Queen, Color.White),
+                Piece = PieceFactory.GetPiece(PieceType.Queen, Color.White),
                 Position = new Square("a1"),
                 ExpectedMoves =
                     new Square("a2").BitBoard |
@@ -181,7 +185,7 @@ public class PieceTests
             {
                 Name = "Black queen can take black pieces, but not black ones",
                 Fen = "3K4/8/8/8/5k2/8/Qb6/qN6 b - - 0 1",
-                Piece = PieceFactory.CreatePiece(PieceType.Queen, Color.Black),
+                Piece = PieceFactory.GetPiece(PieceType.Queen, Color.Black),
                 Position = new Square("a1"),
                 ExpectedMoves =
                     new Square("a2").BitBoard |
@@ -191,7 +195,7 @@ public class PieceTests
             {
                 Name = "White king can take black pieces, but not white ones",
                 Fen = "3k4/8/8/8/5Q2/8/qB6/Kn6 w - - 0 1",
-                Piece = PieceFactory.CreatePiece(PieceType.King, Color.White),
+                Piece = PieceFactory.GetPiece(PieceType.King, Color.White),
                 Position = new Square("a1"),
                 ExpectedMoves =
                     new Square("a2").BitBoard |
@@ -201,7 +205,7 @@ public class PieceTests
             {
                 Name = "Black king can take black pieces, but not white ones",
                 Fen = "3K4/8/8/8/5q2/8/Qb6/kN6 b - - 0 1",
-                Piece = PieceFactory.CreatePiece(PieceType.King, Color.Black),
+                Piece = PieceFactory.GetPiece(PieceType.King, Color.Black),
                 Position = new Square("a1"),
                 ExpectedMoves =
                     new Square("a2").BitBoard |
@@ -211,7 +215,7 @@ public class PieceTests
             {
                 Name = "White knight can take black pieces, but not white ones",
                 Fen = "rnbqkbnr/pppppppp/8/2N5/8/1P1P4/P1P1PPPP/R1BQKBNR w KQkq - 0 1",
-                Piece = PieceFactory.CreatePiece(PieceType.Knight, Color.White),
+                Piece = PieceFactory.GetPiece(PieceType.Knight, Color.White),
                 Position = new Square("c5"),
                 ExpectedMoves =
                     new Square("a4").BitBoard |
@@ -225,7 +229,7 @@ public class PieceTests
             {
                 Name = "Black knight can take white pieces, but not black ones",
                 Fen = "r1bqkbnr/pppppppp/8/2n5/8/1P1P4/P1P1PPPP/RNBQKBNR b KQkq - 0 1",
-                Piece = PieceFactory.CreatePiece(PieceType.Knight, Color.Black),
+                Piece = PieceFactory.GetPiece(PieceType.Knight, Color.Black),
                 Position = new Square("c5"),
                 ExpectedMoves =
                     new Square("a4").BitBoard |
@@ -239,7 +243,7 @@ public class PieceTests
             {
                 Name = "White pawn can take black pieces, but not white ones",
                 Fen = "rnbqkbnr/ppp1pppp/8/8/8/3p1N2/PPPPPPPP/RNBQKB1R w KQkq - 0 1",
-                Piece = PieceFactory.CreatePiece(PieceType.Pawn, Color.White),
+                Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.White),
                 Position = new Square("e2"),
                 ExpectedMoves =
                     new Square("d3").BitBoard |
@@ -250,7 +254,7 @@ public class PieceTests
             {
                 Name = "Black pawn can take white pieces, but not black ones",
                 Fen = "rnbqkb1r/pppppppp/3P1n2/8/8/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
-                Piece = PieceFactory.CreatePiece(PieceType.Pawn, Color.Black),
+                Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.Black),
                 Position = new Square("e7"),
                 ExpectedMoves =
                     new Square("d6").BitBoard |
@@ -261,7 +265,7 @@ public class PieceTests
             {
                 Name = "White pawn can take black pieces, but not white ones, opposite side",
                 Fen = "rnbqkbnr/pppp1ppp/8/8/8/2N1p3/PPPPPPPP/R1BQKBNR w KQkq - 0 1",
-                Piece = PieceFactory.CreatePiece(PieceType.Pawn, Color.White),
+                Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.White),
                 Position = new Square("d2"),
                 ExpectedMoves =
                     new Square("d3").BitBoard |
@@ -272,7 +276,7 @@ public class PieceTests
             {
                 Name = "Black pawn can take white pieces, but not black ones, opposite side",
                 Fen = "r1bqkbnr/pppppppp/2n1P3/8/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
-                Piece = PieceFactory.CreatePiece(PieceType.Pawn, Color.Black),
+                Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.Black),
                 Position = new Square("d7"),
                 ExpectedMoves =
                     new Square("d5").BitBoard |
@@ -283,7 +287,7 @@ public class PieceTests
             {
                 Name = "White pawn can take black pawn en passant",
                 Fen = "rnbqkbnr/pppp1ppp/8/3Pp3/4P3/8/PPP2PPP/RNBQKBNR w KQkq e6 0 2",
-                Piece = PieceFactory.CreatePiece(PieceType.Pawn, Color.White),
+                Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.White),
                 Position = new Square("d5"),
                 ExpectedMoves = new Square("e6").BitBoard | new Square("d6").BitBoard,
             },
@@ -291,7 +295,7 @@ public class PieceTests
             {
                 Name = "Black pawn can take white pawn en passant",
                 Fen = "rnbqkbnr/pp1ppppp/8/8/2pPPP2/8/PPP3PP/RNBQKBNR b KQkq d3 0 3",
-                Piece = PieceFactory.CreatePiece(PieceType.Pawn, Color.Black),
+                Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.Black),
                 Position = new Square("c4"),
                 ExpectedMoves = new Square("c3").BitBoard | new Square("d3").BitBoard,
             },
@@ -377,7 +381,7 @@ public class PieceTests
     {
         var board = new Board();
         board.InitializeGameStartingBoard();
-        PieceBase piece = PieceFactory.CreatePiece(pieceType, pieceColor);
+        PieceBase piece = PieceFactory.GetPiece(pieceType, pieceColor);
         Square square = new Square(position);
         Assert.AreEqual(0ul, piece.GetPieceMoves(square.BitBoard, board));
     }
@@ -398,7 +402,7 @@ public class PieceTests
     [DataRow(PieceType.None, Color.None, " ")]
     public void ToStringReturnsCorrectString(PieceType pieceType, Color color, string expected)
     {
-        var piece = PieceFactory.CreatePiece(pieceType, color);
+        var piece = PieceFactory.GetPiece(pieceType, color);
         Assert.AreEqual(expected, piece.ToString());
     }
 }
