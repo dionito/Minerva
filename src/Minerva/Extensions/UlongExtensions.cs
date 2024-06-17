@@ -46,6 +46,16 @@ public static class UlongExtensions
     }
 
     /// <summary>
+    /// Determines if exactly one bit is set in the bitboard.
+    /// </summary>
+    /// <param name="bitboard">The bitboard to check.</param>
+    /// <returns><c>true</c> if exactly one bit is set; otherwise, <c>false</c>.</returns>
+    public static bool IsSingleBitSet(this ulong bitboard)
+    {
+        return bitboard != 0 && (bitboard & (bitboard - 1)) == 0;
+    }
+
+    /// <summary>
     /// Moves to a position one square down.
     /// </summary>
     /// <param name="position">The bitboard position to move.</param>

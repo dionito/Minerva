@@ -51,7 +51,7 @@ public class PieceTests
     public void BishopGetPossibleMovesAndAttacksBitBoardsAreTheSameOnEmptyBoard()
     {
         var bishop = PieceFactory.GetPiece(PieceType.Bishop, Color.White);
-        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/3B4/8/8/8 w - - 0 1"); // Bishop in d4
+        var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/3B4/8/8/7K w - - 0 1"); // Bishop in d4
         var position = new Square("d4");
 
         ulong possibleMoves = bishop.GetPieceMoves(position.BitBoard, board);
@@ -83,7 +83,7 @@ public class PieceTests
     public void KingGetPossibleMovesAndAttacksBitBoardsAreTheSameOnEmptyBoard()
     {
         var king = PieceFactory.GetPiece(PieceType.King, Color.White);
-        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/3K4/8/8/8 w - - 0 1"); // King in d4
+        var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/3K4/8/8/8 w - - 0 1"); // King in d4
         var position = new Square("d4");
 
         ulong possibleMoves = king.GetPieceMoves(position.BitBoard, board);
@@ -113,7 +113,7 @@ public class PieceTests
     public void KnightGetPossibleMovesAndAttacksBitBoardsAreTheSameOnEmptyBoard()
     {
         var knight = PieceFactory.GetPiece(PieceType.Knight, Color.White);
-        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/3N4/8/8/8 w - - 0 1"); // Knigth in d4
+        var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/3N4/8/8/7K w - - 0 1"); // Knigth in d4
         var position = new Square("d4");
 
         ulong possibleMoves = knight.GetPieceMoves(position.BitBoard, board);
@@ -143,7 +143,7 @@ public class PieceTests
     public void PawnGetPossibleAttacksBitBoardReturnsCorrectPositionsInEmptyBoard()
     {
         var pawn = PieceFactory.GetPiece(PieceType.Pawn, Color.White);
-        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/8/8/3P4/8 w - - 0 1"); // Knigth in d4
+        var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/8/8/3P4/7K w - - 0 1"); // Knigth in d4
         var position = new Square("d2");
 
         ulong attacks = pawn.GetPieceAttacks(position.BitBoard, board);
@@ -159,7 +159,7 @@ public class PieceTests
     public void PawnGetPossibleMovesBitBoardReturnsCorrectMovesInEmptyBoard()
     {
         var pawn = PieceFactory.GetPiece(PieceType.Pawn, Color.White);
-        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/8/8/3P4/8 w - - 0 1"); // Knigth in d4
+        var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/8/8/3P4/7K w - - 0 1"); // Knigth in d4
         var position = new Square("d2");
 
         ulong possibleMoves = pawn.GetPieceMoves(position.BitBoard, board);
@@ -462,7 +462,7 @@ public class PieceTests
 
         foreach (var scenario in scenarios)
         {
-            Console.WriteLine($"Starting {scenario.Name}.");
+            Console.WriteLine($"Starting: {scenario.Name}.");
             Board board = ForsythEdwardsNotation.GenerateBoard(scenario.Fen);
             ulong possibleMoves = scenario.Piece.GetPieceMoves(scenario.Position.BitBoard, board);
             Assert.AreEqual(scenario.ExpectedMoves, possibleMoves, scenario.Name);
@@ -483,7 +483,7 @@ public class PieceTests
     public void QueenGetPossibleMovesAndAttacksBitBoardsAreTheSameOnEmptyBoard()
     {
         var queen = PieceFactory.GetPiece(PieceType.Queen, Color.White);
-        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/3Q4/8/8/8 w - - 0 1"); // Queen in d4
+        var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/3Q4/8/8/7K w - - 0 1"); // Queen in d4
         var position = new Square("d4");
 
         ulong possibleMoves = queen.GetPieceMoves(position.BitBoard, board);
@@ -517,7 +517,7 @@ public class PieceTests
     public void RookGetPossibleMovesAndAttacksBitBoardsAreTheSameOnEmptyBoard()
     {
         var rook = PieceFactory.GetPiece(PieceType.Rook, Color.Black);
-        var board = ForsythEdwardsNotation.GenerateBoard("8/8/8/8/3r4/8/8/8 w - - 0 1"); // rook in d4
+        var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/3r4/8/8/7K w - - 0 1"); // rook in d4
         var position = new Square("d4");
 
         ulong possibleMoves = rook.GetPieceMoves(position.BitBoard, board);

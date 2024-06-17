@@ -114,6 +114,38 @@ public class ForsythEdwardsNotationTests
     }
 
     [TestMethod]
+    [DataRow(
+        "8/8/8/4k3/2K2q2/3N4/Qb6/8 b - - 0 1",
+        "Invalid FEN string. The side to move can take the opposite king. (Parameter 'fen')",
+        DisplayName = "Black is moving and can capture enemy king.")]
+    [DataRow(
+        "8/8/8/4k3/2K2q2/3N4/Qb6/8 w - - 0 1",
+        "Invalid FEN string. The side to move can take the opposite king. (Parameter 'fen')",
+        DisplayName = "White is moving and can capture enemy king.")]
+    [DataRow(
+        "8/8/2k5/5k2/2K5/8/8/8 w - - 0 1",
+        "Invalid FEN string. There must be only one king for each side. (Parameter 'fen')",
+        DisplayName = "More than one king for black.")]
+    [DataRow(
+        "8/8/2K5/5k2/2K5/8/8/8 w - - 0 1",
+        "Invalid FEN string. There must be only one king for each side. (Parameter 'fen')",
+        DisplayName = "More than one king for white.")]
+    [DataRow(
+        "3K4/8/8/8/5q2/8/Qb6/1N6 w - - 0 1",
+        "Invalid FEN string. The kings must be present on the board for both sides. (Parameter 'fen')",
+        DisplayName = "No black king on board.")]
+    [DataRow(
+        "8/8/8/8/5q2/8/Qb6/kN6 w - - 0 1",
+        "Invalid FEN string. The kings must be present on the board for both sides. (Parameter 'fen')",
+        DisplayName = "No white king on board.")]
+    public void TestInvalidFenStrings(string fen, string message)
+    {
+        Exception exception =
+            Assert.ThrowsException<ArgumentException>(() => ForsythEdwardsNotation.GenerateBoard(fen));
+        Assert.AreEqual(message, exception.Message);
+    }
+
+    [TestMethod]
     public void GenerateBoardCreatesCorrectStartingBoardFromValidFen()
     {
         string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";

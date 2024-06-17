@@ -288,9 +288,14 @@ public class Board
         this.UpdateBitBoards();
     }
 
-    public bool IsCheck()
+    public bool IsCheck(Color color = Color.None)
     {
-        if (this.ActiveColor == 'w')
+        if (color == Color.None)
+        {
+            color = this.ActiveColor.ToColor();
+        }
+
+        if (color == Color.White)
         {
             return (this.BlackAttacks & this.WhitePieces['K']) != 0;
         }

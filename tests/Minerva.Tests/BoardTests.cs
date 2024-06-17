@@ -85,6 +85,15 @@ public class BoardTests : TestBase
     }
 
     [TestMethod]
+    [DataRow("3K4/8/8/8/5q2/8/Qb6/kN6 b - - 0 1", true)]
+    [DataRow("8/8/8/4k3/2K2q2/8/Qb6/1N6 w - - 0 1", true)]
+    public void IsCheckTests(string fen, bool result)
+    {
+        Board board = ForsythEdwardsNotation.GenerateBoard(fen);
+        Assert.AreEqual(result, board.IsCheck());
+    }
+
+    [TestMethod]
     public void BlackPiecesBitBoardIsCorrectOnEmptyBoardCreation()
     {
         var board = new Board();
