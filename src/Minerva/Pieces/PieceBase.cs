@@ -117,8 +117,11 @@ public abstract class PieceBase
                 position = newPosition;
                 newPosition = position.Move(singleDirection);
             }
+        }
 
-            position = originalPosition;
+        if (!attacks)
+        {
+            result = this.PurgeIlegalMoves(originalPosition, result, board);
         }
 
         return result;
@@ -136,20 +139,6 @@ public abstract class PieceBase
         ulong toLocations,
         Board board)
     {
-        ulong to = 1ul;
-        for (int i = 0; i < 64; i++)
-        {
-            if ((toLocations & to) != 0)
-            {
-                if (!board.IsMoveLegal(from, to, this.Color))
-                {
-                    toLocations &= ~to;
-                }
-            }
-
-            to = to << 1;
-        }
-
         return toLocations;
     }
 

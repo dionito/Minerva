@@ -87,10 +87,10 @@ public class BoardTests : TestBase
     [TestMethod]
     [DataRow("3K4/8/8/8/5q2/8/Qb6/kN6 b - - 0 1", true)]
     [DataRow("8/8/8/4k3/2K2q2/8/Qb6/1N6 w - - 0 1", true)]
-    public void IsCheckTests(string fen, bool result)
+    public void IsCheckTests(string fen, bool expected)
     {
         Board board = ForsythEdwardsNotation.GenerateBoard(fen);
-        Assert.AreEqual(result, board.IsCheck());
+        Assert.AreEqual(expected, board.Check);
     }
 
     [TestMethod]

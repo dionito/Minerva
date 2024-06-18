@@ -93,18 +93,17 @@ public class Pawn : PieceBase
             }
         }
 
+        result = this.PurgeIlegalMoves(position, result, board);
         return result;
     }
 
     public override ulong GetPieceAttacks(ulong position, Board board)
     {
-        ulong attacks = this.GetPawnAttacks(position, board);
-        return this.PurgeIlegalMoves(position, attacks, board);
+        return this.GetPawnAttacks(position, board);
     }
 
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        ulong moves = this.GetPawnMoves(position, board);
-        return this.PurgeIlegalMoves(position, moves, board);
+        return this.GetPawnMoves(position, board);
     }
 }

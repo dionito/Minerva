@@ -118,7 +118,7 @@ public static class ForsythEdwardsNotation
         }
         
         board.SetFullmoveNumber(fullmoveNumber);
-
+        board.UpdateBoardStatus();
         ValidateBoard(board, fen);
 
         return board;
@@ -143,7 +143,7 @@ public static class ForsythEdwardsNotation
         }
 
         // The side to move cannot take the opposite king.
-        if (board.IsCheck(board.ActiveColor.ToColor().Opposite()))
+        if (board.CanTakeOppositeKing)
         {
             throw new ArgumentException(
                 "Invalid FEN string. The side to move can take the opposite king.",

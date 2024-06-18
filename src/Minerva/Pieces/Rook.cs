@@ -30,20 +30,18 @@ public class Rook : PieceBase
 
     public override ulong GetPieceAttacks(ulong position, Board board)
     {
-        var moves = this.GetPieceMovesOrAttacks(
+        return this.GetPieceMovesOrAttacks(
             position,
             MovingDirections.Rook,
             board,
             attacks: true);
-        return this.PurgeIlegalMoves(position, moves, board);
     }
 
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        var moves = this.GetPieceMovesOrAttacks(
+        return this.GetPieceMovesOrAttacks(
             position,
             MovingDirections.Rook,
             board);
-        return this.PurgeIlegalMoves(position, moves, board);
     }
 }

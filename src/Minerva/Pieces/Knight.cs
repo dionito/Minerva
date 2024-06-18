@@ -44,14 +44,12 @@ public class Knight : PieceBase
 
     public override ulong GetPieceAttacks(ulong position, Board board)
     {
-        var pieceAttacks = this.GetKnightMovesOrAttacks(position, board);
-        return this.PurgeIlegalMoves(position, pieceAttacks, board);
+        return this.GetKnightMovesOrAttacks(position, board, attacks: true);
     }
 
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        var pieceMoves = this.GetKnightMovesOrAttacks(position, board);
-        return this.PurgeIlegalMoves(position, pieceMoves, board);
+        return this.GetKnightMovesOrAttacks(position, board);
     }
 
     /// <summary>
@@ -76,6 +74,11 @@ public class Knight : PieceBase
                     result |= newPosition;
                 }
             }
+        }
+
+        if (!attacks)
+        {
+            result = this.PurgeIlegalMoves(position, result, board);
         }
 
         return result;

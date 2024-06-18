@@ -22,22 +22,6 @@ namespace Minerva.Tests;
 public class PieceTests
 {
     [TestMethod]
-    public void NoPieceConstructorSetsCorrectPieceAndTypeColor()
-    {
-        var none = PieceFactory.GetPiece(PieceType.None, Color.None);
-        Assert.AreEqual(PieceType.None, none.PieceType, "Piece type.");
-        Assert.AreEqual(Color.None, none.Color, "Color");
-    }
-
-    [TestMethod]
-    public void NoPieceGetsNoMoves()
-    {
-        var none = PieceFactory.GetPiece(PieceType.None, Color.None);
-        var moves = none.GetPieceMoves(1ul, new Board());
-        Assert.AreEqual(0ul, moves, "Moves");
-    }
-
-    [TestMethod]
     [DataRow(Color.White, DisplayName = "White")]
     [DataRow(Color.Black, DisplayName = "Black")]
     public void BishopConstructorSetsCorrectPieceTypeAndColor(Color color)
@@ -130,6 +114,22 @@ public class PieceTests
     }
 
     [TestMethod]
+    public void NoPieceConstructorSetsCorrectPieceAndTypeColor()
+    {
+        var none = PieceFactory.GetPiece(PieceType.None, Color.None);
+        Assert.AreEqual(PieceType.None, none.PieceType, "Piece type.");
+        Assert.AreEqual(Color.None, none.Color, "Color");
+    }
+
+    [TestMethod]
+    public void NoPieceGetsNoMoves()
+    {
+        var none = PieceFactory.GetPiece(PieceType.None, Color.None);
+        var moves = none.GetPieceMoves(1ul, new Board());
+        Assert.AreEqual(0ul, moves, "Moves");
+    }
+
+    [TestMethod]
     [DataRow(Color.White, DisplayName = "White")]
     [DataRow(Color.Black, DisplayName = "Black")]
     public void PawnConstructorSetsCorrectPieceTypeAndColor(Color color)
@@ -197,7 +197,9 @@ public class PieceTests
                 Name = "Black knight",
                 Piece = PieceFactory.GetPiece(PieceType.Knight, Color.Black),
                 Position = new Square("b8"),
-                ExpectedAttacks = new Square("a6").BitBoard | new Square("c6").BitBoard,
+                ExpectedAttacks = new Square("a6").BitBoard | 
+                    new Square("c6").BitBoard |
+                    new Square("d7").BitBoard,
             },
             new
             {
@@ -278,7 +280,9 @@ public class PieceTests
                 Name = "White knight",
                 Piece = PieceFactory.GetPiece(PieceType.Knight, Color.White),
                 Position = new Square("b1"),
-                ExpectedAttacks = new Square("a3").BitBoard | new Square("c3").BitBoard,
+                ExpectedAttacks = new Square("a3").BitBoard |
+                    new Square("c3").BitBoard |
+                    new Square("d2").BitBoard,
             },
             new
             {
@@ -510,7 +514,6 @@ public class PieceTests
         var rook = PieceFactory.GetPiece(PieceType.Rook, color);
         Assert.AreEqual(PieceType.Rook, rook.PieceType);
         Assert.AreEqual(color, rook.Color);
-
     }
 
     [TestMethod]

@@ -85,7 +85,7 @@ public class Board
     /// <summary>
     /// Represents the bitboards for the black pieces.
     /// </summary>
-    public Dictionary<char, ulong> BlackPieces { get; } = new()
+    public Dictionary<char, ulong> BlackPieces { get; private set; } = new()
     {
         { 'b', 0ul },
         { 'n', 0ul },
@@ -107,6 +107,8 @@ public class Board
     /// </summary>
     public ulong BlackPiecesBitBoard { get; private set; }
 
+    public bool CanTakeOppositeKing { get; set; }
+
     /// <summary>
     /// Gets or sets the castling rights for both white and black.
     /// The rights are represented as a string with the following possible values:
@@ -117,6 +119,8 @@ public class Board
     /// "-"  - Neither side can castle
     /// </summary>
     public string CastlingRights { get; private set; } = "KQkq";
+
+    public bool Check { get; private set; } = false;
 
     /// <summary>
     /// Gets the en passant target square in Forsyth-Edwards Notation (FEN).
@@ -156,7 +160,7 @@ public class Board
     /// <summary>
     /// Represents the bitboards for the white pieces.
     /// </summary>
-    public Dictionary<char, ulong> WhitePieces { get; } = new()
+    public Dictionary<char, ulong> WhitePieces { get; private set;} = new()
     {
         { 'B', 0ul },
         { 'N', 0ul },
@@ -285,22 +289,7 @@ public class Board
         // Pawns are placed on a2 to h2
         this.WhitePieces['P'] = Rank2;
 
-        this.UpdateBitBoards();
-    }
-
-    public bool IsCheck(Color color = Color.None)
-    {
-        if (color == Color.None)
-        {
-            color = this.ActiveColor.ToColor();
-        }
-
-        if (color == Color.White)
-        {
-            return (this.BlackAttacks & this.WhitePieces['K']) != 0;
-        }
-
-        return (this.WhiteAttacks & this.BlackPieces['k']) != 0;
+        this.UpdateBoardStatus();
     }
 
     /// <summary>
@@ -327,41 +316,6 @@ public class Board
     public bool IsEmptySquare(ulong square)
     {
         return (this.OccupiedBitBoard & square) == 0;
-    }
-
-    /// <summary>
-    /// Determines if a move from one square to another is legal for a given color.
-    /// </summary>
-    /// <param name="from">The bitboard representing the starting square of the move.</param>
-    /// <param name="to">The bitboard representing the target square of the move.</param>
-    /// <param name="color">The color of the piece making the move.</param>
-    /// <returns>true if the move is legal; otherwise, false.</returns>
-    public bool IsMoveLegal(ulong from, ulong to, Color color)
-    {
-        if (from == to || from == 0 || to == 0)
-        {
-            return false;
-        }
-
-        char piece = this.GetPieceAt(from, color);
-
-        var whitePieces = new Dictionary<char, ulong>(this.WhitePieces);
-        var blackPieces = new Dictionary<char, ulong>(this.BlackPieces);
-
-        MovePiece(piece, color == Color.White ? whitePieces : blackPieces, from, to);
-        return true;
-        // need to calculate if the king is in check after the move
-    }
-
-    static void MovePiece(char piece, Dictionary<char, ulong> pieces, ulong from, ulong to)
-    {
-        if ((pieces[piece] & from) != from)
-        {
-            throw new ArgumentException("Invalid move!", nameof(from));
-        }
-
-        pieces[piece] ^= from;
-        pieces[piece] ^= to;
     }
 
     /// <summary>
@@ -534,7 +488,7 @@ public class Board
             this.WhitePieces[piece] |= targetBitBoard;
         }
 
-        this.UpdateBitBoards();
+        this.UpdateBoardStatus();
     }
 
     /// <summary>
@@ -613,30 +567,58 @@ public class Board
         };
     }
 
-    /// <summary>
-    /// Updates the bitboards for black and white pieces.
-    /// This method should be called whenever the pieces change.
-    /// It performs a bitwise OR operation on the bitboards of all pieces of the same color.
-    /// </summary>
-    void UpdateBitBoards()
+    private void UpdateAttacks()
     {
-        this.BlackPiecesBitBoard = 0;
         this.BlackAttacks = 0;
-        this.WhitePiecesBitBoard = 0;
         this.WhiteAttacks = 0;
 
-        foreach (KeyValuePair<char, ulong> pieceKvp in this.BlackPieces)
+        foreach (KeyValuePair<char, ulong> pieceKvp in this.BlackPieces.Where(p => p.Value != 0))
         {
-            this.BlackPiecesBitBoard |= pieceKvp.Value;
             var piece = PieceFactory.GetPiece(pieceKvp.Key);
-            this.BlackAttacks |= piece.GetPieceMoves(pieceKvp.Value, this);
+            this.BlackAttacks |= piece.GetPieceAttacks(pieceKvp.Value, this);
         }
 
-        foreach (var pieceKvp in this.WhitePieces)
+        foreach (KeyValuePair<char, ulong> pieceKvp in this.WhitePieces.Where(p => p.Value != 0))
+        {
+            var piece = PieceFactory.GetPiece(pieceKvp.Key);
+            this.WhiteAttacks |= piece.GetPieceAttacks(pieceKvp.Value, this);
+        }
+    }
+
+    private void UpdateBitBoards()
+    {
+        this.BlackPiecesBitBoard = 0;
+        this.WhitePiecesBitBoard = 0;
+
+        foreach (KeyValuePair<char, ulong> pieceKvp in this.BlackPieces.Where(p => p.Value != 0))
+        {
+            this.BlackPiecesBitBoard |= pieceKvp.Value;
+        }
+
+        foreach (KeyValuePair<char, ulong> pieceKvp in this.WhitePieces.Where(p => p.Value != 0))
         {
             this.WhitePiecesBitBoard |= pieceKvp.Value;
-            var piece = PieceFactory.GetPiece(pieceKvp.Key);
-            this.WhiteAttacks |= piece.GetPieceMoves(pieceKvp.Value, this);
+        }
+    }
+
+    public void UpdateBoardStatus()
+    {
+        this.UpdateBitBoards();
+        this.UpdateAttacks();
+        this.UpdateCheckAndIllegalCheck();
+    }
+
+    void UpdateCheckAndIllegalCheck()
+    {
+        if (this.ActiveColor == 'w')
+        {
+            this.Check = (this.BlackAttacks & this.WhitePieces['K']) != 0;
+            this.CanTakeOppositeKing = (this.WhiteAttacks & this.BlackPieces['k']) != 0;
+        }
+        else
+        {
+            this.Check = (this.WhiteAttacks & this.BlackPieces['k']) != 0;
+            this.CanTakeOppositeKing = (this.BlackAttacks & this.WhitePieces['K']) != 0;
         }
     }
 }

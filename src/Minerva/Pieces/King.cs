@@ -32,18 +32,16 @@ public class King : PieceBase
 
     public override ulong GetPieceAttacks(ulong position, Board board)
     {
-        ulong pieceAttacks = this.GetPieceMovesOrAttacks(
+        return this.GetPieceMovesOrAttacks(
             position,
             MovingDirections.KingAndQueen,
             board,
             attacks: true);
-        return this.PurgeIlegalMoves(position, pieceAttacks, board);
     }
 
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        ulong pieceMoves = this.GetPieceMovesOrAttacks(position, MovingDirections.KingAndQueen, board, attacks: false);
-        return this.PurgeIlegalMoves(position, pieceMoves, board);
+        return this.GetPieceMovesOrAttacks(position, MovingDirections.KingAndQueen, board, attacks: false);
     }
 
     protected override ulong GetPieceMovesOrAttacks(
@@ -72,6 +70,11 @@ public class King : PieceBase
                     result |= newPosition;
                 }
             }
+        }
+
+        if (!attacks)
+        {
+            result = this.PurgeIlegalMoves(position, result, board);
         }
 
         return result;
