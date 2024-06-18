@@ -23,8 +23,13 @@ public class NoPiece : PieceBase
         this.Color = Color.None;
     }
 
-    public override Square[] GetPossibleMoves(Square position, Board board)
+    public override ulong GetPieceAttacks(ulong position, Board board)
     {
-        return Array.Empty<Square>();
+        return 0;
+    }
+
+    public override ulong GetPieceMoves(ulong position, Board board)
+    {
+        return 0;
     }
 }

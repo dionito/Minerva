@@ -55,13 +55,7 @@ public abstract class PieceBase
     /// </summary>
     public PieceType PieceType { get; protected set; }
 
-    /// <summary>
-    /// When overridden in a derived class, gets the possible moves for the piece.
-    /// </summary>
-    /// <param name="position">The current position of the piece.</param>
-    /// <param name="board">The current state of the chess board.</param>
-    /// <returns>An array of squares representing the possible moves for the piece.</returns>
-    public abstract Square[] GetPossibleMoves(Square position, Board board);
+    public abstract ulong GetPieceAttacks(ulong position, Board board);
 
     /// <summary>
     /// Gets the bitboard representation of the possible moves for the piece.
@@ -70,39 +64,82 @@ public abstract class PieceBase
     /// <param name="board">The current state of the chess board.</param>
     /// <returns>A bitboard (ulong) where each bit represents a square on the
     /// chess board. A set bit indicates that the piece can move to that square.</returns>
-    public ulong GetPossibleMovesBitBoard(Square position, Board board)
+    public abstract ulong GetPieceMoves(ulong position, Board board);
+
+    /// <summary>
+    /// Gets the bitboard representation of the possible moves for the piece based on its current
+    /// position and moving direction.
+    /// </summary>
+    /// <param name="position">The bitboard representing the current position of the piece.</param>
+    /// <param name="direction">The moving direction(s) to calculate the moves for.</param>
+    /// <param name="board">The current state of the chess board.</param>
+    /// <returns>A bitboard (ulong) where each bit represents a possible move destination square.
+    /// A set bit indicates that the piece can move to that square.</returns>
+    /// <remarks>This method works for pieces that can move an unlimited number of squares in the same
+    /// direction (rook, bishop and queen). Overrided for other pieces.</remarks>
+    protected virtual ulong GetPieceMovesOrAttacks(
+        ulong position,
+        MovingDirections direction,
+        Board board,
+        bool attacks = false)
     {
-        return this.GetPossibleMoves(position, board).Aggregate(0ul, (acc, square) => acc | square.BitBoard);
+        ulong result = 0;
+        ulong originalPosition = position;
+        foreach (MovingDirections singleDirection in Enum.GetValues(typeof(MovingDirections)))
+        {
+            if (singleDirection == MovingDirections.None || singleDirection == MovingDirections.Rook ||
+                singleDirection == MovingDirections.Bishop ||
+                singleDirection == MovingDirections.KingAndQueen ||
+                (direction & singleDirection) == 0)
+            {
+                continue; // Skip composite flags and None
+            }
+
+            position = originalPosition;
+
+            ulong newPosition = position.Move(singleDirection);
+            while (newPosition != 0)
+            {
+                if ((board.OccupiedBitBoard & newPosition) == 0)
+                {
+                    result |= newPosition;
+                }
+                else
+                {
+                    if (attacks || board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
+                    {
+                        result |= newPosition;
+                    }
+
+                    break;
+                }
+
+                position = newPosition;
+                newPosition = position.Move(singleDirection);
+            }
+        }
+
+        if (!attacks)
+        {
+            result = this.PurgeIlegalMoves(originalPosition, result, board);
+        }
+
+        return result;
     }
 
     /// <summary>
-    /// Gets the valid moves for the piece in a given direction.
+    /// Removes illegal moves from a set of potential move destinations.
     /// </summary>
-    /// <param name="position">The current position of the piece.</param>
-    /// <param name="direction">The direction of the move.</param>
+    /// <param name="from">The bitboard representing the starting square of the move.</param>
+    /// <param name="toLocations">The bitboard representing potential destination squares.</param>
     /// <param name="board">The current state of the chess board.</param>
-    /// <returns>An enumerable collection of squares representing the valid
-    /// moves for the piece in the given direction.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the provided board is null.</exception>
-    protected virtual IEnumerable<Square> GetValidMoves(Square position, Move direction, Board board)
+    /// <returns>A bitboard (ulong) representing the legal move destinations after removing illegal ones.</returns>
+    protected ulong PurgeIlegalMoves(
+        ulong from,
+        ulong toLocations,
+        Board board)
     {
-        while (position.TryMove(direction, out Square newPosition))
-        {
-            position = newPosition;
-            if ((board.OccupiedBitBoard & newPosition.BitBoard) == 0ul)
-            {
-                yield return newPosition;
-
-                continue;
-            }
-
-            if (board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
-            {
-                yield return newPosition;
-            }
-
-            yield break;
-        }
+        return toLocations;
     }
 
     /// <summary>

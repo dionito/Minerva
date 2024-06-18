@@ -28,22 +28,20 @@ public class Queen : PieceBase
     {
     }
 
-    /// <summary>
-    /// Gets all the possible moves for the queen from a given position on a given board.
-    /// </summary>
-    /// <param name="position">The current position of the queen.</param>
-    /// <param name="board">The current state of the chess board.</param>
-    /// <returns>An array of squares representing all possible moves for the queen.</returns>
-    public override Square[] GetPossibleMoves(Square position, Board board)
+    public override ulong GetPieceAttacks(ulong position, Board board)
     {
-        return this.GetValidMoves(position, Move.Up, board)
-            .Union(this.GetValidMoves(position, Move.Down, board))
-            .Union(this.GetValidMoves(position, Move.Right, board))
-            .Union(this.GetValidMoves(position, Move.Left, board))
-            .Union(this.GetValidMoves(position, Move.UpLeft, board))
-            .Union(this.GetValidMoves(position, Move.UpRight, board))
-            .Union(this.GetValidMoves(position, Move.DownLeft, board))
-            .Union(this.GetValidMoves(position, Move.DownRight, board))
-            .ToArray();
+        return this.GetPieceMovesOrAttacks(
+            position,
+            MovingDirections.KingAndQueen,
+            board,
+            attacks: true);
+    }
+
+    public override ulong GetPieceMoves(ulong position, Board board)
+    {
+        return this.GetPieceMovesOrAttacks(
+            position,
+            MovingDirections.KingAndQueen,
+            board);
     }
 }

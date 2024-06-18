@@ -114,6 +114,38 @@ public class ForsythEdwardsNotationTests
     }
 
     [TestMethod]
+    [DataRow(
+        "8/8/8/4k3/2K2q2/3N4/Qb6/8 b - - 0 1",
+        "Invalid FEN string. The side to move can take the opposite king. (Parameter 'fen')",
+        DisplayName = "Black is moving and can capture enemy king.")]
+    [DataRow(
+        "8/8/8/4k3/2K2q2/3N4/Qb6/8 w - - 0 1",
+        "Invalid FEN string. The side to move can take the opposite king. (Parameter 'fen')",
+        DisplayName = "White is moving and can capture enemy king.")]
+    [DataRow(
+        "8/8/2k5/5k2/2K5/8/8/8 w - - 0 1",
+        "Invalid FEN string. There must be only one king for each side. (Parameter 'fen')",
+        DisplayName = "More than one king for black.")]
+    [DataRow(
+        "8/8/2K5/5k2/2K5/8/8/8 w - - 0 1",
+        "Invalid FEN string. There must be only one king for each side. (Parameter 'fen')",
+        DisplayName = "More than one king for white.")]
+    [DataRow(
+        "3K4/8/8/8/5q2/8/Qb6/1N6 w - - 0 1",
+        "Invalid FEN string. The kings must be present on the board for both sides. (Parameter 'fen')",
+        DisplayName = "No black king on board.")]
+    [DataRow(
+        "8/8/8/8/5q2/8/Qb6/kN6 w - - 0 1",
+        "Invalid FEN string. The kings must be present on the board for both sides. (Parameter 'fen')",
+        DisplayName = "No white king on board.")]
+    public void TestInvalidFenStrings(string fen, string message)
+    {
+        Exception exception =
+            Assert.ThrowsException<ArgumentException>(() => ForsythEdwardsNotation.GenerateBoard(fen));
+        Assert.AreEqual(message, exception.Message);
+    }
+
+    [TestMethod]
     public void GenerateBoardCreatesCorrectStartingBoardFromValidFen()
     {
         string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -130,45 +162,45 @@ public class ForsythEdwardsNotationTests
         // Black pieces
         Assert.AreEqual(
             board.GetSquareBitBoard("a8") | board.GetSquareBitBoard("h8"),
-            board.BlackPieces["r"],
+            board.BlackPieces['r'],
             "Black rocks");
         Assert.AreEqual(
             board.GetSquareBitBoard("b8") | board.GetSquareBitBoard("g8"),
-            board.BlackPieces["n"],
+            board.BlackPieces['n'],
             "Black knights");
         Assert.AreEqual(
             board.GetSquareBitBoard("c8") | board.GetSquareBitBoard("f8"),
-            board.BlackPieces["b"],
+            board.BlackPieces['b'],
             "Black bishops");
-        Assert.AreEqual(board.GetSquareBitBoard("d8"), board.BlackPieces["q"], "Black queen");
-        Assert.AreEqual(board.GetSquareBitBoard("e8"), board.BlackPieces["k"], "Black king");
+        Assert.AreEqual(board.GetSquareBitBoard("d8"), board.BlackPieces['q'], "Black queen");
+        Assert.AreEqual(board.GetSquareBitBoard("e8"), board.BlackPieces['k'], "Black king");
         Assert.AreEqual(
             board.GetSquareBitBoard("a7") | board.GetSquareBitBoard("b7") | board.GetSquareBitBoard("c7") |
             board.GetSquareBitBoard("d7") | board.GetSquareBitBoard("e7") | board.GetSquareBitBoard("f7") |
             board.GetSquareBitBoard("g7") | board.GetSquareBitBoard("h7"),
-            board.BlackPieces["p"],
+            board.BlackPieces['p'],
             "Black pawns");
 
         // White pieces
         Assert.AreEqual(
             board.GetSquareBitBoard("a1") | board.GetSquareBitBoard("h1"),
-            board.WhitePieces["R"],
+            board.WhitePieces['R'],
             "White rocks");
         Assert.AreEqual(
             board.GetSquareBitBoard("b1") | board.GetSquareBitBoard("g1"),
-            board.WhitePieces["N"],
+            board.WhitePieces['N'],
             "White knights");
         Assert.AreEqual(
             board.GetSquareBitBoard("c1") | board.GetSquareBitBoard("f1"),
-            board.WhitePieces["B"],
+            board.WhitePieces['B'],
             "White bishops");
-        Assert.AreEqual(board.GetSquareBitBoard("d1"), board.WhitePieces["Q"], "White queen");
-        Assert.AreEqual(board.GetSquareBitBoard("e1"), board.WhitePieces["K"], "White king");
+        Assert.AreEqual(board.GetSquareBitBoard("d1"), board.WhitePieces['Q'], "White queen");
+        Assert.AreEqual(board.GetSquareBitBoard("e1"), board.WhitePieces['K'], "White king");
         Assert.AreEqual(
             board.GetSquareBitBoard("a2") | board.GetSquareBitBoard("b2") | board.GetSquareBitBoard("c2") |
             board.GetSquareBitBoard("d2") | board.GetSquareBitBoard("e2") | board.GetSquareBitBoard("f2") |
             board.GetSquareBitBoard("g2") | board.GetSquareBitBoard("h2"),
-            board.WhitePieces["P"],
+            board.WhitePieces['P'],
             "White pawns");
         
         // Active color

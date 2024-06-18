@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+using Minerva.Extensions;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -57,6 +58,7 @@ public static class ForsythEdwardsNotation
         }
 
         board.SetPieces(ranks);
+
 
         // The active color is the color that has the next move. It is either 'w' for white or 'b' for black.
         string activeColor = fenParts[1];
@@ -116,7 +118,37 @@ public static class ForsythEdwardsNotation
         }
         
         board.SetFullmoveNumber(fullmoveNumber);
+        board.UpdateBoardStatus();
+        ValidateBoard(board, fen);
+
         return board;
+    }
+
+    private static void ValidateBoard(Board board, string fen)
+    {
+        // The kings must be present on the board.
+        if (board.BlackPieces['k'] == 0 || board.WhitePieces['K'] == 0)
+        {
+            throw new ArgumentException(
+                "Invalid FEN string. The kings must be present on the board for both sides.",
+                nameof(fen));
+        }
+
+        // There must be only one king for each side.
+        if (!board.BlackPieces['k'].IsSingleBitSet() || !board.WhitePieces['K'].IsSingleBitSet())
+        {
+            throw new ArgumentException(
+                "Invalid FEN string. There must be only one king for each side.",
+                nameof(fen));
+        }
+
+        // The side to move cannot take the opposite king.
+        if (board.CanTakeOppositeKing)
+        {
+            throw new ArgumentException(
+                "Invalid FEN string. The side to move can take the opposite king.",
+                nameof(fen));
+        }
     }
 
     public static string GenerateFen(this Board board)

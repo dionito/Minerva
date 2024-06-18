@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+using Minerva.Extensions;
+using Minerva.Pieces;
 using System.Text.RegularExpressions;
 
 namespace Minerva;
@@ -38,6 +40,8 @@ namespace Minerva;
 /// </summary>
 public class Board
 {
+    public const char EmptySquare = ' ';
+
     public const ulong FileA = 0x8080808080808080ul;
     public const ulong FileB = 0x4040404040404040ul;
     public const ulong FileC = 0x2020202020202020ul;
@@ -56,8 +60,6 @@ public class Board
     public const ulong Rank7 = 0x00FF000000000000ul;
     public const ulong Rank8 = 0xFF00000000000000ul;
 
-    public const char EmptySquare = ' ';
-
     /// <summary>
     /// Represents the files of the chess board.
     /// </summary>
@@ -75,29 +77,37 @@ public class Board
     };
 
     /// <summary>
-    /// Represents the combined bitboard for all black pieces.
-    /// This field should be updated whenever the black pieces change.
+    /// Gets the active color, which is the color that has the next move.
     /// </summary>
-    ulong blackPiecesBitBoard;
-
-    /// <summary>
-    /// Represents the combined bitboard for all white pieces.
-    /// This field should be updated whenever the white pieces change.
-    /// </summary>
-    ulong whitePiecesBitBoard;
+    /// <value>The active color is either 'w' for white or 'b' for black.</value>
+    public char ActiveColor { get; private set; } = 'w';
 
     /// <summary>
     /// Represents the bitboards for the black pieces.
     /// </summary>
-    public Dictionary<string, ulong> BlackPieces { get; } = new()
+    public Dictionary<char, ulong> BlackPieces { get; private set; } = new()
     {
-        { "b", 0ul },
-        { "n", 0ul },
-        { "r", 0ul },
-        { "q", 0ul },
-        { "k", 0ul },
-        { "p", 0ul },
+        { 'b', 0ul },
+        { 'n', 0ul },
+        { 'r', 0ul },
+        { 'q', 0ul },
+        { 'k', 0ul },
+        { 'p', 0ul },
     };
+
+    /// <summary>
+    /// Gets the bitboard representing all squares under attack by black pieces.
+    /// This property is updated after each move to reflect the current state of the board.
+    /// </summary>
+    public ulong BlackAttacks { get; private set; }
+
+    /// <summary>
+    /// Gets the combined bitboard for all black pieces.
+    /// This property performs a bitwise OR operation on the bitboards of all black pieces.
+    /// </summary>
+    public ulong BlackPiecesBitBoard { get; private set; }
+
+    public bool CanTakeOppositeKing { get; set; }
 
     /// <summary>
     /// Gets or sets the castling rights for both white and black.
@@ -109,6 +119,8 @@ public class Board
     /// "-"  - Neither side can castle
     /// </summary>
     public string CastlingRights { get; private set; } = "KQkq";
+
+    public bool Check { get; private set; } = false;
 
     /// <summary>
     /// Gets the en passant target square in Forsyth-Edwards Notation (FEN).
@@ -139,75 +151,33 @@ public class Board
     public ulong OccupiedBitBoard => this.BlackPiecesBitBoard | this.WhitePiecesBitBoard;
 
     /// <summary>
+    /// Gets the bitboard representing all squares under attack by white pieces.
+    /// This property is updated after each move to reflect the current state of the board.
+    /// </summary>
+    /// 
+    public ulong WhiteAttacks { get; private set; }
+
+    /// <summary>
     /// Represents the bitboards for the white pieces.
     /// </summary>
-    public Dictionary<string, ulong> WhitePieces { get; } = new()
+    public Dictionary<char, ulong> WhitePieces { get; private set;} = new()
     {
-        { "B", 0ul },
-        { "N", 0ul },
-        { "R", 0ul },
-        { "Q", 0ul },
-        { "K", 0ul },
-        { "P", 0ul },
+        { 'B', 0ul },
+        { 'N', 0ul },
+        { 'R', 0ul },
+        { 'Q', 0ul },
+        { 'K', 0ul },
+        { 'P', 0ul },
     };
-
-    /// <summary>
-    /// Gets the active color, which is the color that has the next move.
-    /// </summary>
-    /// <value>The active color is either 'w' for white or 'b' for black.</value>
-    public char ActiveColor { get; private set; } = 'w';
-
-    /// <summary>
-    /// Gets the combined bitboard for all black pieces.
-    /// This property performs a bitwise OR operation on the bitboards of all black pieces.
-    /// </summary>
-    public ulong BlackPiecesBitBoard => this.blackPiecesBitBoard;
 
     /// <summary>
     /// Gets the combined bitboard for all white pieces.
     /// This property performs a bitwise OR operation on the bitboards of all white pieces.
     /// </summary>
-    public ulong WhitePiecesBitBoard => this.whitePiecesBitBoard;
+    public ulong WhitePiecesBitBoard { get; private set; }
 
     /// <summary>
-    /// Initializes the chess board to the standard starting position.
-    /// This method sets the bitboards for both black and white pieces.
-    /// </summary>
-    public void InitializeGameStartingBoard()
-    {
-        // Initialize black pieces
-        // Rooks are placed on a8 and h8
-        this.BlackPieces["r"] = Rank8 & FileA | Rank8 & FileH;
-        // Knights are placed on b8 and g8
-        this.BlackPieces["n"] = Rank8 & FileB | Rank8 & FileG;
-        // Bishops are placed on c8 and f8
-        this.BlackPieces["b"] = Rank8 & FileC | Rank8 & FileF;
-        // Queen is placed on d8
-        this.BlackPieces["q"] = Rank8 & FileD;
-        // King is placed on e8
-        this.BlackPieces["k"] = Rank8 & FileE;
-        // Pawns are placed on a7 to h7
-        this.BlackPieces["p"] = Rank7;
-
-        // Initialize white pieces
-        // Rooks are placed on a1 and h1
-        this.WhitePieces["R"] = Rank1 & FileA | Rank1 & FileH;
-        // Knights are placed on b1 and g1
-        this.WhitePieces["N"] = Rank1 & FileB | Rank1 & FileG;
-        // Bishops are placed on c1 and f1
-        this.WhitePieces["B"] = Rank1 & FileC | Rank1 & FileF;
-        // Queen is placed on d1
-        this.WhitePieces["Q"] = Rank1 & FileD;
-        // King is placed on e1
-        this.WhitePieces["K"] = Rank1 & FileE;
-        // Pawns are placed on a2 to h2
-        this.WhitePieces["P"] = Rank2;
-
-        this.UpdateBitBoards();
-    }
-
-    /// <summary>
-    /// Gets the piece at the specified location on the chess board.
+    /// Gets the piece at the specified square on the chess board.
     /// </summary>
     /// <param name="file">The file of the target location. Must be between 1 and 8 inclusive.</param>
     /// <param name="rank">The rank of the target location. Must be between 1 and 8 inclusive.</param>
@@ -227,24 +197,99 @@ public class Board
             throw new ArgumentOutOfRangeException(nameof(file), "Must be between 1 and 8 inclusive.");
         }
 
-        ulong targetBitBoard = Files[file - 1] & Ranks[rank - 1];
-        foreach (var piece in this.BlackPieces)
+        return this.GetPieceAt(Files[file - 1] & Ranks[rank - 1]);
+    }
+
+    /// <summary>
+    /// Gets the piece at the specified square on the chess board.
+    /// </summary>
+    /// <param name="square">The square to check.</param>
+    /// <returns>The piece at the specified square.</returns>
+    public char GetPieceAt(Square square)
+    {
+        return this.GetPieceAt(square.BitBoard);
+    }
+
+    /// <summary>
+    /// Gets the piece at the specified square on the chess board.
+    /// </summary>
+    /// <param name="square">The square to check in algebraic notation (e.g., "e4").</param>
+    /// <returns>The piece at the specified square.</returns>
+    public char GetPieceAt(string square)
+    {
+        return this.GetPieceAt(Files[square[0] - 'a'] & Ranks[square[1] - '1']);
+    }
+
+    /// <summary>
+    /// Gets the piece at the specified square on the chess board.
+    /// </summary>
+    /// <param name="square">The bitboard representation of the square to check.</param>
+    /// <param name="color">The color of the piece to find. If Color.None, any piece will
+    /// be considered.</param>
+    /// <returns>The character representing the piece at the given position, or the
+    /// <see cref="EmptySquare"/> character (' ') if no piece is found.</returns>
+    public char GetPieceAt(ulong square, Color color = Color.None)
+    {
+        if (color != Color.White && (this.BlackPiecesBitBoard & square) != 0)
         {
-            if ((piece.Value & targetBitBoard) != 0)
+            foreach (KeyValuePair<char, ulong> pieceType in this.BlackPieces)
             {
-                return piece.Key[0];
+                if ((pieceType.Value & square) != 0)
+                {
+                    return pieceType.Key;
+                }
             }
         }
 
-        foreach (var piece in this.WhitePieces)
+        if (color != Color.Black && (this.WhitePiecesBitBoard & square) != 0)
         {
-            if ((piece.Value & targetBitBoard) != 0)
+            foreach (KeyValuePair<char, ulong> pieceType in this.WhitePieces)
             {
-                return piece.Key[0];
+                if ((pieceType.Value & square) != 0)
+                {
+                    return pieceType.Key;
+                }
             }
         }
 
         return EmptySquare;
+    }
+
+    /// <summary>
+    /// Initializes the chess board to the standard starting position.
+    /// This method sets the bitboards for both black and white pieces.
+    /// </summary>
+    public void InitializeGameStartingBoard()
+    {
+        // Initialize black pieces
+        // Rooks are placed on a8 and h8
+        this.BlackPieces['r'] = Rank8 & FileA | Rank8 & FileH;
+        // Knights are placed on b8 and g8
+        this.BlackPieces['n'] = Rank8 & FileB | Rank8 & FileG;
+        // Bishops are placed on c8 and f8
+        this.BlackPieces['b'] = Rank8 & FileC | Rank8 & FileF;
+        // Queen is placed on d8
+        this.BlackPieces['q'] = Rank8 & FileD;
+        // King is placed on e8
+        this.BlackPieces['k'] = Rank8 & FileE;
+        // Pawns are placed on a7 to h7
+        this.BlackPieces['p'] = Rank7;
+
+        // Initialize white pieces
+        // Rooks are placed on a1 and h1
+        this.WhitePieces['R'] = Rank1 & FileA | Rank1 & FileH;
+        // Knights are placed on b1 and g1
+        this.WhitePieces['N'] = Rank1 & FileB | Rank1 & FileG;
+        // Bishops are placed on c1 and f1
+        this.WhitePieces['B'] = Rank1 & FileC | Rank1 & FileF;
+        // Queen is placed on d1
+        this.WhitePieces['Q'] = Rank1 & FileD;
+        // King is placed on e1
+        this.WhitePieces['K'] = Rank1 & FileE;
+        // Pawns are placed on a2 to h2
+        this.WhitePieces['P'] = Rank2;
+
+        this.UpdateBoardStatus();
     }
 
     /// <summary>
@@ -265,7 +310,12 @@ public class Board
     /// <returns>True if the square is empty, false otherwise.</returns>
     public bool IsEmptySquare(Square square)
     {
-        return (this.OccupiedBitBoard & square.BitBoard) == 0;
+        return this.IsEmptySquare(square.BitBoard);
+    }
+
+    public bool IsEmptySquare(ulong square)
+    {
+        return (this.OccupiedBitBoard & square) == 0;
     }
 
     /// <summary>
@@ -342,8 +392,8 @@ public class Board
         int rank = enPassantTargetSquare[1] - '1';
         rank = this.ActiveColor == 'w' ? rank - 1 : rank + 1;
         ulong targetBitBoard = Files[file] & Ranks[rank];
-        if ((this.ActiveColor == 'b' && (this.WhitePieces["P"] & targetBitBoard) == 0) ||
-            (this.ActiveColor == 'w' && (this.BlackPieces["p"] & targetBitBoard) == 0))
+        if ((this.ActiveColor == Color.Black.ToChar() && (this.WhitePieces['P'] & targetBitBoard) == 0) ||
+            (this.ActiveColor == Color.White.ToChar() && (this.BlackPieces['p'] & targetBitBoard) == 0))
         {
             throw new ArgumentException(
                 "Invalid en passant target square in FEN string. No pawn to be taken en passant found.",
@@ -424,7 +474,7 @@ public class Board
             }
 
             // Set the bit at the target location for the specified piece
-            this.BlackPieces[piece.ToString()] |= targetBitBoard;
+            this.BlackPieces[piece] |= targetBitBoard;
         }
         else
         {
@@ -435,10 +485,10 @@ public class Board
             }
 
             // Set the bit at the target location for the specified piece
-            this.WhitePieces[piece.ToString()] |= targetBitBoard;
+            this.WhitePieces[piece] |= targetBitBoard;
         }
 
-        this.UpdateBitBoards();
+        this.UpdateBoardStatus();
     }
 
     /// <summary>
@@ -484,31 +534,91 @@ public class Board
     /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
     public bool SquareContainPieceOfColor(Square square, char color)
     {
-        return color switch
-        {
-            'w' => (this.WhitePiecesBitBoard & square.BitBoard) != 0,
-            'b' => (this.BlackPiecesBitBoard & square.BitBoard) != 0,
-            _ => throw new ArgumentException($"Invalid color: {color}. Valid colors are 'b' or 'w'.", nameof(color)),
-        };
+        return this.SquareContainPieceOfColor(square.BitBoard, color);
     }
 
     /// <summary>
-    /// Updates the bitboards for black and white pieces.
-    /// This method should be called whenever the pieces change.
-    /// It performs a bitwise OR operation on the bitboards of all pieces of the same color.
+    /// Checks if a square contains a piece of the specified color.
     /// </summary>
-    void UpdateBitBoards()
+    /// <param name="square">The square to check, represented as a bitboard with a single bit set.</param>
+    /// <param name="color">The color to check for. Can be either 'w' for white or 'b' for black.</param>
+    /// <returns>true if the square contains a piece of the specified color; otherwise, false.</returns>
+    /// <exception cref="ArgumentException">Thrown when an invalid color is provided.</exception>
+    public bool SquareContainPieceOfColor(ulong square, Color color)
     {
-        this.blackPiecesBitBoard = 0;
-        foreach (var piece in this.BlackPieces.Values)
+        return this.SquareContainPieceOfColor(square, (char)color);
+    }
+
+    /// <summary>
+    /// Checks if a square contains a piece of the specified color.
+    /// </summary>
+    /// <param name="square">The square to check, represented as a bitboard with a single bit set.</param>
+    /// <param name="color">The color to check for. Can be either 'w' for white or 'b' for black.</param>
+    /// <returns>true if the square contains a piece of the specified color; otherwise, false.</returns>
+    /// <exception cref="ArgumentException">Thrown when an invalid color is provided.</exception>
+    public bool SquareContainPieceOfColor(ulong square, char color)
+    {
+        return color switch
         {
-            this.blackPiecesBitBoard |= piece;
+            'w' => (this.WhitePiecesBitBoard & square) != 0,
+            'b' => (this.BlackPiecesBitBoard & square) != 0,
+            _ => throw new ArgumentException($"Invalid color: {color}. Valid colors are 'b' or 'w'."
+                , nameof(color)),
+        };
+    }
+
+    private void UpdateAttacks()
+    {
+        this.BlackAttacks = 0;
+        this.WhiteAttacks = 0;
+
+        foreach (KeyValuePair<char, ulong> pieceKvp in this.BlackPieces.Where(p => p.Value != 0))
+        {
+            var piece = PieceFactory.GetPiece(pieceKvp.Key);
+            this.BlackAttacks |= piece.GetPieceAttacks(pieceKvp.Value, this);
         }
 
-        this.whitePiecesBitBoard = 0;
-        foreach (var piece in this.WhitePieces.Values)
+        foreach (KeyValuePair<char, ulong> pieceKvp in this.WhitePieces.Where(p => p.Value != 0))
         {
-            this.whitePiecesBitBoard |= piece;
+            var piece = PieceFactory.GetPiece(pieceKvp.Key);
+            this.WhiteAttacks |= piece.GetPieceAttacks(pieceKvp.Value, this);
+        }
+    }
+
+    private void UpdateBitBoards()
+    {
+        this.BlackPiecesBitBoard = 0;
+        this.WhitePiecesBitBoard = 0;
+
+        foreach (KeyValuePair<char, ulong> pieceKvp in this.BlackPieces.Where(p => p.Value != 0))
+        {
+            this.BlackPiecesBitBoard |= pieceKvp.Value;
+        }
+
+        foreach (KeyValuePair<char, ulong> pieceKvp in this.WhitePieces.Where(p => p.Value != 0))
+        {
+            this.WhitePiecesBitBoard |= pieceKvp.Value;
+        }
+    }
+
+    public void UpdateBoardStatus()
+    {
+        this.UpdateBitBoards();
+        this.UpdateAttacks();
+        this.UpdateCheckAndIllegalCheck();
+    }
+
+    void UpdateCheckAndIllegalCheck()
+    {
+        if (this.ActiveColor == 'w')
+        {
+            this.Check = (this.BlackAttacks & this.WhitePieces['K']) != 0;
+            this.CanTakeOppositeKing = (this.WhiteAttacks & this.BlackPieces['k']) != 0;
+        }
+        else
+        {
+            this.Check = (this.WhiteAttacks & this.BlackPieces['k']) != 0;
+            this.CanTakeOppositeKing = (this.BlackAttacks & this.WhitePieces['K']) != 0;
         }
     }
 }
