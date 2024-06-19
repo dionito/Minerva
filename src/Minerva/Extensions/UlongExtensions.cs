@@ -17,6 +17,25 @@ public static class UlongExtensions
     private const ulong NotRank8 = ~Board.Rank8;
 
     /// <summary>
+    /// Gets the indices of all set bits in the bitboard.
+    /// </summary>
+    /// <param name="bitboard">The bitboard to analyze.</param>
+    /// <returns>An array containing the zero-based indices of all set bits in the bitboard.</returns>
+    public static int[] BitsSet(this ulong bitboard)
+    {
+        int[] result = new int[bitboard.PopCount()];
+        int index = 0;
+        while (bitboard != 0)
+        {
+            int trailingZeros = BitOperations.TrailingZeroCount(bitboard);
+            result[index++] = trailingZeros;
+            bitboard &= bitboard - 1; // Clears the lowest set bit
+        }
+
+        return result;
+    }
+
+    /// <summary>
     /// Clears a bit at the specified index in the bitboard.
     /// </summary>
     /// <param name="bitboard">The bitboard to modify.</param>
