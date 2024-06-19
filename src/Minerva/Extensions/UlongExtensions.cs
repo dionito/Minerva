@@ -1,4 +1,6 @@
-﻿namespace Minerva.Extensions;
+﻿using System.Numerics;
+
+namespace Minerva.Extensions;
 
 /// <summary>
 /// Provides extension methods for ulong representing bitboards in a chess game.
@@ -13,6 +15,57 @@ public static class UlongExtensions
     private const ulong NotRank2 = ~Board.Rank2;
     private const ulong NotRank7 = ~Board.Rank7;
     private const ulong NotRank8 = ~Board.Rank8;
+
+    /// <summary>
+    /// Clears a bit at the specified index in the bitboard.
+    /// </summary>
+    /// <param name="bitboard">The bitboard to modify.</param>
+    /// <param name="index">The zero-based index of the bit to clear.</param>
+    /// <returns>A new bitboard with the specified bit cleared.</returns>
+    public static ulong ClearBit(this ulong bitboard, int index) => bitboard & ~(1UL << index);
+
+    /// <summary>
+    /// Determines if the bitboard is empty (i.e., all bits are unset).
+    /// </summary>
+    /// <param name="bitboard">The bitboard to check.</param>
+    /// <returns><c>true</c> if the bitboard is empty; otherwise, <c>false</c>.</returns>
+    public static bool IsEmpty(this ulong bitboard) => bitboard == 0;
+
+    /// <summary>
+    /// Determines if exactly one bit is set in the bitboard.
+    /// </summary>
+    /// <param name="bitboard">The bitboard to check.</param>
+    /// <returns><c>true</c> if exactly one bit is set; otherwise, <c>false</c>.</returns>
+    public static bool IsSingleBitSet(this ulong bitboard)
+    {
+        return bitboard != 0 && (bitboard & (bitboard - 1)) == 0;
+    }
+
+    /// <summary>
+    /// Determines if exactly one bit is set in the bitboard and outputs the index of the set bit.
+    /// </summary>
+    /// <param name="bitboard">The bitboard to check.</param>
+    /// <param name="index">When this method returns, contains the zero-based index of the set bit if exactly one bit is set; otherwise, -1.</param>
+    /// <returns><c>true</c> if exactly one bit is set; otherwise, <c>false</c>.</returns>
+    public static bool IsSingleBitSet(this ulong bitboard, out int index)
+    {
+        index = -1;
+        if (bitboard == 0 || (bitboard & (bitboard - 1)) != 0)
+        {
+            return false;
+        }
+
+        index = BitOperations.TrailingZeroCount(bitboard);
+        return true;
+    }
+
+    /// <summary>
+    /// Calculates the Hamming distance between two bitboards.
+    /// </summary>
+    /// <param name="bitboard">The first bitboard.</param>
+    /// <param name="other">The second bitboard to compare.</param>
+    /// <returns>The Hamming distance between the two bitboards.</returns>
+    public static int HammingDistance(this ulong bitboard, ulong other) => (bitboard ^ other).PopCount();
 
     /// <summary>
     /// Moves to a position in the specified direction.
@@ -43,16 +96,6 @@ public static class UlongExtensions
             MovingDirections.Left | MovingDirections.DownLeft => MoveLeftDownLeft(position),
             _ => throw new InvalidOperationException("The move direction is invalid."),
         };
-    }
-
-    /// <summary>
-    /// Determines if exactly one bit is set in the bitboard.
-    /// </summary>
-    /// <param name="bitboard">The bitboard to check.</param>
-    /// <returns><c>true</c> if exactly one bit is set; otherwise, <c>false</c>.</returns>
-    public static bool IsSingleBitSet(this ulong bitboard)
-    {
-        return bitboard != 0 && (bitboard & (bitboard - 1)) == 0;
     }
 
     /// <summary>
@@ -181,4 +224,51 @@ public static class UlongExtensions
     /// <returns>The new position after moving up twice and to the right once,
     /// or zero if the move is not valid.</returns>
     private static ulong MoveUpUpRight(ulong position) => (position & NotRank8 & NotRank7 & NotFileH) << 15;
+
+    /// <summary>
+    /// Counts the number of set bits (1s) in the bitboard.
+    /// </summary>
+    /// <param name="bitboard">The bitboard to count set bits in.</param>
+    /// <returns>The number of set bits in the bitboard.</returns>
+    public static int PopCount(this ulong bitboard) => BitOperations.PopCount(bitboard);
+
+    /// <summary>
+    /// Sets a bit at the specified index.
+    /// </summary>
+    /// <param name="bitboard">The bitboard to modify.</param>
+    /// <param name="index">The zero-based index of the bit to set.</param>
+    /// <returns>A new bitboard with the specified bit set.</returns>
+    public static ulong SetBit(this ulong bitboard, int index) => bitboard | (1UL << index);
+
+    /// <summary>
+    /// Toggles a bit at the specified index.
+    /// </summary>
+    /// <param name="bitboard">The bitboard to modify.</param>
+    /// <param name="index">The zero-based index of the bit to toggle.</param>
+    /// <returns>A new bitboard with the specified bit toggled.</returns>
+    public static ulong ToggleBit(this ulong bitboard, int index) => bitboard ^ (1UL << index);
+
+    /// <summary>
+    /// Toggles bits at the specified indices.
+    /// </summary>
+    /// <param name="bitboard">The bitboard to modify.</param>
+    /// <param name="indices">An array of zero-based indices of the bits to toggle.</param>
+    /// <returns>A new bitboard with the specified bits toggled.</returns>
+    public static ulong ToggleBits(this ulong bitboard, params int[] indices)
+    {
+        ulong mask = 0;
+        foreach (int index in indices)
+        {
+            mask |= 1UL << index;
+        }
+        return bitboard ^ mask;
+    }
+
+    /// <summary>
+    /// Toggles bits according to a mask.
+    /// </summary>
+    /// <param name="bitboard">The bitboard to modify.</param>
+    /// <param name="mask">The mask indicating which bits to toggle.</param>
+    /// <returns>A new bitboard with bits toggled according to the mask.</returns>
+    public static ulong ToggleBits(this ulong bitboard, ulong mask) => bitboard ^ mask;
 }
