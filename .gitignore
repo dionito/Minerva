@@ -368,8 +368,8 @@ __pycache__/
 # This .gitignore file should be placed at the root of your Unity project directory
 
 # Library and Temp folders
-/Library/
-/Temp/
+**/Library/*
+**/Temp/*
 
 # Obj folder (contains object files for intermediate script compilation)
 /obj/
