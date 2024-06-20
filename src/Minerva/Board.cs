@@ -85,7 +85,7 @@ public class Board
     /// <summary>
     /// Represents the bitboards for the black pieces.
     /// </summary>
-    public Dictionary<char, ulong> BlackPieces { get; private set; } = new()
+    public Dictionary<char, ulong> BlackPieces { get; } = new()
     {
         { 'b', 0ul },
         { 'n', 0ul },
@@ -107,8 +107,6 @@ public class Board
     /// </summary>
     public ulong BlackPiecesBitBoard { get; private set; }
 
-    public bool CanTakeOppositeKing { get; set; }
-
     /// <summary>
     /// Gets or sets the castling rights for both white and black.
     /// The rights are represented as a string with the following possible values:
@@ -120,7 +118,12 @@ public class Board
     /// </summary>
     public string CastlingRights { get; private set; } = "KQkq";
 
-    public bool Check { get; private set; } = false;
+    /// <summary>
+    /// Gets a value indicating whether the current player is in check.
+    /// This property is true if the current player's king is under attack by the opponent's pieces,
+    /// indicating that the player must make a move to remove the threat to the king.
+    /// </summary>
+    public bool Check { get; private set; }
 
     /// <summary>
     /// Gets the en passant target square in Forsyth-Edwards Notation (FEN).
@@ -145,6 +148,13 @@ public class Board
     public int HalfmoveClock { get; set; }
 
     /// <summary>
+    /// Gets a value indicating whether the current player can take the opposing king.
+    /// This property is used to check for illegal moves where the king is left in check or
+    /// to determine checkmate conditions.
+    /// </summary>
+    public bool IllegalCheck { get; private set; }
+
+    /// <summary>
     /// Gets the combined bitboard for all pieces on the board.
     /// This property performs a bitwise OR operation on the bitboards of all black and white pieces.
     /// </summary>
@@ -160,7 +170,7 @@ public class Board
     /// <summary>
     /// Represents the bitboards for the white pieces.
     /// </summary>
-    public Dictionary<char, ulong> WhitePieces { get; private set;} = new()
+    public Dictionary<char, ulong> WhitePieces { get; } = new()
     {
         { 'B', 0ul },
         { 'N', 0ul },
@@ -585,7 +595,56 @@ public class Board
         }
     }
 
-    private void UpdateBitBoards()
+    /// <summary>
+    /// Updates the board status, including piece bitboards, attacks, and check status.
+    /// Optionally toggles the active color and increments the full move number after a move.
+    /// </summary>
+    /// <param name="afterMove">Indicates whether the update is happening after a move, which
+    /// will toggle the active color and may increment the full move number, or after an
+    /// artificial setup of the board, which will not.</param>
+    public void UpdateBoardStatus(bool afterMove = false)
+    {
+        if (afterMove)
+        {
+            if (this.ActiveColor == 'w')
+            {
+                this.ActiveColor = 'b';
+            }
+            else
+            {
+                this.ActiveColor = 'w';
+                this.FullmoveNumber++;
+            }
+        }
+
+        this.UpdatePiecesBitBoards();
+        this.UpdateAttacks();
+        this.UpdateCheckAndIllegalCheck();
+    }
+
+    /// <summary>
+    /// Updates the check and illegal check status based on the current attacks against the kings.
+    /// </summary>
+    /// <remarks>Illegal check indicates whether the current player can take the opposing king.</remarks>
+    void UpdateCheckAndIllegalCheck()
+    {
+        if (this.ActiveColor == 'w')
+        {
+            this.Check = (this.BlackAttacks & this.WhitePieces['K']) != 0;
+            this.IllegalCheck = (this.WhiteAttacks & this.BlackPieces['k']) != 0;
+        }
+        else
+        {
+            this.Check = (this.WhiteAttacks & this.BlackPieces['k']) != 0;
+            this.IllegalCheck = (this.BlackAttacks & this.WhitePieces['K']) != 0;
+        }
+    }
+
+    /// <summary>
+    /// Updates the bitboards representing all pieces for each color by aggregating the bitboards
+    /// of individual piece types.
+    /// </summary>
+    private void UpdatePiecesBitBoards()
     {
         this.BlackPiecesBitBoard = 0;
         this.WhitePiecesBitBoard = 0;
@@ -598,27 +657,6 @@ public class Board
         foreach (KeyValuePair<char, ulong> pieceKvp in this.WhitePieces.Where(p => p.Value != 0))
         {
             this.WhitePiecesBitBoard |= pieceKvp.Value;
-        }
-    }
-
-    public void UpdateBoardStatus()
-    {
-        this.UpdateBitBoards();
-        this.UpdateAttacks();
-        this.UpdateCheckAndIllegalCheck();
-    }
-
-    void UpdateCheckAndIllegalCheck()
-    {
-        if (this.ActiveColor == 'w')
-        {
-            this.Check = (this.BlackAttacks & this.WhitePieces['K']) != 0;
-            this.CanTakeOppositeKing = (this.WhiteAttacks & this.BlackPieces['k']) != 0;
-        }
-        else
-        {
-            this.Check = (this.WhiteAttacks & this.BlackPieces['k']) != 0;
-            this.CanTakeOppositeKing = (this.BlackAttacks & this.WhitePieces['K']) != 0;
         }
     }
 }
