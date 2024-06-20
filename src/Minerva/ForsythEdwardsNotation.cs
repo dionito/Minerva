@@ -143,7 +143,7 @@ public static class ForsythEdwardsNotation
         }
 
         // The side to move cannot take the opposite king.
-        if (board.CanTakeOppositeKing)
+        if (board.IllegalCheck)
         {
             throw new ArgumentException(
                 "Invalid FEN string. The side to move can take the opposite king.",
