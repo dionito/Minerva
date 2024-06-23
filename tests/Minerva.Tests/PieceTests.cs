@@ -172,7 +172,19 @@ public class PieceTests
     }
 
     [TestMethod]
-    public void PieceAttacksAreCorrectInInitialBoard()
+    [DataRow("Black bishop", DisplayName = "Black Bishop")]
+    [DataRow("Black king", DisplayName = "Black King")]
+    [DataRow("Black knight", DisplayName = "Black Knight")]
+    [DataRow("Black pawn", DisplayName = "Black Pawn")]
+    [DataRow("Black queen", DisplayName = "Black Queen")]
+    [DataRow("Black rook", DisplayName = "Black Rook")]
+    [DataRow("White bishop", DisplayName = "White Bishop")]
+    [DataRow("White king", DisplayName = "White King")]
+    [DataRow("White knight", DisplayName = "White Knight")]
+    [DataRow("White pawn", DisplayName = "White Pawn")]
+    [DataRow("White queen", DisplayName = "White Queen")]
+    [DataRow("White rook", DisplayName = "White Rook")]
+    public void PieceAttacksAreCorrectInInitialBoard(string name)
     {
         var scenarios = new[]
         {
@@ -302,7 +314,7 @@ public class PieceTests
             },
         };
 
-        foreach (var scenario in scenarios)
+        foreach (var scenario in scenarios.Where(s=>s.Name.Equals(name)))
         {
             Console.WriteLine($"Starting: {scenario.Name}.");
             Board board = new Board();
@@ -330,7 +342,39 @@ public class PieceTests
     }
 
     [TestMethod]
-    public void PiecesCanOnlyTakeOpponentPieces()
+    [DataRow(
+        "White queen can take black pieces, but not white ones",
+        DisplayName = "White queen can take black pieces, but not white ones")]
+    [DataRow(
+        "Black queen can take black pieces, but not black ones",
+        DisplayName = "Black queen can take black pieces, but not black ones")]
+    [DataRow(
+        "White king can take black pieces, but not white ones",
+        DisplayName = "White king can take black pieces, but not white ones")]
+    [DataRow(
+        "Black king can take black pieces, but not white ones",
+        DisplayName = "Black king can take black pieces, but not white ones")]
+    [DataRow(
+        "White knight can take black pieces, but not white ones",
+        DisplayName = "White knight can take black pieces, but not white ones")]
+    [DataRow(
+        "Black knight can take white pieces, but not black ones",
+        DisplayName = "Black knight can take white pieces, but not black ones")]
+    [DataRow(
+        "White pawn can take black pieces, but not white ones",
+        DisplayName = "White pawn can take black pieces, but not white ones")]
+    [DataRow(
+        "Black pawn can take white pieces, but not black ones",
+        DisplayName = "Black pawn can take white pieces, but not black ones")]
+    [DataRow(
+        "White pawn can take black pieces, but not white ones, opposite side",
+        DisplayName = "White pawn can take black pieces, but not white ones, opposite side")]
+    [DataRow(
+        "Black pawn can take white pieces, but not black ones, opposite side",
+        DisplayName = "Black pawn can take white pieces, but not black ones, opposite side")]
+    [DataRow("White pawn can take black pawn en passant", DisplayName = "White pawn can take black pawn en passant")]
+    [DataRow("Black pawn can take white pawn en passant", DisplayName = "Black pawn can take white pawn en passant")]
+    public void PiecesCanOnlyTakeOpponentPieces(string name)
     {
         var scenarios = new[]
         {
@@ -464,7 +508,7 @@ public class PieceTests
             },
         };
 
-        foreach (var scenario in scenarios)
+        foreach (var scenario in scenarios.Where(s => s.Name.Equals(name)))
         {
             Console.WriteLine($"Starting: {scenario.Name}.");
             Board board = ForsythEdwardsNotation.GenerateBoard(scenario.Fen);
