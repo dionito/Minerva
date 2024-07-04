@@ -52,6 +52,13 @@ public static class PieceFactory
             : AllPieces[pieceChar];
     }
 
+    public static PieceBase GetPiece(char pieceType, Color pieceColor)
+    {
+        return pieceColor == Color.White
+            ? AllPieces[char.ToUpper(pieceType)]
+            : AllPieces[char.ToLower(pieceType)];
+    }
+
     public static PieceBase GetPiece(char pieceType)
     {
         return AllPieces[pieceType];

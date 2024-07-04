@@ -1,0 +1,440 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Minerva.UI.MainPage">
+    <ScrollView>
+        <Grid x:Name="chessBoard" Padding="0" RowSpacing="0" ColumnSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="100" />
+                <RowDefinition Height="100" />
+                <RowDefinition Height="100" />
+                <RowDefinition Height="100" />
+                <RowDefinition Height="100" />
+                <RowDefinition Height="100" />
+                <RowDefinition Height="100" />
+                <RowDefinition Height="100" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Rectangle x:Name="leftBorder" Grid.Column="0" />
+            <Label Text="Minerva Chess Board" FontSize="Title" TextColor="White" Grid.Row="0" Grid.Column="0"
+                    Grid.ColumnSpan="11" HorizontalOptions="Center" />
+            <Label Text="Board Data" FontSize="Title" TextColor="White" Grid.Row="0" Grid.Column="11"
+                    HorizontalOptions="Center" />
+
+            <BoxView Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="10" Grid.RowSpan="10" Background="White"
+                    HorizontalOptions="Fill" VerticalOptions="Fill" />
+
+            <!--Row 8, which is row 2 in our grid-->
+            <ImageButton x:Name="btn8A" Grid.Row="2" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn8B" Grid.Row="2" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn8C" Grid.Row="2" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn8D" Grid.Row="2" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn8E" Grid.Row="2" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn8F" Grid.Row="2" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn8G" Grid.Row="2" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn8H" Grid.Row="2" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <!--Row 7, which is row 3 in our grid-->
+            <ImageButton x:Name="btn7A" Grid.Row="3" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn7B" Grid.Row="3" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn7C" Grid.Row="3" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn7D" Grid.Row="3" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn7E" Grid.Row="3" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn7F" Grid.Row="3" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn7G" Grid.Row="3" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn7H" Grid.Row="3" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <!--Row 6, which is row 4 in our grid-->
+            <ImageButton x:Name="btn6A" Grid.Row="4" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn6B" Grid.Row="4" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn6C" Grid.Row="4" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn6D" Grid.Row="4" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn6E" Grid.Row="4" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn6F" Grid.Row="4" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn6G" Grid.Row="4" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn6H" Grid.Row="4" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <!--Row 5, which is row 5 in our grid-->
+            <ImageButton x:Name="btn5A" Grid.Row="5" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn5B" Grid.Row="5" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn5C" Grid.Row="5" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn5D" Grid.Row="5" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn5E" Grid.Row="5" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn5F" Grid.Row="5" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn5G" Grid.Row="5" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn5H" Grid.Row="5" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <!--Row 4, which is row 6 in our grid-->
+            <ImageButton x:Name="btn4A" Grid.Row="6" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn4B" Grid.Row="6" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn4C" Grid.Row="6" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn4D" Grid.Row="6" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn4E" Grid.Row="6" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn4F" Grid.Row="6" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn4G" Grid.Row="6" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn4H" Grid.Row="6" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <!--Row 3, which is row 7 in our grid-->
+            <ImageButton x:Name="btn3A" Grid.Row="7" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn3B" Grid.Row="7" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn3C" Grid.Row="7" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn3D" Grid.Row="7" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn3E" Grid.Row="7" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn3F" Grid.Row="7" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn3G" Grid.Row="7" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn3H" Grid.Row="7" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <!--Row 2, which is row 8 in our grid-->
+            <ImageButton x:Name="btn2A" Grid.Row="8" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn2B" Grid.Row="8" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn2C" Grid.Row="8" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn2D" Grid.Row="8" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn2E" Grid.Row="8" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn2F" Grid.Row="8" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn2G" Grid.Row="8" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn2H" Grid.Row="8" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <!--Row 1, which is row 9 in our grid-->
+            <ImageButton x:Name="btn1A" Grid.Row="9" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn1B" Grid.Row="9" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn1C" Grid.Row="9" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn1D" Grid.Row="9" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn1E" Grid.Row="9" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn1F" Grid.Row="9" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn1G" Grid.Row="9" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+            <ImageButton x:Name="btn1H" Grid.Row="9" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill"
+                    CornerRadius="0" Clicked="SquareSelected" />
+
+            <!-- Stuff in the right of the board goes here -->
+            <StackLayout Grid.Row="1" Grid.Column="11" Grid.RowSpan="11">
+                <Grid x:Name="boardData" Padding="0" RowSpacing="3" ColumnSpacing="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="275" />
+                        <ColumnDefinition Width="900" />
+                        <ColumnDefinition Width="85" />
+                        <ColumnDefinition Width="450" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="1" Grid.Column="1" Text="Piece" HorizontalOptions="Center" FontSize="Title" />
+                    <Label Grid.Row="1" Grid.Column="2" Text="Decimal" HorizontalOptions="Center" FontSize="Title" />
+                    <Label Grid.Row="1" Grid.Column="3" Text="Binary" HorizontalOptions="Center" FontSize="Title" />
+                    <Label Grid.Row="1" Grid.Column="4" Text="Attack" HorizontalOptions="Center" FontSize="Title" />
+                    <Label Grid.Row="1" Grid.Column="5" Text="Attacks Hex" HorizontalOptions="Center" FontSize="Title" />
+
+                    <Image Grid.Row="2" Grid.Column="1" Source="blackking.png" BackgroundColor="LightGrey"
+                            VerticalOptions="Fill" />
+                    <Label Grid.Row="2" Grid.Column="2" x:Name="lblBlackKingDecimal" FontSize="Title" TextColor="White"
+                            Text="0" BackgroundColor="Black" VerticalOptions="Fill" HorizontalTextAlignment="End"
+                            VerticalTextAlignment="Center" />
+                    <Label Grid.Row="2" Grid.Column="3" x:Name="lblBlackKingBinary" FontSize="Title" TextColor="White"
+                            Text="0" BackgroundColor="Red" VerticalOptions="Fill" HorizontalTextAlignment="End"
+                            VerticalTextAlignment="Center" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="2" Grid.Column="4" x:Name="cbBlackKing"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="RadioButtonCheckChanged" />
+                    <Label Grid.Row="2" Grid.Column="5" x:Name="lblBlackKingAttacks" FontSize="Title" TextColor="White"
+                            Text="0" BackgroundColor="Black" VerticalOptions="Fill" HorizontalTextAlignment="End"
+                            VerticalTextAlignment="Center" />
+
+                    <Image Grid.Row="3" Grid.Column="1" Source="blackqueen.png" BackgroundColor="LightGrey"
+                            VerticalOptions="Fill" />
+                    <Label Grid.Row="3" Grid.Column="2" x:Name="lblBlackQueensDecimal" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <Label Grid.Row="3" Grid.Column="3" x:Name="lblBlackQueensBinary" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="3" Grid.Column="4" x:Name="cbBlackQueens"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="RadioButtonCheckChanged" />
+                    <Label Grid.Row="3" Grid.Column="5" x:Name="lblBlackQueensAttacks" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+
+                    <Image Grid.Row="4" Grid.Column="1" Source="blackrook.png" BackgroundColor="LightGrey"
+                            VerticalOptions="Fill" />
+                    <Label Grid.Row="4" Grid.Column="2" x:Name="lblBlackRooksDecimal" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <Label Grid.Row="4" Grid.Column="3" x:Name="lblBlackRooksBinary" FontSize="Title" TextColor="White"
+                            Text="0" BackgroundColor="Red" VerticalOptions="Fill" HorizontalTextAlignment="End"
+                            VerticalTextAlignment="Center" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="4" Grid.Column="4" x:Name="cbBlackRooks"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="RadioButtonCheckChanged" />
+                    <Label Grid.Row="4" Grid.Column="5" x:Name="lblBlackRooksAttacks" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+
+                    <Image Grid.Row="5" Grid.Column="1" Source="blackknight.png" BackgroundColor="LightGrey"
+                            VerticalOptions="Fill" />
+                    <Label Grid.Row="5" Grid.Column="2" x:Name="lblBlackKnightsDecimal" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <Label Grid.Row="5" Grid.Column="3" x:Name="lblBlackKnightsBinary" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="5" Grid.Column="4" x:Name="cbBlackKnights"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="RadioButtonCheckChanged" />
+                    <Label Grid.Row="5" Grid.Column="5" x:Name="lblBlackKnightsAttacks" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+
+                    <Image Grid.Row="6" Grid.Column="1" Source="blackbishop.png" BackgroundColor="LightGrey"
+                            VerticalOptions="Fill" />
+                    <Label Grid.Row="6" Grid.Column="2" x:Name="lblBlackBishopsDecimal" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <Label Grid.Row="6" Grid.Column="3" x:Name="lblBlackBishopsBinary" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="6" Grid.Column="4" x:Name="cbBlackBishops"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="RadioButtonCheckChanged" />
+                    <Label Grid.Row="6" Grid.Column="5" x:Name="lblBlackBishopsAttacks" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+
+                    <Image Grid.Row="7" Grid.Column="1" Source="blackpawn.png" BackgroundColor="LightGrey"
+                            VerticalOptions="Fill" />
+                    <Label Grid.Row="7" Grid.Column="2" x:Name="lblBlackPawnsDecimal" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <Label Grid.Row="7" Grid.Column="3" x:Name="lblBlackPawnsBinary" FontSize="Title" TextColor="White"
+                            Text="0" BackgroundColor="Red" VerticalOptions="Fill" HorizontalTextAlignment="End"
+                            VerticalTextAlignment="Center" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="7" Grid.Column="4" x:Name="cbBlackPawns"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="RadioButtonCheckChanged" />
+                    <Label Grid.Row="7" Grid.Column="5" x:Name="lblBlackPawnsAttacks" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+
+                    <Image Grid.Row="8" Grid.Column="1" Source="whiteking.png" BackgroundColor="LightGrey"
+                            VerticalOptions="Fill" />
+                    <Label Grid.Row="8" Grid.Column="2" x:Name="lblWhiteKingDecimal" FontSize="Title" TextColor="White"
+                            Text="0" BackgroundColor="Black" VerticalOptions="Fill" HorizontalTextAlignment="End"
+                            VerticalTextAlignment="Center" />
+                    <Label Grid.Row="8" Grid.Column="3" x:Name="lblWhiteKingBinary" FontSize="Title" TextColor="White"
+                            Text="0" BackgroundColor="Red" VerticalOptions="Fill" HorizontalTextAlignment="End"
+                            VerticalTextAlignment="Center" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="8" Grid.Column="4" x:Name="cbWhiteKing"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="RadioButtonCheckChanged" />
+                    <Label Grid.Row="8" Grid.Column="5" x:Name="lblWhiteKingAttacks" FontSize="Title" TextColor="White"
+                            Text="0" BackgroundColor="Black" VerticalOptions="Fill" HorizontalTextAlignment="End"
+                            VerticalTextAlignment="Center" />
+
+                    <Image Grid.Row="9" Grid.Column="1" Source="whitequeen.png" BackgroundColor="LightGrey"
+                            VerticalOptions="Fill" />
+                    <Label Grid.Row="9" Grid.Column="2" x:Name="lblWhiteQueensDecimal" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <Label Grid.Row="9" Grid.Column="3" x:Name="lblWhiteQueensBinary" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="9" Grid.Column="4" x:Name="cbWhiteQueens"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="RadioButtonCheckChanged" />
+                    <Label Grid.Row="9" Grid.Column="5" x:Name="lblWhiteQueensAttacks" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+
+                    <Image Grid.Row="10" Grid.Column="1" Source="whiterook.png" BackgroundColor="LightGrey"
+                            VerticalOptions="Fill" />
+                    <Label Grid.Row="10" Grid.Column="2" x:Name="lblWhiteRooksDecimal" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <Label Grid.Row="10" Grid.Column="3" x:Name="lblWhiteRooksBinary" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="10" Grid.Column="4" x:Name="cbWhiteRooks"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="RadioButtonCheckChanged" />
+                    <Label Grid.Row="10" Grid.Column="5" x:Name="lblWhiteRooksAttacks" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+
+                    <Image Grid.Row="11" Grid.Column="1" Source="whiteknight.png" BackgroundColor="LightGrey"
+                            VerticalOptions="Fill" />
+                    <Label Grid.Row="11" Grid.Column="2" x:Name="lblWhiteKnightsDecimal" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <Label Grid.Row="11" Grid.Column="3" x:Name="lblWhiteKnightsBinary" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="11" Grid.Column="4" x:Name="cbWhiteKnights"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="RadioButtonCheckChanged" />
+                    <Label Grid.Row="11" Grid.Column="5" x:Name="lblWhiteKnightsAttacks" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+
+                    <Image Grid.Row="12" Grid.Column="1" Source="whitebishop.png" BackgroundColor="LightGrey"
+                            VerticalOptions="Fill" />
+                    <Label Grid.Row="12" Grid.Column="2" x:Name="lblWhiteBishopsDecimal" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <Label Grid.Row="12" Grid.Column="3" x:Name="lblWhiteBishopsBinary" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="12" Grid.Column="4" x:Name="cbWhiteBishops"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="RadioButtonCheckChanged" />
+                    <Label Grid.Row="12" Grid.Column="5" x:Name="lblWhiteBishopsAttacks" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+
+                    <Image Grid.Row="13" Grid.Column="1" Source="whitepawn.png" BackgroundColor="LightGrey"
+                            VerticalOptions="Fill" />
+                    <Label Grid.Row="13" Grid.Column="2" x:Name="lblWhitePawnsDecimal" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <Label Grid.Row="13" Grid.Column="3" x:Name="lblWhitePawnsBinary" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="13" Grid.Column="4" x:Name="cbWhitePawns"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="RadioButtonCheckChanged" />
+                    <Label Grid.Row="13" Grid.Column="5" x:Name="lblWhitePawnsAttacks" FontSize="Title"
+                            TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
+                            HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                </Grid>
+            </StackLayout>
+
+            <!--Now, the controls here-->
+            <StackLayout Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="11" VerticalOptions="Start"
+                    HorizontalOptions="Center">
+                <Label Text="Square colors" FontSize="Title" TextColor="White" HorizontalOptions="Center"
+                        Margin="20,20,5,5" />
+                <HorizontalStackLayout HorizontalOptions="Center">
+                    <Border x:Name="swatch" HeightRequest="100" WidthRequest="100" Margin="10,0,10,0" Background="Cyan"
+                            VerticalOptions="Center" HorizontalOptions="Center" />
+                    <VerticalStackLayout>
+                        <HorizontalStackLayout VerticalOptions="Center">
+                            <Slider x:Name="sldrRed" Minimum="0" Maximum="255" Value="0" VerticalOptions="Center"
+                                    ThumbColor="Red" WidthRequest="256" MaximumTrackColor="White"
+                                    MinimumTrackColor="Red" ValueChanged="UpdateColorSwatch" />
+                            <Label x:Name="lblRed" FontSize="Micro" TextColor="White" Margin="5"
+                                    VerticalOptions="Center" Text="0" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout VerticalOptions="Center">
+                            <Slider x:Name="sldrGreen" Minimum="0" Maximum="255" Value="255" VerticalOptions="Center"
+                                    ThumbColor="Red" WidthRequest="256" MaximumTrackColor="White"
+                                    MinimumTrackColor="Green" ValueChanged="UpdateColorSwatch" />
+                            <Label x:Name="lblGreen" FontSize="Micro" TextColor="White" Margin="5"
+                                    VerticalOptions="Center" Text="255" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout VerticalOptions="Center">
+                            <Slider x:Name="sldrBlue" Minimum="0" Maximum="255" Value="255" VerticalOptions="Center"
+                                    ThumbColor="Red" WidthRequest="256" MaximumTrackColor="White"
+                                    MinimumTrackColor="Blue" ValueChanged="UpdateColorSwatch" />
+                            <Label x:Name="lblBlue" FontSize="Micro" TextColor="White" Margin="5"
+                                    VerticalOptions="Center" Text="255" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="25" Padding="25">
+                    <Button x:Name="btnLightColor" HeightRequest="50" WidthRequest="150" Text="Set Light"
+                            Clicked="BtnLightColor_OnClicked" />
+                    <Button x:Name="btnDarkColor" HeightRequest="50" WidthRequest="150" Text="Set Dark"
+                            Clicked="BtnDarkColor_OnClicked" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="25" Padding="25">
+                    <Label Text="FEN:" FontSize="Title" VerticalOptions="Fill" VerticalTextAlignment="Center" />
+                    <Entry x:Name="txtFen" VerticalOptions="Center" WidthRequest="900" BackgroundColor="White"
+                            TextColor="Black" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="25" Padding="25">
+                    <Button x:Name="btnClear" HeightRequest="50" WidthRequest="150" Text="Clear Board"
+                            Clicked="ResetBoard" />
+                    <Button x:Name="btnSetup" HeightRequest="50" WidthRequest="150" Text="Setup Pieces"
+                            Clicked="InitializeBoard" />
+                </HorizontalStackLayout>
+                <Label TextColor="LightGrey" Text="Copyright 2023 Sanydio" VerticalOptions="End"
+                        HorizontalOptions="Center" FontSize="Micro" VerticalTextAlignment="End" />
+            </StackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>
