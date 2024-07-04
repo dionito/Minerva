@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+using Minerva.Pieces;
+
 namespace Minerva.Tests;
 
 [TestClass]
@@ -481,5 +483,25 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         Assert.ThrowsException<ArgumentException>(() => board.SetPieceAt(file, rank, piece));
+    }
+
+    [TestMethod]
+    [DataRow(Color.White, 'R', DisplayName = "White Rook Attacks")]
+    [DataRow(Color.Black, 'r', DisplayName = "Black Rook Attacks")]
+    public void GetPieceAttacks_ReturnsCorrectAttacks_ForRooks(Color color, char pieceType)
+    {
+        // Arrange
+        var board = new Board();
+        board.SetPieceAt(1, 1, pieceType); // Place rook at a1
+        board.SetPieceAt(8, 8, pieceType); // Place rook at h8
+        var pieceBase = PieceFactory.GetPiece(pieceType, color);
+
+        // Act
+        ulong attacks = board.GetPieceAttacks(pieceBase);
+
+        // Assert
+        // Assuming a method to calculate expected attacks for a rook at a1
+        ulong expectedAttacks = Board.Rank1 | Board.Rank8 | Board.FileA | Board.FileH;
+        Assert.AreEqual(expectedAttacks, attacks, "Rook attacks did not match expected attacks.");
     }
 }
