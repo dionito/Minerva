@@ -73,8 +73,8 @@ public class Board
             { FileA & Rank8, 0x8040201008040201ul },
             { FileB & Rank1, 0x102040810A040ul },
             { FileB & Rank2, 0x102040810A040A0ul },
-            { FileB & Rank3, 0x20408A040A01000ul },
-            { FileB & Rank4, 0x40840A040A01008ul },
+            { FileB & Rank3, 0x2040810A040A010ul },
+            { FileB & Rank4, 0x40810A040A01008ul },
             { FileB & Rank5, 0x810A040A0100804ul },
             { FileB & Rank6, 0x10A040A010080402ul },
             { FileB & Rank7, 0xA040A01008040201ul },
@@ -82,68 +82,62 @@ public class Board
             { FileC & Rank1, 0x10204885020ul },
             { FileC & Rank2, 0x1020488502050ul },
             { FileC & Rank3, 0x102048850205088ul },
-            { FileC & Rank4, 0x204845020508804ul },
+            { FileC & Rank4, 0x204885020508804ul },
             { FileC & Rank5, 0x488502050880402ul },
             { FileC & Rank6, 0x8850205088040201ul },
             { FileC & Rank7, 0x5020508804020100ul },
             { FileC & Rank8, 0x2050880402010000ul },
-            { FileD & Rank1, 0x1824428100ul },
-            { FileD & Rank2, 0x8244281028ul },
-            { FileD & Rank3, 0x1824428202844ul  },
+            { FileD & Rank1, 0x182442810ul },
+            { FileD & Rank2, 0x18244281028ul },
+            { FileD & Rank3, 0x1824428102844ul },
             { FileD & Rank4, 0x182442810284482ul },
-            { FileD & Rank5, 0x0ul },
-            { FileD & Rank6, 0x0ul },
-            { FileD & Rank7, 0x0ul },
-            { FileD & Rank8, 0x0ul },
-            { FileE & Rank1, 0x0ul },
-            { FileE & Rank2, 0x0ul },
-            { FileE & Rank3, 0x0ul },
-            { FileE & Rank4, 0x0ul },
-            { FileE & Rank5, 0x0ul },
-            { FileE & Rank6, 0x0ul },
-            { FileE & Rank7, 0x0ul },
-            { FileE & Rank8, 0x0ul },
-            { FileF & Rank1, 0x0ul },
-            { FileF & Rank2, 0x0ul },
-            { FileF & Rank3, 0x0ul },
-            { FileF & Rank4, 0x0ul },
-            { FileF & Rank5, 0x0ul },
-            { FileF & Rank6, 0x0ul },
-            { FileF & Rank7, 0x0ul },
-            { FileF & Rank8, 0x0ul },
-            { FileG & Rank1, 0x0ul },
-            { FileG & Rank2, 0x0ul },
-            { FileG & Rank3, 0x0ul },
-            { FileG & Rank4, 0x0ul },
-            { FileG & Rank5, 0x0ul },
-            { FileG & Rank6, 0x0ul },
-            { FileG & Rank7, 0x0ul },
-            { FileG & Rank8, 0x0ul },
+            { FileD & Rank5, 0x8244281028448201ul },
+            { FileD & Rank6, 0x4428102844820100ul },
+            { FileD & Rank7, 0x2810284482010000ul },
+            { FileD & Rank8, 0x1028448201000000ul },
+            { FileE & Rank1, 0x8041221408ul },
+            { FileE & Rank2, 0x804122140814ul },
+            { FileE & Rank3, 0x80412214081422ul },
+            { FileE & Rank4, 0x8041221408142241ul },
+            { FileE & Rank5, 0x4122140814224180ul },
+            { FileE & Rank6, 0x2214081422418000ul },
+            { FileE & Rank7, 0x1408142241800000ul },
+            { FileE & Rank8, 0x814224180000000ul },
+            { FileF & Rank1, 0x804020110A04ul },
+            { FileF & Rank2, 0x804020110A040Aul },
+            { FileF & Rank3, 0x804020110A040A11ul },
+            { FileF & Rank4, 0x4020110A040A1120ul },
+            { FileF & Rank5, 0x20110A040A112040ul },
+            { FileF & Rank6, 0x110A040A11204080ul },
+            { FileF & Rank7, 0xA040A1120408000ul },
+            { FileF & Rank8, 0x40A112040800000ul },
+            { FileG & Rank1, 0x80402010080502ul },
+            { FileG & Rank2, 0x8040201008050205ul },
+            { FileG & Rank3, 0x4020100805020508ul },
+            { FileG & Rank4, 0x2010080502050810ul },
+            { FileG & Rank5, 0x1008050205081020ul },
+            { FileG & Rank6, 0x805020508102040ul },
+            { FileG & Rank7, 0x502050810204080ul },
+            { FileG & Rank8, 0x205081020408000ul },
             { FileH & Rank1, 0x8040201008040201ul },
-            { FileH & Rank2, 0x0ul },
-            { FileH & Rank3, 0x0ul },
-            { FileH & Rank4, 0x0ul },
-            { FileH & Rank5, 0x0ul },
-            { FileH & Rank6, 0x0ul },
-            { FileH & Rank7, 0x0ul },
+            { FileH & Rank2, 0x4020100804020102ul },
+            { FileH & Rank3, 0x2010080402010204ul },
+            { FileH & Rank4, 0x1008040201020408ul },
+            { FileH & Rank5, 0x804020102040810ul },
+            { FileH & Rank6, 0x402010204081020ul },
+            { FileH & Rank7, 0x201020408102040ul },
             { FileH & Rank8, 0x102040810204080ul },
         };
 
     /// <summary>
     /// Represents the files of the chess board.
     /// </summary>
-    public static readonly ulong[] Files = 
-    {
-        FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH,
-    };
+    public static readonly ulong[] Files = { FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH, };
 
     /// <summary>
     /// Represents the ranks of the chess board.
     /// </summary>
-    public static readonly ulong[] Ranks = 
-    {
-        Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8,
-    };
+    public static readonly ulong[] Ranks = { Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8, };
 
     /// <summary>
     /// Gets the active color, which is the color that has the next move.
@@ -343,28 +337,38 @@ public class Board
         // Initialize black pieces
         // Rooks are placed on a8 and h8
         this.BlackPieces['r'] = Rank8 & FileA | Rank8 & FileH;
+
         // Knights are placed on b8 and g8
         this.BlackPieces['n'] = Rank8 & FileB | Rank8 & FileG;
+
         // Bishops are placed on c8 and f8
         this.BlackPieces['b'] = Rank8 & FileC | Rank8 & FileF;
+
         // Queen is placed on d8
         this.BlackPieces['q'] = Rank8 & FileD;
+
         // King is placed on e8
         this.BlackPieces['k'] = Rank8 & FileE;
+
         // Pawns are placed on a7 to h7
         this.BlackPieces['p'] = Rank7;
 
         // Initialize white pieces
         // Rooks are placed on a1 and h1
         this.WhitePieces['R'] = Rank1 & FileA | Rank1 & FileH;
+
         // Knights are placed on b1 and g1
         this.WhitePieces['N'] = Rank1 & FileB | Rank1 & FileG;
+
         // Bishops are placed on c1 and f1
         this.WhitePieces['B'] = Rank1 & FileC | Rank1 & FileF;
+
         // Queen is placed on d1
         this.WhitePieces['Q'] = Rank1 & FileD;
+
         // King is placed on e1
         this.WhitePieces['K'] = Rank1 & FileE;
+
         // Pawns are placed on a2 to h2
         this.WhitePieces['P'] = Rank2;
 
@@ -543,34 +547,40 @@ public class Board
             throw new ArgumentException("Invalid piece.", nameof(piece));
         }
 
-        ulong targetBitBoard = Files[file - 1] & Ranks[rank - 1];
+        ulong bitBoard = Files[file - 1] & Ranks[rank - 1];
+        this.SetPieceAt(bitBoard, piece);
+    }
+
+    public void SetPieceAt(ulong bitBoard, char piece)
+    {
         if (char.IsLower(piece))
         {
             // Clear the bit at the target location for all black pieces
             foreach (var key in this.BlackPieces.Keys.ToList())
             {
-                this.BlackPieces[key] &= ~targetBitBoard;
+                this.BlackPieces[key] &= ~bitBoard;
             }
 
             // Set the bit at the target location for the specified piece
-            this.BlackPieces[piece] |= targetBitBoard;
+            this.BlackPieces[piece] |= bitBoard;
         }
         else
         {
             // Clear the bit at the target location for all white pieces
             foreach (var key in this.WhitePieces.Keys.ToList())
             {
-                this.WhitePieces[key] &= ~targetBitBoard;
+                this.WhitePieces[key] &= ~bitBoard;
             }
 
             // Set the bit at the target location for the specified piece
-            this.WhitePieces[piece] |= targetBitBoard;
+            this.WhitePieces[piece] |= bitBoard;
         }
 
         this.UpdateBoardStatus();
     }
 
-    /// <summary>
+
+/// <summary>
     /// Checks if a given square contains a piece of a specific color.
     /// </summary>
     /// <param name="file">The file of the square to check. Must be between 'a' and 'h' inclusive.</param>

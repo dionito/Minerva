@@ -21,6 +21,18 @@ namespace Minerva.Tests;
 public class BoardTests : TestBase
 {
     [TestMethod]
+    public void TestDiagonalsDictionary()
+    {
+        var board = new Board();
+        var bishop = PieceFactory.GetPiece('b', Color.White);
+        foreach (KeyValuePair<ulong, ulong> diagonal in Board.Diagonals)
+        {
+            var attacks = bishop.GetPieceAttacks(diagonal.Key, board) | diagonal.Key;
+            Assert.AreEqual(attacks.ToString("X8"), diagonal.Value.ToString("X8"));
+        }
+    }
+
+    [TestMethod]
     [DataRow("a1", Board.Rank1 & Board.FileA, DisplayName = "a1")]
     [DataRow("a8", Board.Rank8 & Board.FileA, DisplayName = "a8")]
     [DataRow("h1", Board.Rank1 & Board.FileH, DisplayName = "h1")]
