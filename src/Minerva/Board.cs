@@ -154,7 +154,7 @@ public class Board
     /// <summary>
     /// Represents the bitboards for the black pieces.
     /// </summary>
-    public Dictionary<char, ulong> BlackPieces { get; } = new()
+    public Dictionary<char, ulong> BlackPieces { get; } = new(new CaseInsensitiveCharComparer())
     {
         { 'b', 0ul },
         { 'n', 0ul },
@@ -239,7 +239,7 @@ public class Board
     /// <summary>
     /// Represents the bitboards for the white pieces.
     /// </summary>
-    public Dictionary<char, ulong> WhitePieces { get; } = new()
+    public Dictionary<char, ulong> WhitePieces { get; } = new(new CaseInsensitiveCharComparer())
     {
         { 'B', 0ul },
         { 'N', 0ul },
@@ -727,5 +727,22 @@ public class Board
         {
             this.WhitePiecesBitBoard |= pieceKvp.Value;
         }
+    }
+
+    public ulong GetPieceAttacks(PieceBase pieceBase)
+    {
+        Dictionary<char, ulong> pieces = pieceBase.Color == Color.Black ? this.BlackPieces : this.WhitePieces;
+        ulong piecePositions = pieces[pieceBase.PieceType.ToChar()];
+
+        // find the 1s in the piecePositions bitboard and get the attacks for those positions
+        ulong attacks = piecePositions;
+        while (piecePositions != 0)
+        {
+            ulong position = piecePositions & (ulong)-(long)piecePositions;
+            attacks |= pieceBase.GetPieceAttacks(position, this);
+            piecePositions &= ~position;
+        }
+
+        return attacks;
     }
 }
