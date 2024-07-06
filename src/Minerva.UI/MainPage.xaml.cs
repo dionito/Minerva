@@ -96,12 +96,12 @@ public partial class MainPage : ContentPage
         };
         this.attackRadioButtons = new Dictionary<RadioButton, PieceBase>
         {
-            { this.cbBlackBishops, PieceFactory.GetPiece(PieceType.Bishop, Color.Black) },
-            { this.cbBlackKing, PieceFactory.GetPiece(PieceType.King, Color.Black) },
-            { this.cbBlackKnights, PieceFactory.GetPiece(PieceType.Knight, Color.Black) },
-            { this.cbBlackPawns, PieceFactory.GetPiece(PieceType.Pawn, Color.Black) },
-            { this.cbBlackQueens, PieceFactory.GetPiece(PieceType.Queen, Color.Black)},
-            { this.cbBlackRooks, PieceFactory.GetPiece(PieceType.Rook, Color.Black) },
+            { this.cbBlackBishopsAttacks, PieceFactory.GetPiece(PieceType.Bishop, Color.Black) },
+            { this.cbBlackKingAttacks, PieceFactory.GetPiece(PieceType.King, Color.Black) },
+            { this.cbBlackKnightsAttacks, PieceFactory.GetPiece(PieceType.Knight, Color.Black) },
+            { this.cbBlackPawnsAttacks, PieceFactory.GetPiece(PieceType.Pawn, Color.Black) },
+            { this.cbBlackQueensAttacks, PieceFactory.GetPiece(PieceType.Queen, Color.Black)},
+            { this.cbBlackRooksAttacks, PieceFactory.GetPiece(PieceType.Rook, Color.Black) },
             { this.cbWhiteBishops, PieceFactory.GetPiece(PieceType.Bishop, Color.White) },
             { this.cbWhiteKing, PieceFactory.GetPiece(PieceType.King, Color.White) },
             { this.cbWhiteKnights, PieceFactory.GetPiece(PieceType.Knight, Color.White) },
@@ -255,81 +255,107 @@ public partial class MainPage : ContentPage
     void SetBoardData()
     {
         // black pieces data
+        this.lblBlackBishopsHex.Text = this.board?.BlackPieces[PieceType.Bishop.ToChar()].ToString("X16") ?? "0";
         this.lblBlackBishopsBinary.Text =
             this.board != null
                 ? Convert.ToString((long)this.board!.BlackPieces[PieceType.Bishop.ToChar()], 2).PadLeft(64, '0')
                 : "0";
-        this.lblBlackBishopsDecimal.Text = this.board?.BlackPieces[PieceType.Bishop.ToChar()].ToString("D") ?? "0";
-        string? hexValue = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Bishop, Color.Black)).ToString("X8");
-        this.lblBlackBishopsAttacks.Text = hexValue ?? "0";
-        Clipboard.SetTextAsync(hexValue ?? "0");
+        this.lblBlackBishopsAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Bishop, Color.Black))
+            .ToString("X16") ?? "0";
 
-        //this.lblBlackKingBinary.Text =
-        //    this.board != null
-        //        ? Convert.ToString((long)this.board!.BlackPieces[PieceTypes.King], 2).PadLeft(64, '0')
-        //        : "0";
-        //this.lblBlackKingDecimal.Text = this.board?.BlackPieces[PieceTypes.King].ToString("D") ?? "0";
+        this.lblBlackKingHex.Text = this.board?.BlackPieces[PieceType.King.ToChar()].ToString("X16") ?? "0";
+        this.lblBlackKingBinary.Text =
+            this.board != null
+                ? Convert.ToString((long)this.board!.BlackPieces[PieceType.King.ToChar()], 2).PadLeft(64, '0')
+                : "0";
+        this.lblBlackKingAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.King, Color.Black))
+            .ToString("X16") ?? "0";
 
-        //this.lblBlackKnightsBinary.Text =
-        //    this.board != null
-        //        ? Convert.ToString((long)this.board!.BlackPieces[PieceTypes.Knight], 2).PadLeft(64, '0')
-        //        : "0";
-        //this.lblBlackKnightsDecimal.Text = this.board?.BlackPieces[PieceTypes.Knight].ToString("D") ?? "0";
 
-        //this.lblBlackPawnsBinary.Text =
-        //    this.board != null
-        //        ? Convert.ToString((long)this.board!.BlackPieces[PieceTypes.Pawn], 2).PadLeft(64, '0')
-        //        : "0";
-        //this.lblBlackPawnsDecimal.Text = this.board?.BlackPieces[PieceTypes.Pawn].ToString("D") ?? "0";
+        this.lblBlackKnightsHex.Text = this.board?.BlackPieces[PieceType.Knight.ToChar()].ToString("X16") ?? "0";
+        this.lblBlackKnightsBinary.Text =
+            this.board != null
+                ? Convert.ToString((long)this.board!.BlackPieces[PieceType.Knight.ToChar()], 2).PadLeft(64, '0')
+                : "0";
+        this.lblBlackKnightsAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Knight, Color.Black))
+            .ToString("X16") ?? "0";
 
-        //this.lblBlackQueensDecimal.Text = this.board?.BlackPieces[PieceTypes.Queen].ToString("D") ?? "0";
-        //this.lblBlackQueensBinary.Text =
-        //    this.board != null
-        //        ? Convert.ToString((long)this.board!.BlackPieces[PieceTypes.Queen], 2).PadLeft(64, '0')
-        //        : "0";
 
-        //this.lblBlackRooksBinary.Text =
-        //    this.board != null
-        //        ? Convert.ToString((long)this.board!.BlackPieces[PieceTypes.Rook], 2).PadLeft(64, '0')
-        //        : "0";
-        //this.lblBlackRooksDecimal.Text = this.board?.BlackPieces[PieceTypes.Rook].ToString("D") ?? "0";
+        this.lblBlackPawnsHex.Text = this.board?.BlackPieces[PieceType.Pawn.ToChar()].ToString("X16") ?? "0";
+        this.lblBlackPawnsBinary.Text =
+            this.board != null
+                ? Convert.ToString((long)this.board!.BlackPieces[PieceType.Pawn.ToChar()], 2).PadLeft(64, '0')
+                : "0";
+        this.lblBlackPawnsAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Pawn, Color.Black))
+            .ToString("X16") ?? "0";
 
-        //// white pieces data
-        //this.lblWhiteBishopsBinary.Text =
-        //    this.board != null
-        //        ? Convert.ToString((long)this.board!.WhitePieces[PieceTypes.Bishop], 2).PadLeft(64, '0')
-        //        : "0";
-        //this.lblWhiteBishopsDecimal.Text = this.board?.WhitePieces[PieceTypes.Bishop].ToString("D") ?? "0";
 
-        //this.lblWhiteKingBinary.Text =
-        //    this.board != null
-        //        ? Convert.ToString((long)this.board!.WhitePieces[PieceTypes.King], 2).PadLeft(64, '0')
-        //        : "0";
-        //this.lblWhiteKingDecimal.Text = this.board?.WhitePieces[PieceTypes.King].ToString("D") ?? "0";
+        this.lblBlackQueensHex.Text = this.board?.BlackPieces[PieceType.Queen.ToChar()].ToString("X16") ?? "0";
+        this.lblBlackQueensBinary.Text =
+            this.board != null
+                ? Convert.ToString((long)this.board!.BlackPieces[PieceType.Queen.ToChar()], 2).PadLeft(64, '0')
+                : "0";
+        this.lblBlackQueensAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Queen, Color.Black))
+            .ToString("X16") ?? "0";
 
-        //this.lblWhiteKnightsBinary.Text =
-        //    this.board != null
-        //        ? Convert.ToString((long)this.board!.WhitePieces[PieceTypes.Knight], 2).PadLeft(64, '0')
-        //        : "0";
-        //this.lblWhiteKnightsDecimal.Text = this.board?.WhitePieces[PieceTypes.Knight].ToString("D") ?? "0";
 
-        //this.lblWhitePawnsBinary.Text =
-        //    this.board != null
-        //        ? Convert.ToString((long)this.board!.WhitePieces[PieceTypes.Pawn], 2).PadLeft(64, '0')
-        //        : "0";
-        //this.lblWhitePawnsDecimal.Text = this.board?.WhitePieces[PieceTypes.Pawn].ToString("D") ?? "0";
+        this.lblBlackRooksBinary.Text =
+            this.board != null
+                ? Convert.ToString((long)this.board!.BlackPieces[PieceType.Rook.ToChar()], 2).PadLeft(64, '0')
+                : "0";
+        this.lblBlackRooksHex.Text = this.board?.BlackPieces[PieceType.Rook.ToChar()].ToString("X16") ?? "0";
+        this.lblBlackRooksAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Rook, Color.Black))
+            .ToString("X16") ?? "0";
 
-        //this.lblWhiteQueensDecimal.Text = this.board?.WhitePieces[PieceTypes.Queen].ToString("D") ?? "0";
-        //this.lblWhiteQueensBinary.Text =
-        //    this.board != null
-        //        ? Convert.ToString((long)this.board!.WhitePieces[PieceTypes.Queen], 2).PadLeft(64, '0')
-        //        : "0";
 
-        //this.lblWhiteRooksBinary.Text =
-        //    this.board != null
-        //        ? Convert.ToString((long)this.board!.WhitePieces[PieceTypes.Rook], 2).PadLeft(64, '0')
-        //        : "0";
-        //this.lblWhiteRooksDecimal.Text = this.board?.WhitePieces[PieceTypes.Rook].ToString("D") ?? "0";
+        // white pieces data
+        this.lblWhiteBishopsHex.Text = this.board?.WhitePieces[PieceType.Bishop.ToChar()].ToString("X16") ?? "0";
+        this.lblWhiteBishopsBinary.Text =
+            this.board != null
+                ? Convert.ToString((long)this.board!.WhitePieces[PieceType.Bishop.ToChar()], 2).PadLeft(64, '0')
+                : "0";
+        this.lblWhiteBishopsAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Bishop, Color.White))
+            .ToString("X16") ?? "0";
+
+        this.lblWhiteKingHex.Text = this.board?.WhitePieces[PieceType.King.ToChar()].ToString("X16") ?? "0";
+        this.lblWhiteKingBinary.Text =
+            this.board != null
+                ? Convert.ToString((long)this.board!.WhitePieces[PieceType.King.ToChar()], 2).PadLeft(64, '0')
+                : "0";
+        this.lblWhiteKingAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.King, Color.White))
+            .ToString("X16") ?? "0";
+
+        this.lblWhiteKnightsHex.Text = this.board?.WhitePieces[PieceType.Knight.ToChar()].ToString("X16") ?? "0";
+        this.lblWhiteKnightsBinary.Text =
+            this.board != null
+                ? Convert.ToString((long)this.board!.WhitePieces[PieceType.Knight.ToChar()], 2).PadLeft(64, '0')
+                : "0";
+        this.lblWhiteKnightsAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Knight, Color.White))
+            .ToString("X16") ?? "0";
+
+        this.lblWhitePawnsHex.Text = this.board?.WhitePieces[PieceType.Pawn.ToChar()].ToString("X16") ?? "0";
+        this.lblWhitePawnsBinary.Text =
+            this.board != null
+                ? Convert.ToString((long)this.board!.WhitePieces[PieceType.Pawn.ToChar()], 2).PadLeft(64, '0')
+                : "0";
+        this.lblWhitePawnsAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Pawn, Color.White))
+            .ToString("X16") ?? "0";
+
+        this.lblWhiteQueensHex.Text = this.board?.WhitePieces[PieceType.Queen.ToChar()].ToString("X16") ?? "0";
+        this.lblWhiteQueensBinary.Text =
+            this.board != null
+                ? Convert.ToString((long)this.board!.WhitePieces[PieceType.Queen.ToChar()], 2).PadLeft(64, '0')
+                : "0";
+        this.lblWhiteQueensAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Queen, Color.White))
+            .ToString("X16") ?? "0";
+
+        this.lblWhiteRooksHex.Text = this.board?.WhitePieces[PieceType.Rook.ToChar()].ToString("X16") ?? "0";
+        this.lblWhiteRooksBinary.Text =
+            this.board != null
+                ? Convert.ToString((long)this.board!.WhitePieces[PieceType.Rook.ToChar()], 2).PadLeft(64, '0')
+                : "0";
+        this.lblWhiteRooksAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Rook, Color.White))
+            .ToString("X16") ?? "0";
     }
 
     void ResetBoard(object? sender, EventArgs e)
