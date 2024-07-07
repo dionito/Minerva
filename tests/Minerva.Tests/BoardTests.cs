@@ -34,6 +34,30 @@ public class BoardTests : TestBase
     }
 
     [TestMethod]
+    public void BlackOrEmptyTests()
+    {
+        var board = new Board();
+        Assert.AreEqual(0xFFFFFFFFFFFFFFFF, board.BlackOrEmpty, "Empty board.");
+        board.InitializeGameStartingBoard();
+        Assert.AreEqual(
+            Board.Rank3 | Board.Rank4 | Board.Rank5 | Board.Rank6 | Board.Rank7 | Board.Rank8,
+            board.BlackOrEmpty,
+            "Starting board.");
+    }
+
+    [TestMethod]
+    public void WhiteOrEmptyTests()
+    {
+        var board = new Board();
+        Assert.AreEqual(0xFFFFFFFFFFFFFFFF, board.WhiteOrEmpty, "Empty board.");
+        board.InitializeGameStartingBoard();
+        Assert.AreEqual(
+            Board.Rank1 | Board.Rank2 | Board.Rank3 | Board.Rank4 | Board.Rank5 | Board.Rank6,
+            board.WhiteOrEmpty,
+            "Starting board.");
+    }
+
+    [TestMethod]
     public void DiagonalsTests()
     {
         var board = new Board();
@@ -124,7 +148,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase pawn = PieceFactory.GetPiece('p', Color.Black);
-        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnAttacksXRayBlack)
+        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnDefensesXRayBlack)
         {
             ulong attacks = pawn.GetPieceAttacks(pawnAttacks.Key, board);
             Assert.AreEqual(attacks.ToString("X"), pawnAttacks.Value.ToString("X"));
@@ -136,7 +160,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase pawn = PieceFactory.GetPiece('p', Color.White);
-        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnAttacksXRayWhite)
+        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnDefensesXRayWhite)
         {
             ulong attacks = pawn.GetPieceAttacks(pawnAttacks.Key, board);
             Assert.AreEqual(attacks.ToString("X"), pawnAttacks.Value.ToString("X"));
@@ -255,9 +279,12 @@ public class BoardTests : TestBase
         board.InitializeGameStartingBoard();
 
         // Bitboards
-        Assert.AreEqual(0x000000000000FFFFul, board.WhitePiecesBitBoard, "White Pieces.");
-        Assert.AreEqual(0xFFFF000000000000ul, board.BlackPiecesBitBoard, "Black pieces.");
-        Assert.AreEqual(0xFFFF00000000FFFFul, board.OccupiedBitBoard, "Occupied squares.");
+        Assert.AreEqual(Board.Rank1 | Board.Rank2, board.WhitePiecesBitBoard, "White Pieces.");
+        Assert.AreEqual(Board.Rank8 | Board.Rank7, board.BlackPiecesBitBoard, "Black pieces.");
+        Assert.AreEqual(
+            Board.Rank1 | Board.Rank2 | Board.Rank7 | Board.Rank8,
+            board.OccupiedBitBoard,
+            "Occupied squares.");
         
         // Black pieces
         Assert.AreEqual(
@@ -618,7 +645,7 @@ public class BoardTests : TestBase
         var pieceBase = PieceFactory.GetPiece(pieceType, color);
 
         // Act
-        ulong attacks = board.GetPieceAttacks(pieceBase);
+        ulong attacks = board.GetPieceDefenses(pieceBase);
 
         // Assert
         // Assuming a method to calculate expected attacks for a rook at a1
