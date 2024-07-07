@@ -148,7 +148,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase pawn = PieceFactory.GetPiece('p', Color.Black);
-        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnAttacksXRayBlack)
+        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnDefensesXRayBlack)
         {
             ulong attacks = pawn.GetPieceAttacks(pawnAttacks.Key, board);
             Assert.AreEqual(attacks.ToString("X"), pawnAttacks.Value.ToString("X"));
@@ -160,7 +160,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase pawn = PieceFactory.GetPiece('p', Color.White);
-        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnAttacksXRayWhite)
+        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnDefensesXRayWhite)
         {
             ulong attacks = pawn.GetPieceAttacks(pawnAttacks.Key, board);
             Assert.AreEqual(attacks.ToString("X"), pawnAttacks.Value.ToString("X"));
@@ -645,7 +645,7 @@ public class BoardTests : TestBase
         var pieceBase = PieceFactory.GetPiece(pieceType, color);
 
         // Act
-        ulong attacks = board.GetPieceAttacks(pieceBase);
+        ulong attacks = board.GetPieceDefenses(pieceBase);
 
         // Assert
         // Assuming a method to calculate expected attacks for a rook at a1

@@ -332,7 +332,7 @@ public class Board
         { FileH & Rank8, 0x4020000000000ul },
     };
 
-    public static readonly Dictionary<ulong, ulong> PawnAttacksXRayBlack = new()
+    public static readonly Dictionary<ulong, ulong> PawnDefensesXRayBlack = new()
     {
         { FileA & Rank2, 0x40ul },
         { FileA & Rank3, 0x4000ul },
@@ -384,7 +384,7 @@ public class Board
         { FileH & Rank7, 0x20000000000ul },
     };
 
-    public static readonly Dictionary<ulong, ulong> PawnAttacksXRayWhite = new()
+    public static readonly Dictionary<ulong, ulong> PawnDefensesXRayWhite = new()
     {
         { FileA & Rank2, 0x400000ul },
         { FileA & Rank3, 0x40000000ul },
@@ -879,27 +879,27 @@ public class Board
     /// </summary>
     public ulong WhitePiecesBitBoard { get; private set; }
 
-    public ulong GetPieceAttacks(PieceBase piece)
+    public ulong GetPieceDefenses(PieceBase piece)
     {
         Dictionary<char, ulong> pieces;
-        Dictionary<ulong, ulong> preCalculatedAttacks;
+        Dictionary<ulong, ulong> preCalculatedDefenses;
         if (piece.Color == Color.Black)
         {
             pieces = this.BlackPieces;
-            preCalculatedAttacks = PawnAttacksXRayBlack;
+            preCalculatedDefenses = PawnDefensesXRayBlack;
         }
         else
         {
             pieces = this.WhitePieces;
-            preCalculatedAttacks = PawnAttacksXRayWhite;
+            preCalculatedDefenses = PawnDefensesXRayWhite;
         }
 
-        preCalculatedAttacks = piece.PieceType switch
+        preCalculatedDefenses = piece.PieceType switch
         {
             PieceType.Bishop => BishopXRay,
             PieceType.King => KingXRay,
             PieceType.Knight => KnightXRay,
-            PieceType.Pawn => preCalculatedAttacks,
+            PieceType.Pawn => preCalculatedDefenses,
             PieceType.Queen => QueenXRay,
             PieceType.Rook => RookXRay,
             PieceType.None => throw new ArgumentOutOfRangeException(nameof(piece.PieceType), "Invalid piece type."),
@@ -908,17 +908,17 @@ public class Board
 
         ulong piecePositions = pieces[piece.PieceType.ToChar()];
 
-        // find the 1s in the piecePositions bitboard and get the attacks for those positions
-        ulong attacks = 0;
+        // find the 1s in the piecePositions bitboard and get the positions defended by the piece
+        ulong defenses = 0;
         while (piecePositions != 0)
         {
             ulong position = piecePositions & (ulong)-(long)piecePositions;
-            //attacks |= pieceBase.GetPieceAttacks(position, this);
-            attacks |= preCalculatedAttacks[position];
+            // no filter here, we want to know the positions defended by the piece including where friendly pieces are
+            defenses |= preCalculatedDefenses[position];
             piecePositions &= ~position;
         }
 
-        return attacks;
+        return defenses;
     }
 
     public ulong GetPieceMoves(PieceBase piece)
@@ -935,7 +935,7 @@ public class Board
             preCalculatedMoves = new Dictionary<ulong, ulong>();
             foreach (KeyValuePair<ulong, ulong> keyValuePair in PawnMovesXRayBlack)
             {
-                preCalculatedMoves[keyValuePair.Key] = keyValuePair.Value | PawnAttacksXRayBlack[keyValuePair.Key] &
+                preCalculatedMoves[keyValuePair.Key] = keyValuePair.Value | PawnDefensesXRayBlack[keyValuePair.Key] &
                     (this.WhitePiecesBitBoard | Squares[this.EnPassantTargetSquare.ToString()]);
             }
             filter = this.WhiteOrEmpty;
@@ -946,7 +946,7 @@ public class Board
             preCalculatedMoves = new Dictionary<ulong, ulong>();
             foreach (KeyValuePair<ulong, ulong> keyValuePair in PawnMovesXRayWhite)
             {
-                preCalculatedMoves[keyValuePair.Key] = keyValuePair.Value | PawnAttacksXRayWhite[keyValuePair.Key] &
+                preCalculatedMoves[keyValuePair.Key] = keyValuePair.Value | PawnDefensesXRayWhite[keyValuePair.Key] &
                     (this.BlackPiecesBitBoard | Squares[this.EnPassantTargetSquare.ToString()]);
             }
             filter = this.BlackOrEmpty;
@@ -967,17 +967,17 @@ public class Board
         
         ulong piecePositions = pieces[piece.PieceType.ToChar()];
 
-        // find the 1s in the piecePositions bitboard and get the attacks for those positions
-        ulong attacks = 0;
+        // find the 1s in the piecePositions bitboard and get the positions defended by the piece
+        ulong defenses = 0;
         while (piecePositions != 0)
         {
             ulong position = piecePositions & (ulong)-(long)piecePositions;
-            //attacks |= pieceBase.GetPieceAttacks(position, this);
-            attacks |= preCalculatedMoves[position] & filter;
+            // we filter here to exclude positions where the piece cannot move
+            defenses |= preCalculatedMoves[position] & filter;
             piecePositions &= ~position;
         }
 
-        return attacks;
+        return defenses;
     }
     /// <summary>
     /// Gets the piece at the specified square on the chess board.

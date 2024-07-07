@@ -212,8 +212,8 @@
                     <Label Grid.Row="1" Grid.Column="1" Text="Piece" HorizontalOptions="Center" FontSize="Title" />
                     <Label Grid.Row="1" Grid.Column="2" Text="Position Hex" HorizontalOptions="Center" FontSize="Title" />
                     <Label Grid.Row="1" Grid.Column="3" Text="Position Binary" HorizontalOptions="Center" FontSize="Title" />
-                    <Label Grid.Row="1" Grid.Column="4" Text="Attacks" HorizontalOptions="Center" FontSize="Title" />
-                    <Label Grid.Row="1" Grid.Column="5" Text="Attacks Hex" HorizontalOptions="Center" FontSize="Title" />
+                    <Label Grid.Row="1" Grid.Column="4" Text="Defends" HorizontalOptions="Center" FontSize="Title" />
+                    <Label Grid.Row="1" Grid.Column="5" Text="Dedengs Hex" HorizontalOptions="Center" FontSize="Title" />
                     <Label Grid.Row="1" Grid.Column="6" Text="Moves" HorizontalOptions="Center" FontSize="Title" />
                     <Label Grid.Row="1" Grid.Column="7" Text="Moves Hex" HorizontalOptions="Center" FontSize="Title" />
 
@@ -225,8 +225,8 @@
                     <Label Grid.Row="2" Grid.Column="3" x:Name="lblBlackKingBinary" FontSize="Title" TextColor="White"
                             Text="0" BackgroundColor="Red" VerticalOptions="Fill" HorizontalTextAlignment="End"
                             VerticalTextAlignment="Center" />
-                    <RadioButton GroupName="AttackingSquares" Grid.Row="2" Grid.Column="4" x:Name="cbBlackKingAttacks"
-                                 VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="AttacksButtonCheckChanged" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="2" Grid.Column="4" x:Name="cbBlackKingDefends"
+                                 VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="DefendsButtonCheckChanged" />
                     <Label Grid.Row="2" Grid.Column="5" x:Name="lblBlackKingAttacks" FontSize="Title" TextColor="White"
                            Text="0" BackgroundColor="Black" VerticalOptions="Fill" HorizontalTextAlignment="End"
                            VerticalTextAlignment="Center" />
@@ -244,8 +244,8 @@
                     <Label Grid.Row="3" Grid.Column="3" x:Name="lblBlackQueensBinary" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
-                    <RadioButton GroupName="AttackingSquares" Grid.Row="3" Grid.Column="4" x:Name="cbBlackQueensAttacks"
-                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="AttacksButtonCheckChanged" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="3" Grid.Column="4" x:Name="cbBlackQueensDefends"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="DefendsButtonCheckChanged" />
                     <Label Grid.Row="3" Grid.Column="5" x:Name="lblBlackQueensAttacks" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
@@ -263,8 +263,8 @@
                     <Label Grid.Row="4" Grid.Column="3" x:Name="lblBlackRooksBinary" FontSize="Title" TextColor="White"
                             Text="0" BackgroundColor="Red" VerticalOptions="Fill" HorizontalTextAlignment="End"
                             VerticalTextAlignment="Center" />
-                    <RadioButton GroupName="AttackingSquares" Grid.Row="4" Grid.Column="4" x:Name="cbBlackRooksAttacks"
-                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="AttacksButtonCheckChanged" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="4" Grid.Column="4" x:Name="cbBlackRooksDefends"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="DefendsButtonCheckChanged" />
                     <Label Grid.Row="4" Grid.Column="5" x:Name="lblBlackRooksAttacks" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
@@ -282,8 +282,8 @@
                     <Label Grid.Row="5" Grid.Column="3" x:Name="lblBlackKnightsBinary" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
-                    <RadioButton GroupName="AttackingSquares" Grid.Row="5" Grid.Column="4" x:Name="cbBlackKnightsAttacks"
-                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="AttacksButtonCheckChanged" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="5" Grid.Column="4" x:Name="cbBlackKnightsDefends"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="DefendsButtonCheckChanged" />
                     <Label Grid.Row="5" Grid.Column="5" x:Name="lblBlackKnightsAttacks" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
@@ -301,8 +301,8 @@
                     <Label Grid.Row="6" Grid.Column="3" x:Name="lblBlackBishopsBinary" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
-                    <RadioButton GroupName="AttackingSquares" Grid.Row="6" Grid.Column="4" x:Name="cbBlackBishopsAttacks"
-                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="AttacksButtonCheckChanged" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="6" Grid.Column="4" x:Name="cbBlackBishopsDefends"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="DefendsButtonCheckChanged" />
                     <Label Grid.Row="6" Grid.Column="5" x:Name="lblBlackBishopsAttacks" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
@@ -320,8 +320,8 @@
                     <Label Grid.Row="7" Grid.Column="3" x:Name="lblBlackPawnsBinary" FontSize="Title" TextColor="White"
                             Text="0" BackgroundColor="Red" VerticalOptions="Fill" HorizontalTextAlignment="End"
                             VerticalTextAlignment="Center" />
-                    <RadioButton GroupName="AttackingSquares" Grid.Row="7" Grid.Column="4" x:Name="cbBlackPawnsAttacks"
-                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="AttacksButtonCheckChanged" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="7" Grid.Column="4" x:Name="cbBlackPawnsDefends"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="DefendsButtonCheckChanged" />
                     <Label Grid.Row="7" Grid.Column="5" x:Name="lblBlackPawnsAttacks" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
@@ -339,8 +339,8 @@
                     <Label Grid.Row="8" Grid.Column="3" x:Name="lblWhiteKingBinary" FontSize="Title" TextColor="White"
                             Text="0" BackgroundColor="Red" VerticalOptions="Fill" HorizontalTextAlignment="End"
                             VerticalTextAlignment="Center" />
-                    <RadioButton GroupName="AttackingSquares" Grid.Row="8" Grid.Column="4" x:Name="cbWhiteKingAttacks"
-                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="AttacksButtonCheckChanged" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="8" Grid.Column="4" x:Name="cbWhiteKingDefends"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="DefendsButtonCheckChanged" />
                     <Label Grid.Row="8" Grid.Column="5" x:Name="lblWhiteKingAttacks" FontSize="Title" TextColor="White"
                             Text="0" BackgroundColor="Black" VerticalOptions="Fill" HorizontalTextAlignment="End"
                             VerticalTextAlignment="Center" />
@@ -358,8 +358,8 @@
                     <Label Grid.Row="9" Grid.Column="3" x:Name="lblWhiteQueensBinary" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
-                    <RadioButton GroupName="AttackingSquares" Grid.Row="9" Grid.Column="4" x:Name="cbWhiteQueensAttacks"
-                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="AttacksButtonCheckChanged" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="9" Grid.Column="4" x:Name="cbWhiteQueensDefends"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="DefendsButtonCheckChanged" />
                     <Label Grid.Row="9" Grid.Column="5" x:Name="lblWhiteQueensAttacks" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
@@ -377,8 +377,8 @@
                     <Label Grid.Row="10" Grid.Column="3" x:Name="lblWhiteRooksBinary" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
-                    <RadioButton GroupName="AttackingSquares" Grid.Row="10" Grid.Column="4" x:Name="cbWhiteRooksAttacks"
-                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="AttacksButtonCheckChanged" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="10" Grid.Column="4" x:Name="cbWhiteRooksDefends"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="DefendsButtonCheckChanged" />
                     <Label Grid.Row="10" Grid.Column="5" x:Name="lblWhiteRooksAttacks" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
@@ -396,8 +396,8 @@
                     <Label Grid.Row="11" Grid.Column="3" x:Name="lblWhiteKnightsBinary" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
-                    <RadioButton GroupName="AttackingSquares" Grid.Row="11" Grid.Column="4" x:Name="cbWhiteKnightsAttacks"
-                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="AttacksButtonCheckChanged" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="11" Grid.Column="4" x:Name="cbWhiteKnightsDefends"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="DefendsButtonCheckChanged" />
                     <Label Grid.Row="11" Grid.Column="5" x:Name="lblWhiteKnightsAttacks" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
@@ -415,8 +415,8 @@
                     <Label Grid.Row="12" Grid.Column="3" x:Name="lblWhiteBishopsBinary" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
-                    <RadioButton GroupName="AttackingSquares" Grid.Row="12" Grid.Column="4" x:Name="cbWhiteBishopsAttacks"
-                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="AttacksButtonCheckChanged" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="12" Grid.Column="4" x:Name="cbWhiteBishopsDefends"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="DefendsButtonCheckChanged" />
                     <Label Grid.Row="12" Grid.Column="5" x:Name="lblWhiteBishopsAttacks" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
@@ -434,8 +434,8 @@
                     <Label Grid.Row="13" Grid.Column="3" x:Name="lblWhitePawnsBinary" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Red" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
-                    <RadioButton GroupName="AttackingSquares" Grid.Row="13" Grid.Column="4" x:Name="cbWhitePawnsAttacks"
-                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="AttacksButtonCheckChanged" />
+                    <RadioButton GroupName="AttackingSquares" Grid.Row="13" Grid.Column="4" x:Name="cbWhitePawnsDefends"
+                            VerticalOptions="Fill" HorizontalOptions="Center" CheckedChanged="DefendsButtonCheckChanged" />
                     <Label Grid.Row="13" Grid.Column="5" x:Name="lblWhitePawnsAttacks" FontSize="Title"
                             TextColor="White" Text="0" BackgroundColor="Black" VerticalOptions="Fill"
                             HorizontalTextAlignment="End" VerticalTextAlignment="Center" />

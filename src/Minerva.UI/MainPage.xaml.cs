@@ -28,7 +28,7 @@ public partial class MainPage : ContentPage
 
     readonly ImageButton[] allquares;
 
-    readonly Dictionary<RadioButton, PieceBase> attackRadioButtons;
+    readonly Dictionary<RadioButton, PieceBase> defenseRadioButtons;
     readonly Dictionary<RadioButton, PieceBase> moveRadioButtons;
 
     readonly ImageSource blackBishop = ImageSource.FromFile("blackbishop.png");
@@ -95,20 +95,20 @@ public partial class MainPage : ContentPage
             this.btn7B, this.btn7D, this.btn7F, this.btn7H,
             this.btn8A, this.btn8C, this.btn8E, this.btn8G,
         };
-        this.attackRadioButtons = new Dictionary<RadioButton, PieceBase>
+        this.defenseRadioButtons = new Dictionary<RadioButton, PieceBase>
         {
-            { this.cbBlackBishopsAttacks, PieceFactory.GetPiece(PieceType.Bishop, Color.Black) },
-            { this.cbBlackKingAttacks, PieceFactory.GetPiece(PieceType.King, Color.Black) },
-            { this.cbBlackKnightsAttacks, PieceFactory.GetPiece(PieceType.Knight, Color.Black) },
-            { this.cbBlackPawnsAttacks, PieceFactory.GetPiece(PieceType.Pawn, Color.Black) },
-            { this.cbBlackQueensAttacks, PieceFactory.GetPiece(PieceType.Queen, Color.Black)},
-            { this.cbBlackRooksAttacks, PieceFactory.GetPiece(PieceType.Rook, Color.Black) },
-            { this.cbWhiteBishopsAttacks, PieceFactory.GetPiece(PieceType.Bishop, Color.White) },
-            { this.cbWhiteKingAttacks, PieceFactory.GetPiece(PieceType.King, Color.White) },
-            { this.cbWhiteKnightsAttacks, PieceFactory.GetPiece(PieceType.Knight, Color.White) },
-            { this.cbWhitePawnsAttacks, PieceFactory.GetPiece(PieceType.Pawn, Color.White) },
-            { this.cbWhiteQueensAttacks, PieceFactory.GetPiece(PieceType.Queen, Color.White) },
-            { this.cbWhiteRooksAttacks, PieceFactory.GetPiece(PieceType.Rook, Color.White) },
+            { this.cbBlackBishopsDefends, PieceFactory.GetPiece(PieceType.Bishop, Color.Black) },
+            { this.cbBlackKingDefends, PieceFactory.GetPiece(PieceType.King, Color.Black) },
+            { this.cbBlackKnightsDefends, PieceFactory.GetPiece(PieceType.Knight, Color.Black) },
+            { this.cbBlackPawnsDefends, PieceFactory.GetPiece(PieceType.Pawn, Color.Black) },
+            { this.cbBlackQueensDefends, PieceFactory.GetPiece(PieceType.Queen, Color.Black)},
+            { this.cbBlackRooksDefends, PieceFactory.GetPiece(PieceType.Rook, Color.Black) },
+            { this.cbWhiteBishopsDefends, PieceFactory.GetPiece(PieceType.Bishop, Color.White) },
+            { this.cbWhiteKingDefends, PieceFactory.GetPiece(PieceType.King, Color.White) },
+            { this.cbWhiteKnightsDefends, PieceFactory.GetPiece(PieceType.Knight, Color.White) },
+            { this.cbWhitePawnsDefends, PieceFactory.GetPiece(PieceType.Pawn, Color.White) },
+            { this.cbWhiteQueensDefends, PieceFactory.GetPiece(PieceType.Queen, Color.White) },
+            { this.cbWhiteRooksDefends, PieceFactory.GetPiece(PieceType.Rook, Color.White) },
         };
         this.moveRadioButtons = new Dictionary<RadioButton, PieceBase>
         {
@@ -141,7 +141,7 @@ public partial class MainPage : ContentPage
         SetBoardColors(this.lightSquares, this.lightSquareColor);
     }
 
-    void AttacksButtonCheckChanged(object? sender, CheckedChangedEventArgs e)
+    void DefendsButtonCheckChanged(object? sender, CheckedChangedEventArgs e)
     {
         this.SetBoardColors();
 
@@ -157,14 +157,14 @@ public partial class MainPage : ContentPage
                 attackRadioButton.Key.IsChecked = false;
             }
 
-            PieceBase piece = this.attackRadioButtons[radioButton];
-            ulong attackedSquares = this.board.GetPieceAttacks(piece);
-            if (attackedSquares > 0)
+            PieceBase piece = this.defenseRadioButtons[radioButton];
+            ulong defendedSquares = this.board.GetPieceDefenses(piece);
+            if (defendedSquares > 0)
             {
                 for (int i = 0; i < 64; i++)
                 {
                     ulong bitmask = 1ul << i;
-                    if ((bitmask & attackedSquares) != 0)
+                    if ((bitmask & defendedSquares) != 0)
                     {
                         this.allquares[i].BackgroundColor = Colors.Red;
                     }
@@ -281,7 +281,7 @@ public partial class MainPage : ContentPage
             this.board != null
                 ? Convert.ToString((long)this.board!.BlackPieces[PieceType.Bishop.ToChar()], 2).PadLeft(64, '0')
                 : "0";
-        this.lblBlackBishopsAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Bishop, Color.Black))
+        this.lblBlackBishopsAttacks.Text = this.board?.GetPieceDefenses(PieceFactory.GetPiece(PieceType.Bishop, Color.Black))
             .ToString("X16") ?? "0";
 
         this.lblBlackKingHex.Text = this.board?.BlackPieces[PieceType.King.ToChar()].ToString("X16") ?? "0";
@@ -289,7 +289,7 @@ public partial class MainPage : ContentPage
             this.board != null
                 ? Convert.ToString((long)this.board!.BlackPieces[PieceType.King.ToChar()], 2).PadLeft(64, '0')
                 : "0";
-        this.lblBlackKingAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.King, Color.Black))
+        this.lblBlackKingAttacks.Text = this.board?.GetPieceDefenses(PieceFactory.GetPiece(PieceType.King, Color.Black))
             .ToString("X16") ?? "0";
 
 
@@ -298,7 +298,7 @@ public partial class MainPage : ContentPage
             this.board != null
                 ? Convert.ToString((long)this.board!.BlackPieces[PieceType.Knight.ToChar()], 2).PadLeft(64, '0')
                 : "0";
-        this.lblBlackKnightsAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Knight, Color.Black))
+        this.lblBlackKnightsAttacks.Text = this.board?.GetPieceDefenses(PieceFactory.GetPiece(PieceType.Knight, Color.Black))
             .ToString("X16") ?? "0";
 
 
@@ -307,7 +307,7 @@ public partial class MainPage : ContentPage
             this.board != null
                 ? Convert.ToString((long)this.board!.BlackPieces[PieceType.Pawn.ToChar()], 2).PadLeft(64, '0')
                 : "0";
-        this.lblBlackPawnsAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Pawn, Color.Black))
+        this.lblBlackPawnsAttacks.Text = this.board?.GetPieceDefenses(PieceFactory.GetPiece(PieceType.Pawn, Color.Black))
             .ToString("X16") ?? "0";
 
 
@@ -316,7 +316,7 @@ public partial class MainPage : ContentPage
             this.board != null
                 ? Convert.ToString((long)this.board!.BlackPieces[PieceType.Queen.ToChar()], 2).PadLeft(64, '0')
                 : "0";
-        this.lblBlackQueensAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Queen, Color.Black))
+        this.lblBlackQueensAttacks.Text = this.board?.GetPieceDefenses(PieceFactory.GetPiece(PieceType.Queen, Color.Black))
             .ToString("X16") ?? "0";
 
 
@@ -325,7 +325,7 @@ public partial class MainPage : ContentPage
                 ? Convert.ToString((long)this.board!.BlackPieces[PieceType.Rook.ToChar()], 2).PadLeft(64, '0')
                 : "0";
         this.lblBlackRooksHex.Text = this.board?.BlackPieces[PieceType.Rook.ToChar()].ToString("X16") ?? "0";
-        this.lblBlackRooksAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Rook, Color.Black))
+        this.lblBlackRooksAttacks.Text = this.board?.GetPieceDefenses(PieceFactory.GetPiece(PieceType.Rook, Color.Black))
             .ToString("X16") ?? "0";
 
 
@@ -335,7 +335,7 @@ public partial class MainPage : ContentPage
             this.board != null
                 ? Convert.ToString((long)this.board!.WhitePieces[PieceType.Bishop.ToChar()], 2).PadLeft(64, '0')
                 : "0";
-        this.lblWhiteBishopsAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Bishop, Color.White))
+        this.lblWhiteBishopsAttacks.Text = this.board?.GetPieceDefenses(PieceFactory.GetPiece(PieceType.Bishop, Color.White))
             .ToString("X16") ?? "0";
 
         this.lblWhiteKingHex.Text = this.board?.WhitePieces[PieceType.King.ToChar()].ToString("X16") ?? "0";
@@ -343,7 +343,7 @@ public partial class MainPage : ContentPage
             this.board != null
                 ? Convert.ToString((long)this.board!.WhitePieces[PieceType.King.ToChar()], 2).PadLeft(64, '0')
                 : "0";
-        this.lblWhiteKingAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.King, Color.White))
+        this.lblWhiteKingAttacks.Text = this.board?.GetPieceDefenses(PieceFactory.GetPiece(PieceType.King, Color.White))
             .ToString("X16") ?? "0";
 
         this.lblWhiteKnightsHex.Text = this.board?.WhitePieces[PieceType.Knight.ToChar()].ToString("X16") ?? "0";
@@ -351,7 +351,7 @@ public partial class MainPage : ContentPage
             this.board != null
                 ? Convert.ToString((long)this.board!.WhitePieces[PieceType.Knight.ToChar()], 2).PadLeft(64, '0')
                 : "0";
-        this.lblWhiteKnightsAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Knight, Color.White))
+        this.lblWhiteKnightsAttacks.Text = this.board?.GetPieceDefenses(PieceFactory.GetPiece(PieceType.Knight, Color.White))
             .ToString("X16") ?? "0";
 
         this.lblWhitePawnsHex.Text = this.board?.WhitePieces[PieceType.Pawn.ToChar()].ToString("X16") ?? "0";
@@ -359,7 +359,7 @@ public partial class MainPage : ContentPage
             this.board != null
                 ? Convert.ToString((long)this.board!.WhitePieces[PieceType.Pawn.ToChar()], 2).PadLeft(64, '0')
                 : "0";
-        this.lblWhitePawnsAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Pawn, Color.White))
+        this.lblWhitePawnsAttacks.Text = this.board?.GetPieceDefenses(PieceFactory.GetPiece(PieceType.Pawn, Color.White))
             .ToString("X16") ?? "0";
 
         this.lblWhiteQueensHex.Text = this.board?.WhitePieces[PieceType.Queen.ToChar()].ToString("X16") ?? "0";
@@ -367,7 +367,7 @@ public partial class MainPage : ContentPage
             this.board != null
                 ? Convert.ToString((long)this.board!.WhitePieces[PieceType.Queen.ToChar()], 2).PadLeft(64, '0')
                 : "0";
-        this.lblWhiteQueensAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Queen, Color.White))
+        this.lblWhiteQueensAttacks.Text = this.board?.GetPieceDefenses(PieceFactory.GetPiece(PieceType.Queen, Color.White))
             .ToString("X16") ?? "0";
 
         this.lblWhiteRooksHex.Text = this.board?.WhitePieces[PieceType.Rook.ToChar()].ToString("X16") ?? "0";
@@ -375,7 +375,7 @@ public partial class MainPage : ContentPage
             this.board != null
                 ? Convert.ToString((long)this.board!.WhitePieces[PieceType.Rook.ToChar()], 2).PadLeft(64, '0')
                 : "0";
-        this.lblWhiteRooksAttacks.Text = this.board?.GetPieceAttacks(PieceFactory.GetPiece(PieceType.Rook, Color.White))
+        this.lblWhiteRooksAttacks.Text = this.board?.GetPieceDefenses(PieceFactory.GetPiece(PieceType.Rook, Color.White))
             .ToString("X16") ?? "0";
     }
 
@@ -430,9 +430,9 @@ public partial class MainPage : ContentPage
                 return;
             }
 
-            foreach (KeyValuePair<RadioButton, PieceBase> attackRadioButton in this.attackRadioButtons)
+            foreach (KeyValuePair<RadioButton, PieceBase> defenseRadioButton in this.defenseRadioButtons)
             {
-                attackRadioButton.Key.IsChecked = false;
+                defenseRadioButton.Key.IsChecked = false;
             }
 
             PieceBase piece = this.moveRadioButtons[radioButton];
