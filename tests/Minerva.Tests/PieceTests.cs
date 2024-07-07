@@ -536,7 +536,7 @@ public class PieceTests
 
         ulong possibleMoves = queen.GetPieceMoves(position.BitBoard, board);
         ulong attacks = queen.GetPieceAttacks(position.BitBoard, board);
-        ulong expectedMoves = (Board.FileD | Board.Rank4 | new Square("c3").BitBoard |
+        ulong expectedMoves = (BitBoards.FileD | BitBoards.Rank4 | new Square("c3").BitBoard |
             new Square("b2").BitBoard | new Square("a1").BitBoard | new Square("e5").BitBoard |
             new Square("f6").BitBoard | new Square("g7").BitBoard | new Square("h8").BitBoard |
             new Square("c5").BitBoard | new Square("b6").BitBoard | new Square("a7").BitBoard |
@@ -569,7 +569,7 @@ public class PieceTests
 
         ulong possibleMoves = rook.GetPieceMoves(position.BitBoard, board);
         ulong attacks = rook.GetPieceAttacks(position.BitBoard, board);
-        ulong expectedMoves = (Board.FileD | Board.Rank4) ^ position.BitBoard;
+        ulong expectedMoves = (BitBoards.FileD | BitBoards.Rank4) ^ position.BitBoard;
 
         Assert.AreEqual(expectedMoves, possibleMoves, "Moves mismatch");
         Assert.AreEqual(expectedMoves, attacks, "Attacks mismatch.");

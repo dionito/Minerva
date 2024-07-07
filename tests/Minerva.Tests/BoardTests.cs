@@ -26,7 +26,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase bishop = PieceFactory.GetPiece('b', Color.White);
-        foreach (KeyValuePair<ulong, ulong> diagonal in Board.BishopXRay)
+        foreach (KeyValuePair<ulong, ulong> diagonal in BitBoards.Bishop)
         {
             ulong moves = bishop.GetPieceMoves(diagonal.Key, board);
             Assert.AreEqual(moves.ToString("X"), diagonal.Value.ToString("X"));
@@ -37,11 +37,11 @@ public class BoardTests : TestBase
     public void BlackOrEmptyTests()
     {
         var board = new Board();
-        Assert.AreEqual(0xFFFFFFFFFFFFFFFF, board.BlackOrEmpty, "Empty board.");
+        Assert.AreEqual(0xFFFFFFFFFFFFFFFF, BitBoards.BlackOrEmpty(board), "Empty board.");
         board.InitializeGameStartingBoard();
         Assert.AreEqual(
-            Board.Rank3 | Board.Rank4 | Board.Rank5 | Board.Rank6 | Board.Rank7 | Board.Rank8,
-            board.BlackOrEmpty,
+            BitBoards.Rank3 | BitBoards.Rank4 | BitBoards.Rank5 | BitBoards.Rank6 | BitBoards.Rank7 | BitBoards.Rank8,
+            BitBoards.BlackOrEmpty(board),
             "Starting board.");
     }
 
@@ -49,11 +49,11 @@ public class BoardTests : TestBase
     public void WhiteOrEmptyTests()
     {
         var board = new Board();
-        Assert.AreEqual(0xFFFFFFFFFFFFFFFF, board.WhiteOrEmpty, "Empty board.");
+        Assert.AreEqual(0xFFFFFFFFFFFFFFFF, BitBoards.WhiteOrEmpty(board), "Empty board.");
         board.InitializeGameStartingBoard();
         Assert.AreEqual(
-            Board.Rank1 | Board.Rank2 | Board.Rank3 | Board.Rank4 | Board.Rank5 | Board.Rank6,
-            board.WhiteOrEmpty,
+            BitBoards.Rank1 | BitBoards.Rank2 | BitBoards.Rank3 | BitBoards.Rank4 | BitBoards.Rank5 | BitBoards.Rank6,
+            BitBoards.WhiteOrEmpty(board),
             "Starting board.");
     }
 
@@ -62,7 +62,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase bishop = PieceFactory.GetPiece('b', Color.White);
-        foreach (KeyValuePair<ulong, ulong> diagonal in Board.Diagonals)
+        foreach (KeyValuePair<ulong, ulong> diagonal in BitBoards.Diagonals)
         {
             ulong positions = bishop.GetPieceMoves(diagonal.Key, board) | diagonal.Key;
             Assert.AreEqual(positions.ToString("X"), diagonal.Value.ToString("X"));
@@ -78,14 +78,14 @@ public class BoardTests : TestBase
     }
 
     [TestMethod]
-    [DataRow("a1", Board.Rank1 & Board.FileA, DisplayName = "a1")]
-    [DataRow("a8", Board.Rank8 & Board.FileA, DisplayName = "a8")]
-    [DataRow("h1", Board.Rank1 & Board.FileH, DisplayName = "h1")]
-    [DataRow("h8", Board.Rank8 & Board.FileH, DisplayName = "h8")]
-    [DataRow("A1", Board.Rank1 & Board.FileA, DisplayName = "A1")]
-    [DataRow("A8", Board.Rank8 & Board.FileA, DisplayName = "A8")]
-    [DataRow("H1", Board.Rank1 & Board.FileH, DisplayName = "H1")]
-    [DataRow("H8", Board.Rank8 & Board.FileH, DisplayName = "H8")]
+    [DataRow("a1", BitBoards.Rank1 & BitBoards.FileA, DisplayName = "a1")]
+    [DataRow("a8", BitBoards.Rank8 & BitBoards.FileA, DisplayName = "a8")]
+    [DataRow("h1", BitBoards.Rank1 & BitBoards.FileH, DisplayName = "h1")]
+    [DataRow("h8", BitBoards.Rank8 & BitBoards.FileH, DisplayName = "h8")]
+    [DataRow("A1", BitBoards.Rank1 & BitBoards.FileA, DisplayName = "A1")]
+    [DataRow("A8", BitBoards.Rank8 & BitBoards.FileA, DisplayName = "A8")]
+    [DataRow("H1", BitBoards.Rank1 & BitBoards.FileH, DisplayName = "H1")]
+    [DataRow("H8", BitBoards.Rank8 & BitBoards.FileH, DisplayName = "H8")]
     public void GetSquareReturnsTheRightBitboard(string square, ulong result)
     {
         var board = new Board();
@@ -124,7 +124,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase king = PieceFactory.GetPiece('k', Color.White);
-        foreach (KeyValuePair<ulong, ulong> kingAttacks in Board.KingXRay)
+        foreach (KeyValuePair<ulong, ulong> kingAttacks in BitBoards.King)
         {
             var attacks = king.GetPieceMoves(kingAttacks.Key, board);
             Assert.AreEqual(attacks.ToString("X"), kingAttacks.Value.ToString("X"));
@@ -136,7 +136,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase knight = PieceFactory.GetPiece('n', Color.White);
-        foreach (KeyValuePair<ulong, ulong> knightAttacks in Board.KnightXRay)
+        foreach (KeyValuePair<ulong, ulong> knightAttacks in BitBoards.Knight)
         {
             ulong moves = knight.GetPieceMoves(knightAttacks.Key, board);
             Assert.AreEqual(moves.ToString("X"), knightAttacks.Value.ToString("X"));
@@ -148,7 +148,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase pawn = PieceFactory.GetPiece('p', Color.Black);
-        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnDefensesXRayBlack)
+        foreach (KeyValuePair<ulong, ulong> pawnAttacks in BitBoards.PawnDefendedBlack)
         {
             ulong attacks = pawn.GetPieceAttacks(pawnAttacks.Key, board);
             Assert.AreEqual(attacks.ToString("X"), pawnAttacks.Value.ToString("X"));
@@ -160,7 +160,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase pawn = PieceFactory.GetPiece('p', Color.White);
-        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnDefensesXRayWhite)
+        foreach (KeyValuePair<ulong, ulong> pawnAttacks in BitBoards.PawnDefendedWhite)
         {
             ulong attacks = pawn.GetPieceAttacks(pawnAttacks.Key, board);
             Assert.AreEqual(attacks.ToString("X"), pawnAttacks.Value.ToString("X"));
@@ -172,7 +172,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase pawn = PieceFactory.GetPiece('p', Color.Black);
-        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnMovesXRayBlack)
+        foreach (KeyValuePair<ulong, ulong> pawnAttacks in BitBoards.PawnMovesBlack)
         {
             ulong moves = pawn.GetPieceMoves(pawnAttacks.Key, board);
             Assert.AreEqual(moves.ToString("X"), pawnAttacks.Value.ToString("X"));
@@ -184,7 +184,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase pawn = PieceFactory.GetPiece('p', Color.White);
-        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnMovesXRayWhite)
+        foreach (KeyValuePair<ulong, ulong> pawnAttacks in BitBoards.PawnMovesWhite)
         {
             ulong moves = pawn.GetPieceMoves(pawnAttacks.Key, board);
             Assert.AreEqual(moves.ToString("X"), pawnAttacks.Value.ToString("X"));
@@ -196,7 +196,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase queen = PieceFactory.GetPiece('q', Color.White);
-        foreach (KeyValuePair<ulong, ulong> diagonal in Board.QueenXRay)
+        foreach (KeyValuePair<ulong, ulong> diagonal in BitBoards.Queen)
         {
             ulong moves = queen.GetPieceMoves(diagonal.Key, board);
             Assert.AreEqual(moves.ToString("X"), diagonal.Value.ToString("X"));
@@ -208,7 +208,7 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         PieceBase rook = PieceFactory.GetPiece('r', Color.White);
-        foreach (KeyValuePair<ulong, ulong> diagonal in Board.RookXRay)
+        foreach (KeyValuePair<ulong, ulong> diagonal in BitBoards.Rook)
         {
             ulong moves = rook.GetPieceMoves(diagonal.Key, board);
             Assert.AreEqual(moves.ToString("X"), diagonal.Value.ToString("X"));
@@ -279,10 +279,10 @@ public class BoardTests : TestBase
         board.InitializeGameStartingBoard();
 
         // Bitboards
-        Assert.AreEqual(Board.Rank1 | Board.Rank2, board.WhitePiecesBitBoard, "White Pieces.");
-        Assert.AreEqual(Board.Rank8 | Board.Rank7, board.BlackPiecesBitBoard, "Black pieces.");
+        Assert.AreEqual(BitBoards.Rank1 | BitBoards.Rank2, board.WhitePiecesBitBoard, "White Pieces.");
+        Assert.AreEqual(BitBoards.Rank8 | BitBoards.Rank7, board.BlackPiecesBitBoard, "Black pieces.");
         Assert.AreEqual(
-            Board.Rank1 | Board.Rank2 | Board.Rank7 | Board.Rank8,
+            BitBoards.Rank1 | BitBoards.Rank2 | BitBoards.Rank7 | BitBoards.Rank8,
             board.OccupiedBitBoard,
             "Occupied squares.");
         
@@ -340,7 +340,7 @@ public class BoardTests : TestBase
     [DataRow('f', 8, 'b', DisplayName = "Black bishop at f8")]
     [DataRow('g', 8, 'n', DisplayName = "Black knight at g8")]
     [DataRow('h', 8, 'r', DisplayName = "Black rook at h8")]
-    [DataRow('d', 4, Board.EmptySquare, DisplayName = "Empty square at d4")]
+    [DataRow('d', 4, BitBoards.EmptySquare, DisplayName = "Empty square at d4")]
     [DataRow('a', 7, 'p', DisplayName = "Black pawn at a7")]
     [DataRow('a', 2, 'P', DisplayName = "White pawn at a2")]
     [DataRow('a', 1, 'R', DisplayName = "White rook at a1")]
@@ -403,8 +403,8 @@ public class BoardTests : TestBase
         var board = new Board();
         board.InitializeGameStartingBoard();
 
-        Assert.AreEqual(Board.EmptySquare, board.GetPieceAt(4, 4)); // Empty square at d4
-        Assert.AreEqual(Board.EmptySquare, board.GetPieceAt(5, 5)); // Empty square at e5
+        Assert.AreEqual(BitBoards.EmptySquare, board.GetPieceAt(4, 4)); // Empty square at d4
+        Assert.AreEqual(BitBoards.EmptySquare, board.GetPieceAt(5, 5)); // Empty square at e5
     }
 
     [TestMethod]
@@ -649,8 +649,8 @@ public class BoardTests : TestBase
 
         // Assert
         // Assuming a method to calculate expected attacks for a rook at a1
-        ulong expectedAttacks = (Board.Rank1 | Board.Rank8 | Board.FileA | Board.FileH) &
-            ~(Board.Rank1 & Board.FileA | Board.Rank8 & Board.FileH);
+        ulong expectedAttacks = (BitBoards.Rank1 | BitBoards.Rank8 | BitBoards.FileA | BitBoards.FileH) &
+            ~(BitBoards.Rank1 & BitBoards.FileA | BitBoards.Rank8 & BitBoards.FileH);
         Assert.AreEqual(expectedAttacks, attacks, "Rook attacks did not match expected attacks.");
     }
 }

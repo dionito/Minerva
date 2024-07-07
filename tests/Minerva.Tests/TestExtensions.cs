@@ -43,6 +43,6 @@ public static class TestExtensions
             throw new ArgumentException("Invalid rank.", nameof(square));
         }
 
-        return Board.Files[file] & Board.Ranks[rank];
+        return BitBoards.Files[file] & BitBoards.Ranks[rank];
     }
 }

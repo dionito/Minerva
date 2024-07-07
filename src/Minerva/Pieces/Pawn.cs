@@ -33,7 +33,7 @@ public class Pawn : PieceBase
     public Pawn(Color color) : base(PieceType.Pawn, color)
     {
         this.standardMove = color == Color.White ? MovingDirections.Up : MovingDirections.Down;
-        this.initialRank = color == Color.White ? Board.Rank2 : Board.Rank7;
+        this.initialRank = color == Color.White ? BitBoards.Rank2 : BitBoards.Rank7;
         this.captureMoves = color == Color.White
             ? new[] { MovingDirections.UpLeft, MovingDirections.UpRight }
             : new[] { MovingDirections.DownLeft, MovingDirections.DownRight };

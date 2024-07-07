@@ -184,13 +184,13 @@ public static class ForsythEdwardsNotation
                 char piece = board.GetPieceAt(file, rank);
 
                 // If the piece is empty, the empty square count is incremented
-                if (piece == Board.EmptySquare)
+                if (piece == BitBoards.EmptySquare)
                 {
                     int emptySquareCount = 1;
 
                     // The empty square count is incremented while the next square is empty
                     while (file + emptySquareCount <= 8 &&
-                           board.GetPieceAt(file + emptySquareCount, rank) == Board.EmptySquare)
+                           board.GetPieceAt(file + emptySquareCount, rank) == BitBoards.EmptySquare)
                     {
                         emptySquareCount++;
                     }

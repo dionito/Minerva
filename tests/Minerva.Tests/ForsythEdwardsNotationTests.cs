@@ -152,10 +152,10 @@ public class ForsythEdwardsNotationTests
         Board board = ForsythEdwardsNotation.GenerateBoard(fen);
 
         // Bitboards
-        Assert.AreEqual(Board.Rank1 | Board.Rank2, board.WhitePiecesBitBoard, "White Pieces");
-        Assert.AreEqual(Board.Rank7 | Board.Rank8, board.BlackPiecesBitBoard, "Black pieces");
+        Assert.AreEqual(BitBoards.Rank1 | BitBoards.Rank2, board.WhitePiecesBitBoard, "White Pieces");
+        Assert.AreEqual(BitBoards.Rank7 | BitBoards.Rank8, board.BlackPiecesBitBoard, "Black pieces");
         Assert.AreEqual(
-            Board.Rank1 | Board.Rank2 | Board.Rank7 | Board.Rank8,
+            BitBoards.Rank1 | BitBoards.Rank2 | BitBoards.Rank7 | BitBoards.Rank8,
             board.OccupiedBitBoard,
             "Occupied squares");
 

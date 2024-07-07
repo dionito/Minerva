@@ -19,9 +19,9 @@ namespace Minerva.Tests;
 public class SquareTests
 {
     [TestMethod]
-    [DataRow('e', 5, Board.FileE & Board.Rank5, DisplayName = "Middle of the board.")]
-    [DataRow('a', 1, Board.FileA & Board.Rank1, DisplayName = "Bottom left corner.")]
-    [DataRow('h', 8, Board.FileH & Board.Rank8, DisplayName = "Top right corner.")]
+    [DataRow('e', 5, BitBoards.FileE & BitBoards.Rank5, DisplayName = "Middle of the board.")]
+    [DataRow('a', 1, BitBoards.FileA & BitBoards.Rank1, DisplayName = "Bottom left corner.")]
+    [DataRow('h', 8, BitBoards.FileH & BitBoards.Rank8, DisplayName = "Top right corner.")]
     public void TestSquareConstructorsWithValidParametersEqualOperatorEqualAndGetHashCode(
         char file,
         int rank,
