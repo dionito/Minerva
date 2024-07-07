@@ -678,6 +678,7 @@ public class Board
 
     public static readonly Dictionary<string, ulong> Squares = new()
     {
+        { "-", 0 },
         { "a1", FileA & Rank1 },
         { "b1", FileB & Rank1 },
         { "c1", FileC & Rank1 },
@@ -780,6 +781,13 @@ public class Board
     public ulong BlackAttacks { get; private set; }
 
     /// <summary>
+    /// Gets the bitboard representing all squares that are either occupied by black pieces or are empty.
+    /// This is achieved by inverting the bitboard of white pieces, thus marking all squares not occupied
+    /// by white pieces.
+    /// </summary>
+    public ulong BlackOrEmpty => ~this.WhitePiecesBitBoard;
+
+    /// <summary>
     /// Gets the combined bitboard for all black pieces.
     /// This property performs a bitwise OR operation on the bitboards of all black pieces.
     /// </summary>
@@ -836,7 +844,7 @@ public class Board
     /// Gets the combined bitboard for all pieces on the board.
     /// This property performs a bitwise OR operation on the bitboards of all black and white pieces.
     /// </summary>
-    public ulong OccupiedBitBoard => this.BlackPiecesBitBoard | this.WhitePiecesBitBoard;
+    public ulong OccupiedBitBoard { get; private set; }
 
     /// <summary>
     /// Gets the bitboard representing all squares under attack by white pieces.
@@ -844,6 +852,13 @@ public class Board
     /// </summary>
     /// 
     public ulong WhiteAttacks { get; private set; }
+
+    /// <summary>
+    /// Gets the bitboard representing all squares that are either occupied by white pieces or are empty.
+    /// This is achieved by inverting the bitboard of black pieces, thus marking all squares not occupied
+    /// by black pieces.
+    /// </summary>
+    public ulong WhiteOrEmpty => ~this.BlackPiecesBitBoard;
 
     /// <summary>
     /// Represents the bitboards for the white pieces.
@@ -864,11 +879,11 @@ public class Board
     /// </summary>
     public ulong WhitePiecesBitBoard { get; private set; }
 
-    public ulong GetPieceAttacks(PieceBase pieceBase)
+    public ulong GetPieceAttacks(PieceBase piece)
     {
         Dictionary<char, ulong> pieces;
         Dictionary<ulong, ulong> preCalculatedAttacks;
-        if (pieceBase.Color == Color.Black)
+        if (piece.Color == Color.Black)
         {
             pieces = this.BlackPieces;
             preCalculatedAttacks = PawnAttacksXRayBlack;
@@ -879,7 +894,7 @@ public class Board
             preCalculatedAttacks = PawnAttacksXRayWhite;
         }
 
-        preCalculatedAttacks = pieceBase.PieceType switch
+        preCalculatedAttacks = piece.PieceType switch
         {
             PieceType.Bishop => BishopXRay,
             PieceType.King => KingXRay,
@@ -887,11 +902,11 @@ public class Board
             PieceType.Pawn => preCalculatedAttacks,
             PieceType.Queen => QueenXRay,
             PieceType.Rook => RookXRay,
-            PieceType.None => throw new ArgumentOutOfRangeException(nameof(pieceBase.PieceType), "Invalid piece type."),
-            _ => throw new ArgumentOutOfRangeException(nameof(pieceBase.PieceType), "Invalid piece type."),
+            PieceType.None => throw new ArgumentOutOfRangeException(nameof(piece.PieceType), "Invalid piece type."),
+            _ => throw new ArgumentOutOfRangeException(nameof(piece.PieceType), "Invalid piece type."),
         };
 
-        ulong piecePositions = pieces[pieceBase.PieceType.ToChar()];
+        ulong piecePositions = pieces[piece.PieceType.ToChar()];
 
         // find the 1s in the piecePositions bitboard and get the attacks for those positions
         ulong attacks = 0;
@@ -906,6 +921,64 @@ public class Board
         return attacks;
     }
 
+    public ulong GetPieceMoves(PieceBase piece)
+    {
+        var foo = new Dictionary<ulong, ulong>();
+        
+
+        Dictionary<char, ulong> pieces;
+        Dictionary<ulong, ulong> preCalculatedMoves;
+        ulong filter;
+        if (piece.Color == Color.Black)
+        {
+            pieces = this.BlackPieces;
+            preCalculatedMoves = new Dictionary<ulong, ulong>();
+            foreach (KeyValuePair<ulong, ulong> keyValuePair in PawnMovesXRayBlack)
+            {
+                preCalculatedMoves[keyValuePair.Key] = keyValuePair.Value | PawnAttacksXRayBlack[keyValuePair.Key] &
+                    (this.WhitePiecesBitBoard | Squares[this.EnPassantTargetSquare.ToString()]);
+            }
+            filter = this.WhiteOrEmpty;
+        }
+        else
+        {
+            pieces = this.WhitePieces;
+            preCalculatedMoves = new Dictionary<ulong, ulong>();
+            foreach (KeyValuePair<ulong, ulong> keyValuePair in PawnMovesXRayWhite)
+            {
+                preCalculatedMoves[keyValuePair.Key] = keyValuePair.Value | PawnAttacksXRayWhite[keyValuePair.Key] &
+                    (this.BlackPiecesBitBoard | Squares[this.EnPassantTargetSquare.ToString()]);
+            }
+            filter = this.BlackOrEmpty;
+        }
+
+        preCalculatedMoves = piece.PieceType switch
+        {
+            PieceType.Bishop => BishopXRay,
+            PieceType.King => KingXRay,
+            PieceType.Knight => KnightXRay,
+            PieceType.Pawn => preCalculatedMoves,
+            PieceType.Queen => QueenXRay,
+            PieceType.Rook => RookXRay,
+            PieceType.None => throw new ArgumentOutOfRangeException(nameof(piece.PieceType), "Invalid piece type."),
+            _ => throw new ArgumentOutOfRangeException(nameof(piece.PieceType), "Invalid piece type."),
+        };
+
+        
+        ulong piecePositions = pieces[piece.PieceType.ToChar()];
+
+        // find the 1s in the piecePositions bitboard and get the attacks for those positions
+        ulong attacks = 0;
+        while (piecePositions != 0)
+        {
+            ulong position = piecePositions & (ulong)-(long)piecePositions;
+            //attacks |= pieceBase.GetPieceAttacks(position, this);
+            attacks |= preCalculatedMoves[position] & filter;
+            piecePositions &= ~position;
+        }
+
+        return attacks;
+    }
     /// <summary>
     /// Gets the piece at the specified square on the chess board.
     /// </summary>
@@ -1353,6 +1426,7 @@ public class Board
         }
 
         this.UpdatePiecesBitBoards();
+        this.UpdateOccupiedBitBoard();
         this.UpdateAttacks();
         this.UpdateCheckAndIllegalCheck();
     }
@@ -1373,6 +1447,16 @@ public class Board
             this.Check = (this.WhiteAttacks & this.BlackPieces['k']) != 0;
             this.IllegalCheck = (this.BlackAttacks & this.WhitePieces['K']) != 0;
         }
+    }
+
+    /// <summary>
+    /// Updates the occupied bitboard by combining the bitboards of black and white pieces.
+    /// This method recalculates the occupied squares on the board by performing a bitwise OR operation
+    /// between the bitboards representing the positions of all black and white pieces.
+    /// </summary>
+    private void UpdateOccupiedBitBoard()
+    {
+        this.OccupiedBitBoard = this.BlackPiecesBitBoard | this.WhitePiecesBitBoard;
     }
 
     /// <summary>

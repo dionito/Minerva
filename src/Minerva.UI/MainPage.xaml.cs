@@ -29,6 +29,7 @@ public partial class MainPage : ContentPage
     readonly ImageButton[] allquares;
 
     readonly Dictionary<RadioButton, PieceBase> attackRadioButtons;
+    readonly Dictionary<RadioButton, PieceBase> moveRadioButtons;
 
     readonly ImageSource blackBishop = ImageSource.FromFile("blackbishop.png");
     readonly ImageSource blackKing = ImageSource.FromFile("blackking.png");
@@ -102,12 +103,27 @@ public partial class MainPage : ContentPage
             { this.cbBlackPawnsAttacks, PieceFactory.GetPiece(PieceType.Pawn, Color.Black) },
             { this.cbBlackQueensAttacks, PieceFactory.GetPiece(PieceType.Queen, Color.Black)},
             { this.cbBlackRooksAttacks, PieceFactory.GetPiece(PieceType.Rook, Color.Black) },
-            { this.cbWhiteBishops, PieceFactory.GetPiece(PieceType.Bishop, Color.White) },
-            { this.cbWhiteKing, PieceFactory.GetPiece(PieceType.King, Color.White) },
-            { this.cbWhiteKnights, PieceFactory.GetPiece(PieceType.Knight, Color.White) },
-            { this.cbWhitePawns, PieceFactory.GetPiece(PieceType.Pawn, Color.White) },
-            { this.cbWhiteQueens, PieceFactory.GetPiece(PieceType.Queen, Color.White) },
-            { this.cbWhiteRooks, PieceFactory.GetPiece(PieceType.Rook, Color.White) },
+            { this.cbWhiteBishopsAttacks, PieceFactory.GetPiece(PieceType.Bishop, Color.White) },
+            { this.cbWhiteKingAttacks, PieceFactory.GetPiece(PieceType.King, Color.White) },
+            { this.cbWhiteKnightsAttacks, PieceFactory.GetPiece(PieceType.Knight, Color.White) },
+            { this.cbWhitePawnsAttacks, PieceFactory.GetPiece(PieceType.Pawn, Color.White) },
+            { this.cbWhiteQueensAttacks, PieceFactory.GetPiece(PieceType.Queen, Color.White) },
+            { this.cbWhiteRooksAttacks, PieceFactory.GetPiece(PieceType.Rook, Color.White) },
+        };
+        this.moveRadioButtons = new Dictionary<RadioButton, PieceBase>
+        {
+            { this.cbBlackBishopsMoves, PieceFactory.GetPiece(PieceType.Bishop, Color.Black) },
+            { this.cbBlackKingMoves, PieceFactory.GetPiece(PieceType.King, Color.Black) },
+            { this.cbBlackKnightsMoves, PieceFactory.GetPiece(PieceType.Knight, Color.Black) },
+            { this.cbBlackPawnsMoves, PieceFactory.GetPiece(PieceType.Pawn, Color.Black) },
+            { this.cbBlackQueensMoves, PieceFactory.GetPiece(PieceType.Queen, Color.Black)},
+            { this.cbBlackRooksMoves, PieceFactory.GetPiece(PieceType.Rook, Color.Black) },
+            { this.cbWhiteBishopsMoves, PieceFactory.GetPiece(PieceType.Bishop, Color.White) },
+            { this.cbWhiteKingMoves, PieceFactory.GetPiece(PieceType.King, Color.White) },
+            { this.cbWhiteKnightsMoves, PieceFactory.GetPiece(PieceType.Knight, Color.White) },
+            { this.cbWhitePawnsMoves, PieceFactory.GetPiece(PieceType.Pawn, Color.White) },
+            { this.cbWhiteQueensMoves, PieceFactory.GetPiece(PieceType.Queen, Color.White) },
+            { this.cbWhiteRooksMoves, PieceFactory.GetPiece(PieceType.Rook, Color.White) },
         };
 
         this.SetBoardColors();
@@ -125,7 +141,7 @@ public partial class MainPage : ContentPage
         SetBoardColors(this.lightSquares, this.lightSquareColor);
     }
 
-    void RadioButtonCheckChanged(object? sender, CheckedChangedEventArgs e)
+    void AttacksButtonCheckChanged(object? sender, CheckedChangedEventArgs e)
     {
         this.SetBoardColors();
 
@@ -134,6 +150,11 @@ public partial class MainPage : ContentPage
             if (!radioButton.IsChecked)
             {
                 return;
+            }
+
+            foreach (KeyValuePair<RadioButton, PieceBase> attackRadioButton in this.moveRadioButtons)
+            {
+                attackRadioButton.Key.IsChecked = false;
             }
 
             PieceBase piece = this.attackRadioButtons[radioButton];
@@ -396,5 +417,37 @@ public partial class MainPage : ContentPage
             this.sldrRed.Value / 255d,
             this.sldrGreen.Value / 255d,
             this.sldrBlue.Value / 255d);
+    }
+
+    private void MovesButtonCheckChanged(object? sender, CheckedChangedEventArgs e)
+    {
+        this.SetBoardColors();
+
+        if (this.board != null && sender is RadioButton radioButton)
+        {
+            if (!radioButton.IsChecked)
+            {
+                return;
+            }
+
+            foreach (KeyValuePair<RadioButton, PieceBase> attackRadioButton in this.attackRadioButtons)
+            {
+                attackRadioButton.Key.IsChecked = false;
+            }
+
+            PieceBase piece = this.moveRadioButtons[radioButton];
+            ulong legalMoves = this.board.GetPieceMoves(piece);
+            if (legalMoves > 0)
+            {
+                for (int i = 0; i < 64; i++)
+                {
+                    ulong bitmask = 1ul << i;
+                    if ((bitmask & legalMoves) != 0)
+                    {
+                        this.allquares[i].BackgroundColor = Colors.Cyan;
+                    }
+                }
+            }
+        }
     }
 }
