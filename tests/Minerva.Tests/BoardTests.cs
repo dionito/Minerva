@@ -14,12 +14,45 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 using Minerva.Pieces;
+using System.Text;
 
 namespace Minerva.Tests;
 
 [TestClass]
 public class BoardTests : TestBase
 {
+    [TestMethod]
+    public void BishopsTests()
+    {
+        var board = new Board();
+        PieceBase bishop = PieceFactory.GetPiece('b', Color.White);
+        foreach (KeyValuePair<ulong, ulong> diagonal in Board.BishopXRay)
+        {
+            ulong moves = bishop.GetPieceMoves(diagonal.Key, board);
+            Assert.AreEqual(moves.ToString("X"), diagonal.Value.ToString("X"));
+        }
+    }
+
+    [TestMethod]
+    public void DiagonalsTests()
+    {
+        var board = new Board();
+        PieceBase bishop = PieceFactory.GetPiece('b', Color.White);
+        foreach (KeyValuePair<ulong, ulong> diagonal in Board.Diagonals)
+        {
+            ulong positions = bishop.GetPieceMoves(diagonal.Key, board) | diagonal.Key;
+            Assert.AreEqual(positions.ToString("X"), diagonal.Value.ToString("X"));
+        }
+    }
+
+    [TestMethod]
+    public void BlackPiecesBitBoardIsCorrectOnEmptyBoardCreation()
+    {
+        var board = new Board();
+        ulong blackPiecesBitBoard = board.BlackPieces.Values.Aggregate((a, b) => a | b);
+        Assert.AreEqual(0ul, blackPiecesBitBoard);
+    }
+
     [TestMethod]
     [DataRow("a1", Board.Rank1 & Board.FileA, DisplayName = "a1")]
     [DataRow("a8", Board.Rank8 & Board.FileA, DisplayName = "a8")]
@@ -34,16 +67,6 @@ public class BoardTests : TestBase
         var board = new Board();
         ulong bitboard = board.GetSquareBitBoard(square);
         Assert.AreEqual(result, bitboard);
-    }
-
-    [TestMethod]
-    [DataRow("a8", 1ul << 63, DisplayName = "a8 - MSB")]
-    [DataRow("H1", 1ul, DisplayName = "H1 - LSB")]
-    public void MostSignificanAndLeastSignificantBitSqaresAreSetProperly(string square, ulong expectedBitBoard)
-    {
-        var board = new Board();
-        ulong bitboard = board.GetSquareBitBoard(square);
-        Assert.AreEqual(expectedBitBoard, bitboard);
     }
 
     [TestMethod]
@@ -73,6 +96,102 @@ public class BoardTests : TestBase
     }
 
     [TestMethod]
+    public void KingsTests()
+    {
+        var board = new Board();
+        PieceBase king = PieceFactory.GetPiece('k', Color.White);
+        foreach (KeyValuePair<ulong, ulong> kingAttacks in Board.KingXRay)
+        {
+            var attacks = king.GetPieceMoves(kingAttacks.Key, board);
+            Assert.AreEqual(attacks.ToString("X"), kingAttacks.Value.ToString("X"));
+        }
+    }
+
+    [TestMethod]
+    public void KnightsTests()
+    {
+        var board = new Board();
+        PieceBase knight = PieceFactory.GetPiece('n', Color.White);
+        foreach (KeyValuePair<ulong, ulong> knightAttacks in Board.KnightXRay)
+        {
+            ulong moves = knight.GetPieceMoves(knightAttacks.Key, board);
+            Assert.AreEqual(moves.ToString("X"), knightAttacks.Value.ToString("X"));
+        }
+    }
+
+    [TestMethod]
+    public void PawnsAttacksBlackTests()
+    {
+        var board = new Board();
+        PieceBase pawn = PieceFactory.GetPiece('p', Color.Black);
+        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnAttacksXRayBlack)
+        {
+            ulong attacks = pawn.GetPieceAttacks(pawnAttacks.Key, board);
+            Assert.AreEqual(attacks.ToString("X"), pawnAttacks.Value.ToString("X"));
+        }
+    }
+
+    [TestMethod]
+    public void PawnsAttacksWhiteTests()
+    {
+        var board = new Board();
+        PieceBase pawn = PieceFactory.GetPiece('p', Color.White);
+        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnAttacksXRayWhite)
+        {
+            ulong attacks = pawn.GetPieceAttacks(pawnAttacks.Key, board);
+            Assert.AreEqual(attacks.ToString("X"), pawnAttacks.Value.ToString("X"));
+        }
+    }
+
+    [TestMethod]
+    public void PawnsMovesBlackTests()
+    {
+        var board = new Board();
+        PieceBase pawn = PieceFactory.GetPiece('p', Color.Black);
+        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnMovesXRayBlack)
+        {
+            ulong moves = pawn.GetPieceMoves(pawnAttacks.Key, board);
+            Assert.AreEqual(moves.ToString("X"), pawnAttacks.Value.ToString("X"));
+        }
+    }
+
+    [TestMethod]
+    public void PawnsMovesWhiteTests()
+    {
+        var board = new Board();
+        PieceBase pawn = PieceFactory.GetPiece('p', Color.White);
+        foreach (KeyValuePair<ulong, ulong> pawnAttacks in Board.PawnMovesXRayWhite)
+        {
+            ulong moves = pawn.GetPieceMoves(pawnAttacks.Key, board);
+            Assert.AreEqual(moves.ToString("X"), pawnAttacks.Value.ToString("X"));
+        }
+    }
+
+    [TestMethod]
+    public void QueensTests()
+    {
+        var board = new Board();
+        PieceBase queen = PieceFactory.GetPiece('q', Color.White);
+        foreach (KeyValuePair<ulong, ulong> diagonal in Board.QueenXRay)
+        {
+            ulong moves = queen.GetPieceMoves(diagonal.Key, board);
+            Assert.AreEqual(moves.ToString("X"), diagonal.Value.ToString("X"));
+        }
+    }
+
+    [TestMethod]
+    public void RooksTests()
+    {
+        var board = new Board();
+        PieceBase rook = PieceFactory.GetPiece('r', Color.White);
+        foreach (KeyValuePair<ulong, ulong> diagonal in Board.RookXRay)
+        {
+            ulong moves = rook.GetPieceMoves(diagonal.Key, board);
+            Assert.AreEqual(moves.ToString("X"), diagonal.Value.ToString("X"));
+        }
+    }
+
+    [TestMethod]
     public void GetSquareBitBoardThrowsArgumentNullExceptionWhenSquareIsNull()
     {
         var board = new Board();
@@ -96,11 +215,13 @@ public class BoardTests : TestBase
     }
 
     [TestMethod]
-    public void BlackPiecesBitBoardIsCorrectOnEmptyBoardCreation()
+    [DataRow("a8", 1ul << 63, DisplayName = "a8 - MSB")]
+    [DataRow("H1", 1ul, DisplayName = "H1 - LSB")]
+    public void MostSignificanAndLeastSignificantBitSqaresAreSetProperly(string square, ulong expectedBitBoard)
     {
         var board = new Board();
-        ulong blackPiecesBitBoard = board.BlackPieces.Values.Aggregate((a, b) => a | b);
-        Assert.AreEqual(0ul, blackPiecesBitBoard);
+        ulong bitboard = board.GetSquareBitBoard(square);
+        Assert.AreEqual(expectedBitBoard, bitboard);
     }
 
     [TestMethod]
@@ -488,7 +609,7 @@ public class BoardTests : TestBase
     [TestMethod]
     [DataRow(Color.White, 'R', DisplayName = "White Rook Attacks")]
     [DataRow(Color.Black, 'r', DisplayName = "Black Rook Attacks")]
-    public void GetPieceAttacks_ReturnsCorrectAttacks_ForRooks(Color color, char pieceType)
+    public void GetPieceAttacksReturnsCorrectAttacksForRooks(Color color, char pieceType)
     {
         // Arrange
         var board = new Board();
@@ -501,7 +622,8 @@ public class BoardTests : TestBase
 
         // Assert
         // Assuming a method to calculate expected attacks for a rook at a1
-        ulong expectedAttacks = Board.Rank1 | Board.Rank8 | Board.FileA | Board.FileH;
+        ulong expectedAttacks = (Board.Rank1 | Board.Rank8 | Board.FileA | Board.FileH) &
+            ~(Board.Rank1 & Board.FileA | Board.Rank8 & Board.FileH);
         Assert.AreEqual(expectedAttacks, attacks, "Rook attacks did not match expected attacks.");
     }
 }

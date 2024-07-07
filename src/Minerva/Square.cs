@@ -70,7 +70,7 @@ public readonly struct Square
 
         this.File = file;
         this.Rank = rank;
-        this.BitBoard = Board.Files[file - 'a'] & Board.Ranks[rank - 1];
+        this.BitBoard = Board.Squares[$"{file}{rank}"];
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public readonly struct Square
 
         this.File = file;
         this.Rank = rank;
-        this.BitBoard = Board.Files[file - 'a'] & Board.Ranks[rank - 1];
+        this.BitBoard = Board.Squares[$"{file}{rank}"];
     }
 
     /// <summary>
