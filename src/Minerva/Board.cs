@@ -212,7 +212,7 @@ public class Board
                     (this.WhitePiecesBitBoard | BitBoards.Squares[this.EnPassantTargetSquare.ToString()]);
             }
 
-            filter = BitBoards.WhiteOrEmpty(this);
+            filter = this.WhiteOrEmpty();
         }
         else
         {
@@ -225,7 +225,7 @@ public class Board
                     (this.BlackPiecesBitBoard | BitBoards.Squares[this.EnPassantTargetSquare.ToString()]);
             }
 
-            filter = BitBoards.BlackOrEmpty(this);
+            filter = this.BlackOrEmpty();
         }
 
         preCalculatedMoves = piece.PieceType switch
@@ -255,132 +255,6 @@ public class Board
         }
 
         return defenses;
-    }
-
-    /// <summary>
-    /// Gets the piece at the specified square on the chess board.
-    /// </summary>
-    /// <param name="file">The file of the target location. Must be between 1 and 8 inclusive.</param>
-    /// <param name="rank">The rank of the target location. Must be between 1 and 8 inclusive.</param>
-    /// <returns>The piece at the specified location. ' ' if the square is empty.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// Thrown when the file or rank is out of the valid range.
-    /// </exception>
-    public char GetPieceAt(int file, int rank)
-    {
-        if (file is <= 0 or > 8)
-        {
-            throw new ArgumentOutOfRangeException(nameof(file), "Must be between 1 and 8 inclusive.");
-        }
-
-        if (rank is <= 0 or > 8)
-        {
-            throw new ArgumentOutOfRangeException(nameof(file), "Must be between 1 and 8 inclusive.");
-        }
-
-        return this.GetPieceAt(BitBoards.Files[file - 1] & BitBoards.Ranks[rank - 1]);
-    }
-
-    /// <summary>
-    /// Gets the piece at the specified square on the chess board.
-    /// </summary>
-    /// <param name="square">The square to check.</param>
-    /// <returns>The piece at the specified square.</returns>
-    public char GetPieceAt(Square square)
-    {
-        return this.GetPieceAt(square.BitBoard);
-    }
-
-    /// <summary>
-    /// Gets the piece at the specified square on the chess board.
-    /// </summary>
-    /// <param name="square">The square to check in algebraic notation (e.g., "e4").</param>
-    /// <returns>The piece at the specified square.</returns>
-    public char GetPieceAt(string square)
-    {
-        return this.GetPieceAt(BitBoards.Squares[square]);
-    }
-
-    /// <summary>
-    /// Gets the piece at the specified square on the chess board.
-    /// </summary>
-    /// <param name="square">The bitboard representation of the square to check.</param>
-    /// <param name="color">The color of the piece to find. If Color.None, any piece will
-    /// be considered.</param>
-    /// <returns>The character representing the piece at the given position, or the
-    /// <see cref="EmptySquare"/> character (' ') if no piece is found.</returns>
-    public char GetPieceAt(ulong square, Color color = Color.None)
-    {
-        if (color != Color.White && (this.BlackPiecesBitBoard & square) != 0)
-        {
-            foreach (KeyValuePair<char, ulong> pieceType in this.BlackPieces)
-            {
-                if ((pieceType.Value & square) != 0)
-                {
-                    return pieceType.Key;
-                }
-            }
-        }
-
-        if (color != Color.Black && (this.WhitePiecesBitBoard & square) != 0)
-        {
-            foreach (KeyValuePair<char, ulong> pieceType in this.WhitePieces)
-            {
-                if ((pieceType.Value & square) != 0)
-                {
-                    return pieceType.Key;
-                }
-            }
-        }
-
-        return BitBoards.EmptySquare;
-    }
-
-    /// <summary>
-    /// Initializes the chess board to the standard starting position.
-    /// This method sets the bitboards for both black and white pieces.
-    /// </summary>
-    public void InitializeGameStartingBoard()
-    {
-        // Initialize black pieces
-        // Rooks are placed on a8 and h8
-        this.BlackPieces['r'] = BitBoards.Rank8 & BitBoards.FileA | BitBoards.Rank8 & BitBoards.FileH;
-
-        // Knights are placed on b8 and g8
-        this.BlackPieces['n'] = BitBoards.Rank8 & BitBoards.FileB | BitBoards.Rank8 & BitBoards.FileG;
-
-        // Bishops are placed on c8 and f8
-        this.BlackPieces['b'] = BitBoards.Rank8 & BitBoards.FileC | BitBoards.Rank8 & BitBoards.FileF;
-
-        // Queen is placed on d8
-        this.BlackPieces['q'] = BitBoards.Rank8 & BitBoards.FileD;
-
-        // King is placed on e8
-        this.BlackPieces['k'] = BitBoards.Rank8 & BitBoards.FileE;
-
-        // Pawns are placed on a7 to h7
-        this.BlackPieces['p'] = BitBoards.Rank7;
-
-        // Initialize white pieces
-        // Rooks are placed on a1 and h1
-        this.WhitePieces['R'] = BitBoards.Rank1 & BitBoards.FileA | BitBoards.Rank1 & BitBoards.FileH;
-
-        // Knights are placed on b1 and g1
-        this.WhitePieces['N'] = BitBoards.Rank1 & BitBoards.FileB | BitBoards.Rank1 & BitBoards.FileG;
-
-        // Bishops are placed on c1 and f1
-        this.WhitePieces['B'] = BitBoards.Rank1 & BitBoards.FileC | BitBoards.Rank1 & BitBoards.FileF;
-
-        // Queen is placed on d1
-        this.WhitePieces['Q'] = BitBoards.Rank1 & BitBoards.FileD;
-
-        // King is placed on e1
-        this.WhitePieces['K'] = BitBoards.Rank1 & BitBoards.FileE;
-
-        // Pawns are placed on a2 to h2
-        this.WhitePieces['P'] = BitBoards.Rank2;
-
-        this.UpdateBoardStatus();
     }
 
     /// <summary>

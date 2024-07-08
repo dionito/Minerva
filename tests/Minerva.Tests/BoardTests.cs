@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+using Minerva.Extensions;
 using Minerva.Pieces;
 using System.Text;
 
@@ -37,11 +38,11 @@ public class BoardTests : TestBase
     public void BlackOrEmptyTests()
     {
         var board = new Board();
-        Assert.AreEqual(0xFFFFFFFFFFFFFFFF, BitBoards.BlackOrEmpty(board), "Empty board.");
+        Assert.AreEqual(0xFFFFFFFFFFFFFFFF, board.BlackOrEmpty(), "Empty board.");
         board.InitializeGameStartingBoard();
         Assert.AreEqual(
             BitBoards.Rank3 | BitBoards.Rank4 | BitBoards.Rank5 | BitBoards.Rank6 | BitBoards.Rank7 | BitBoards.Rank8,
-            BitBoards.BlackOrEmpty(board),
+            board.BlackOrEmpty(),
             "Starting board.");
     }
 
@@ -49,11 +50,11 @@ public class BoardTests : TestBase
     public void WhiteOrEmptyTests()
     {
         var board = new Board();
-        Assert.AreEqual(0xFFFFFFFFFFFFFFFF, BitBoards.WhiteOrEmpty(board), "Empty board.");
+        Assert.AreEqual(0xFFFFFFFFFFFFFFFF, board.WhiteOrEmpty(), "Empty board.");
         board.InitializeGameStartingBoard();
         Assert.AreEqual(
             BitBoards.Rank1 | BitBoards.Rank2 | BitBoards.Rank3 | BitBoards.Rank4 | BitBoards.Rank5 | BitBoards.Rank6,
-            BitBoards.WhiteOrEmpty(board),
+            board.WhiteOrEmpty(),
             "Starting board.");
     }
 
@@ -356,10 +357,7 @@ public class BoardTests : TestBase
         var board = new Board();
         board.InitializeGameStartingBoard();
 
-        Assert.AreEqual(expectedPiece, board.GetPieceAt(file - 'a' + 1, rank));
-        Assert.AreEqual(expectedPiece, board.GetPieceAt($"{file}{rank}"));
-        Assert.AreEqual(expectedPiece, board.GetPieceAt(new Square(file, rank)));
-        // no need to test bitboard overload, as it is called from all the above tested methods
+        Assert.AreEqual(expectedPiece, board.GetPieceAt(BitBoards.Squares[$"{file}{rank}"]));
     }
 
     [TestMethod]
@@ -398,27 +396,32 @@ public class BoardTests : TestBase
     }
 
     [TestMethod]
-    public void GetPieceAtReturnsEmptyForEmptySquare()
+    public void GetPieceAtReturnsEmptySquareForCorrectSquares()
     {
         var board = new Board();
         board.InitializeGameStartingBoard();
 
-        Assert.AreEqual(BitBoards.EmptySquare, board.GetPieceAt(4, 4)); // Empty square at d4
-        Assert.AreEqual(BitBoards.EmptySquare, board.GetPieceAt(5, 5)); // Empty square at e5
-    }
-
-    [TestMethod]
-    public void GetPieceAtThrowsExceptionForInvalidFile()
-    {
-        var board = new Board();
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => board.GetPieceAt(0, 1)); // Invalid file
-    }
-
-    [TestMethod]
-    public void GetPieceAtThrowsExceptionForInvalidRank()
-    {
-        var board = new Board();
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => board.GetPieceAt(1, 0)); // Invalid rank
+        for (int file = 1; file <= 8; file++)
+        {
+            for (int rank = 1; rank <= 8; rank++)
+            {
+                char fileChar = (char)('a' + file - 1); // Convert file from int to char
+                if (rank is < 3 or > 6)
+                {
+                    Assert.AreNotEqual(
+                        BitBoards.EmptySquare,
+                        board.GetPieceAt(BitBoards.Squares[$"{fileChar}{rank}"]),
+                        $"Not empty square [{fileChar}{rank}].");
+                }
+                else
+                {
+                    Assert.AreEqual(
+                        BitBoards.EmptySquare,
+                        board.GetPieceAt(BitBoards.Squares[$"{fileChar}{rank}"]),
+                        $"Empty square [{fileChar}{rank}].");
+                }
+            }
+        }
     }
 
     [TestMethod]

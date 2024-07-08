@@ -800,24 +800,4 @@ public static class BitBoards
     /// Represents the ranks of the chess board.
     /// </summary>
     public static readonly ulong[] Ranks = { Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8, };
-
-    /// <summary>
-    /// Calculates the bitboard representing all squares that are either empty or occupied by black pieces.
-    /// </summary>
-    /// <param name="board">The current state of the chess board.</param>
-    /// <returns>A bitboard where 1s represent squares that are either empty or occupied by black pieces.</returns>
-    public static ulong BlackOrEmpty(Board board)
-    {
-        return ~board.WhitePiecesBitBoard;
-    }
-
-    /// <summary>
-    /// Calculates the bitboard representing all squares that are either empty or occupied by white pieces.
-    /// </summary>
-    /// <param name="board">The current state of the chess board.</param>
-    /// <returns>A bitboard where 1s represent squares that are either empty or occupied by white pieces.</returns>
-    public static ulong WhiteOrEmpty(Board board)
-    {
-        return ~board.BlackPiecesBitBoard;
-    }
 }
