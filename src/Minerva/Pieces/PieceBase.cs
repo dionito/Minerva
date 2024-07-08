@@ -106,7 +106,7 @@ public abstract class PieceBase
                 }
                 else
                 {
-                    if (attacks || board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
+                    if (attacks || board.SquareContainPieceOfColor(newPosition, this.Color.Opposite().ToChar()))
                     {
                         result |= newPosition;
                     }

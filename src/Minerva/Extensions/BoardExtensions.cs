@@ -104,6 +104,34 @@ public static class BoardExtensions
     }
 
     /// <summary>
+    /// Checks if a specified square on the chess board is empty.
+    /// </summary>
+    /// <param name="board">The current state of the chess board.</param>
+    /// <param name="square">The square to check, represented as a bitboard.</param>
+    /// <returns>True if the square is empty, false otherwise.</returns>
+    public static bool IsEmptySquare(this Board board, ulong square)
+    {
+        return (board.OccupiedBitBoard & square) == 0;
+    }
+
+    /// <summary>
+    /// Checks if a square contains a piece of the specified color.
+    /// </summary>
+    /// <param name="square">The square to check, represented as a bitboard with a single bit set.</param>
+    /// <param name="color">The color to check for. Can be either 'w' for white or 'b' for black.</param>
+    /// <returns>true if the square contains a piece of the specified color; otherwise, false.</returns>
+    /// <exception cref="ArgumentException">Thrown when an invalid color is provided.</exception>
+    public static bool SquareContainPieceOfColor(this Board board, ulong square, char color)
+    {
+        return color switch
+        {
+            'w' => (board.WhitePiecesBitBoard & square) != 0,
+            'b' => (board.BlackPiecesBitBoard & square) != 0,
+            _ => throw new ArgumentException($"Invalid color: {color}. Valid colors are 'b' or 'w'.", nameof(color)),
+        };
+    }
+
+    /// <summary>
     /// Calculates the bitboard representing all squares that are either empty or occupied by white pieces.
     /// </summary>
     /// <param name="board">The current state of the chess board.</param>

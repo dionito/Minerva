@@ -86,8 +86,8 @@ public class Pawn : PieceBase
         {
             ulong capturePosition = position.Move(direction);
             if (position != 0 &&
-                (board.SquareContainPieceOfColor(capturePosition, this.Color.Opposite()) ||
-                    (board.EnPassantTargetSquare.BitBoard & capturePosition) != 0))
+                (board.SquareContainPieceOfColor(capturePosition, this.Color.Opposite().ToChar()) ||
+                    (BitBoards.Squares[board.EnPassantTargetSquare] & capturePosition) != 0))
             {
                 result |= capturePosition;
             }

@@ -99,7 +99,7 @@ public class Board
     /// "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6" - for black pawns
     /// "-" - if there is no en passant target square
     /// </value>
-    public Square EnPassantTargetSquare { get; private set; } = new();
+    public string EnPassantTargetSquare { get; private set; } = "-";
 
     /// <summary>
     /// Gets the fullmove number.
@@ -209,7 +209,7 @@ public class Board
             {
                 preCalculatedMoves[keyValuePair.Key] = keyValuePair.Value |
                     BitBoards.PawnDefendedBlack[keyValuePair.Key] &
-                    (this.WhitePiecesBitBoard | BitBoards.Squares[this.EnPassantTargetSquare.ToString()]);
+                    (this.WhitePiecesBitBoard | BitBoards.Squares[this.EnPassantTargetSquare]);
             }
 
             filter = this.WhiteOrEmpty();
@@ -222,7 +222,7 @@ public class Board
             {
                 preCalculatedMoves[keyValuePair.Key] = keyValuePair.Value |
                     BitBoards.PawnDefendedWhite[keyValuePair.Key] &
-                    (this.BlackPiecesBitBoard | BitBoards.Squares[this.EnPassantTargetSquare.ToString()]);
+                    (this.BlackPiecesBitBoard | BitBoards.Squares[this.EnPassantTargetSquare]);
             }
 
             filter = this.BlackOrEmpty();
@@ -255,32 +255,6 @@ public class Board
         }
 
         return defenses;
-    }
-
-    /// <summary>
-    /// Checks if a square on the board is empty.
-    /// </summary>
-    /// <param name="file">The file of the square to check. Must be between a and h inclusive.</param>
-    /// <param name="rank">The rank of the square to check. Must be between 1 and 8 inclusive.</param>
-    /// <returns>True if the square is empty, false otherwise.</returns>
-    public bool IsEmptySquare(char file, int rank)
-    {
-        return this.IsEmptySquare(BitBoards.Squares[$"{file}{rank}"]);
-    }
-
-    /// <summary>
-    /// Checks if a square on the board is empty.
-    /// </summary>
-    /// <param name="square">The square to check.</param>
-    /// <returns>True if the square is empty, false otherwise.</returns>
-    public bool IsEmptySquare(Square square)
-    {
-        return this.IsEmptySquare(square.BitBoard);
-    }
-
-    public bool IsEmptySquare(ulong square)
-    {
-        return (this.OccupiedBitBoard & square) == 0;
     }
 
     /// <summary>
@@ -340,7 +314,7 @@ public class Board
     {
         if (enPassantTargetSquare == "-")
         {
-            this.EnPassantTargetSquare = new Square();
+            this.EnPassantTargetSquare = enPassantTargetSquare;
             return;
         }
 
@@ -365,7 +339,7 @@ public class Board
                 nameof(enPassantTargetSquare));
         }
 
-        this.EnPassantTargetSquare = new Square(enPassantTargetSquare);
+        this.EnPassantTargetSquare = enPassantTargetSquare;
     }
 
     /// <summary>
@@ -459,82 +433,6 @@ public class Board
         }
 
         this.UpdateBoardStatus();
-    }
-
-
-    /// <summary>
-    /// Checks if a given square contains a piece of a specific color.
-    /// </summary>
-    /// <param name="file">The file of the square to check. Must be between 'a' and 'h' inclusive.</param>
-    /// <param name="rank">The rank of the square to check. Must be between 1 and 8 inclusive.</param>
-    /// <param name="color">The color of the piece to check for. 'w' for white and 'b' for black.</param>
-    /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
-    public bool SquareContainPieceOfColor(char file, int rank, Color color)
-    {
-        return this.SquareContainPieceOfColor(BitBoards.Squares[$"{file}{rank}"], (char)color);
-    }
-
-    /// <summary>
-    /// Checks if a given square contains a piece of a specific color.
-    /// </summary>
-    /// <param name="square">The square to check.</param>
-    /// <param name="color">The color of the piece to check for. 'w' for white and 'b' for black.</param>
-    /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
-    public bool SquareContainPieceOfColor(Square square, Color color)
-    {
-        return this.SquareContainPieceOfColor(square, (char)color);
-    }
-
-    /// <summary>
-    /// Checks if a given square contains a piece of a specific color.
-    /// </summary>
-    /// <param name="file">The file of the square to check. Must be between 'a' and 'h' inclusive.</param>
-    /// <param name="rank">The rank of the square to check. Must be between 1 and 8 inclusive.</param>
-    /// <param name="color">The color of the piece to check for. 'w' for white and 'b' for black.</param>
-    /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
-    public bool SquareContainPieceOfColor(char file, int rank, char color)
-    {
-        return this.SquareContainPieceOfColor(BitBoards.Squares[$"{file}{rank}"], color);
-    }
-
-    /// <summary>
-    /// Checks if a given square contains a piece of a specific color.
-    /// </summary>
-    /// <param name="square">The square to check.</param>
-    /// <param name="color">The color of the piece to check for. 'w' for white and 'b' for black.</param>
-    /// <returns>True if the square contains a piece of the specified color, false otherwise.</returns>
-    public bool SquareContainPieceOfColor(Square square, char color)
-    {
-        return this.SquareContainPieceOfColor(square.BitBoard, color);
-    }
-
-    /// <summary>
-    /// Checks if a square contains a piece of the specified color.
-    /// </summary>
-    /// <param name="square">The square to check, represented as a bitboard with a single bit set.</param>
-    /// <param name="color">The color to check for. Can be either 'w' for white or 'b' for black.</param>
-    /// <returns>true if the square contains a piece of the specified color; otherwise, false.</returns>
-    /// <exception cref="ArgumentException">Thrown when an invalid color is provided.</exception>
-    public bool SquareContainPieceOfColor(ulong square, Color color)
-    {
-        return this.SquareContainPieceOfColor(square, (char)color);
-    }
-
-    /// <summary>
-    /// Checks if a square contains a piece of the specified color.
-    /// </summary>
-    /// <param name="square">The square to check, represented as a bitboard with a single bit set.</param>
-    /// <param name="color">The color to check for. Can be either 'w' for white or 'b' for black.</param>
-    /// <returns>true if the square contains a piece of the specified color; otherwise, false.</returns>
-    /// <exception cref="ArgumentException">Thrown when an invalid color is provided.</exception>
-    public bool SquareContainPieceOfColor(ulong square, char color)
-    {
-        return color switch
-        {
-            'w' => (this.WhitePiecesBitBoard & square) != 0,
-            'b' => (this.BlackPiecesBitBoard & square) != 0,
-            _ => throw new ArgumentException($"Invalid color: {color}. Valid colors are 'b' or 'w'.", nameof(color)),
-        };
     }
 
     private void UpdateAttacks()
