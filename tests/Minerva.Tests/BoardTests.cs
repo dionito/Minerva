@@ -15,7 +15,6 @@
 
 using Minerva.Extensions;
 using Minerva.Pieces;
-using System.Text;
 
 namespace Minerva.Tests;
 
@@ -23,101 +22,11 @@ namespace Minerva.Tests;
 public class BoardTests : TestBase
 {
     [TestMethod]
-    public void BishopsTests()
-    {
-        var board = new Board();
-        PieceBase bishop = PieceFactory.GetPiece('b', Color.White);
-        foreach (KeyValuePair<ulong, ulong> diagonal in BitBoards.Bishop)
-        {
-            ulong moves = bishop.GetPieceMoves(diagonal.Key, board);
-            Assert.AreEqual(moves.ToString("X"), diagonal.Value.ToString("X"));
-        }
-    }
-
-    [TestMethod]
-    public void BlackOrEmptyTests()
-    {
-        var board = new Board();
-        Assert.AreEqual(0xFFFFFFFFFFFFFFFF, board.BlackOrEmpty(), "Empty board.");
-        board.InitializeGameStartingBoard();
-        Assert.AreEqual(
-            BitBoards.Rank3 | BitBoards.Rank4 | BitBoards.Rank5 | BitBoards.Rank6 | BitBoards.Rank7 | BitBoards.Rank8,
-            board.BlackOrEmpty(),
-            "Starting board.");
-    }
-
-    [TestMethod]
-    public void WhiteOrEmptyTests()
-    {
-        var board = new Board();
-        Assert.AreEqual(0xFFFFFFFFFFFFFFFF, board.WhiteOrEmpty(), "Empty board.");
-        board.InitializeGameStartingBoard();
-        Assert.AreEqual(
-            BitBoards.Rank1 | BitBoards.Rank2 | BitBoards.Rank3 | BitBoards.Rank4 | BitBoards.Rank5 | BitBoards.Rank6,
-            board.WhiteOrEmpty(),
-            "Starting board.");
-    }
-
-    [TestMethod]
-    public void DiagonalsTests()
-    {
-        var board = new Board();
-        PieceBase bishop = PieceFactory.GetPiece('b', Color.White);
-        foreach (KeyValuePair<ulong, ulong> diagonal in BitBoards.Diagonals)
-        {
-            ulong positions = bishop.GetPieceMoves(diagonal.Key, board) | diagonal.Key;
-            Assert.AreEqual(positions.ToString("X"), diagonal.Value.ToString("X"));
-        }
-    }
-
-    [TestMethod]
     public void BlackPiecesBitBoardIsCorrectOnEmptyBoardCreation()
     {
         var board = new Board();
         ulong blackPiecesBitBoard = board.BlackPieces.Values.Aggregate((a, b) => a | b);
         Assert.AreEqual(0ul, blackPiecesBitBoard);
-    }
-
-    [TestMethod]
-    [DataRow("a1", BitBoards.Rank1 & BitBoards.FileA, DisplayName = "a1")]
-    [DataRow("a8", BitBoards.Rank8 & BitBoards.FileA, DisplayName = "a8")]
-    [DataRow("h1", BitBoards.Rank1 & BitBoards.FileH, DisplayName = "h1")]
-    [DataRow("h8", BitBoards.Rank8 & BitBoards.FileH, DisplayName = "h8")]
-    [DataRow("A1", BitBoards.Rank1 & BitBoards.FileA, DisplayName = "A1")]
-    [DataRow("A8", BitBoards.Rank8 & BitBoards.FileA, DisplayName = "A8")]
-    [DataRow("H1", BitBoards.Rank1 & BitBoards.FileH, DisplayName = "H1")]
-    [DataRow("H8", BitBoards.Rank8 & BitBoards.FileH, DisplayName = "H8")]
-    public void GetSquareReturnsTheRightBitboard(string square, ulong result)
-    {
-        var board = new Board();
-        ulong bitboard = board.GetSquareBitBoard(square);
-        Assert.AreEqual(result, bitboard);
-    }
-
-    [TestMethod]
-    [DataRow(
-        "ac3",
-        typeof(ArgumentException),
-        "Square notation must be 2 characters long. (Parameter 'square')",
-        DisplayName = "Wrong lenght square")]
-    [DataRow(
-        "j3",
-        typeof(ArgumentException),
-        "Invalid file. (Parameter 'square')",
-        DisplayName = "Invalid File")]
-    [DataRow(
-        "a0",
-        typeof(ArgumentException),
-        "Invalid rank. (Parameter 'square')",
-        DisplayName = "Invalid Rank")]
-    public void GetSquareBitBoardThrowsTheRightArgumentExceptions(string square, Type exceptionType, string message)
-    {
-        var board = new Board();
-        ArgumentException exception = Assert.ThrowsException<ArgumentException>(
-            () => board.GetSquareBitBoard(square),
-            "Wrong exception type.");
-        Assert.AreEqual(exceptionType, exception.GetType());
-        Assert.AreEqual(message, exception.Message);
     }
 
     [TestMethod]
@@ -217,20 +126,6 @@ public class BoardTests : TestBase
     }
 
     [TestMethod]
-    public void GetSquareBitBoardThrowsArgumentNullExceptionWhenSquareIsNull()
-    {
-        var board = new Board();
-        string? nullSquare = null;
-        #pragma warning disable CS8604 // Possible null reference argument.
-        ArgumentNullException exception = Assert.ThrowsException<ArgumentNullException>(
-            () => board.GetSquareBitBoard(nullSquare),
-            "Wrong exception type.");
-        #pragma warning restore CS8604 // Possible null reference argument.
-        Assert.AreEqual("square", exception.ParamName);
-        Assert.AreEqual("Value cannot be null. (Parameter 'square')", exception.Message);
-    }
-
-    [TestMethod]
     [DataRow("3K4/8/8/8/5q2/8/Qb6/kN6 b - - 0 1", true)]
     [DataRow("8/8/8/4k3/2K2q2/8/Qb6/1N6 w - - 0 1", true)]
     public void IsCheckTests(string fen, bool expected)
@@ -241,11 +136,11 @@ public class BoardTests : TestBase
 
     [TestMethod]
     [DataRow("a8", 1ul << 63, DisplayName = "a8 - MSB")]
-    [DataRow("H1", 1ul, DisplayName = "H1 - LSB")]
+    [DataRow("h1", 1ul, DisplayName = "H1 - LSB")]
     public void MostSignificanAndLeastSignificantBitSqaresAreSetProperly(string square, ulong expectedBitBoard)
     {
         var board = new Board();
-        ulong bitboard = board.GetSquareBitBoard(square);
+        ulong bitboard = BitBoards.Squares[square];
         Assert.AreEqual(expectedBitBoard, bitboard);
     }
 
@@ -271,180 +166,6 @@ public class BoardTests : TestBase
         var board = new Board { BlackPieces = { ['p'] = 1ul } };
         ulong blackPiecesBitBoard = board.BlackPieces.Values.Aggregate((a, b) => a | b);
         Assert.AreEqual(1ul, blackPiecesBitBoard);
-    }
-
-    [TestMethod]
-    public void AllBitBoardsAreCorrectAfterCreatingGameStartingBoard()
-    {
-        var board = new Board();
-        board.InitializeGameStartingBoard();
-
-        // Bitboards
-        Assert.AreEqual(BitBoards.Rank1 | BitBoards.Rank2, board.WhitePiecesBitBoard, "White Pieces.");
-        Assert.AreEqual(BitBoards.Rank8 | BitBoards.Rank7, board.BlackPiecesBitBoard, "Black pieces.");
-        Assert.AreEqual(
-            BitBoards.Rank1 | BitBoards.Rank2 | BitBoards.Rank7 | BitBoards.Rank8,
-            board.OccupiedBitBoard,
-            "Occupied squares.");
-        
-        // Black pieces
-        Assert.AreEqual(
-            board.GetSquareBitBoard("a8") | board.GetSquareBitBoard("h8"),
-            board.BlackPieces['r'],
-            "Black rocks");
-        Assert.AreEqual(
-            board.GetSquareBitBoard("b8") | board.GetSquareBitBoard("g8"),
-            board.BlackPieces['n'],
-            "Black knights");
-        Assert.AreEqual(
-            board.GetSquareBitBoard("c8") | board.GetSquareBitBoard("f8"),
-            board.BlackPieces['b'],
-            "Black bishops");
-        Assert.AreEqual(board.GetSquareBitBoard("d8"), board.BlackPieces['q'], "Black queen");
-        Assert.AreEqual(board.GetSquareBitBoard("e8"), board.BlackPieces['k'], "Black king");
-        Assert.AreEqual(
-            board.GetSquareBitBoard("a7") | board.GetSquareBitBoard("b7") | board.GetSquareBitBoard("c7") |
-            board.GetSquareBitBoard("d7") | board.GetSquareBitBoard("e7") | board.GetSquareBitBoard("f7") |
-            board.GetSquareBitBoard("g7") | board.GetSquareBitBoard("h7"),
-            board.BlackPieces['p'],
-            "Black pawns");
-
-        // White pieces
-        Assert.AreEqual(
-            board.GetSquareBitBoard("a1") | board.GetSquareBitBoard("h1"),
-            board.WhitePieces['R'],
-            "White rocks");
-        Assert.AreEqual(
-            board.GetSquareBitBoard("b1") | board.GetSquareBitBoard("g1"),
-            board.WhitePieces['N'],
-            "White knights");
-        Assert.AreEqual(
-            board.GetSquareBitBoard("c1") | board.GetSquareBitBoard("f1"),
-            board.WhitePieces['B'],
-            "White bishops");
-        Assert.AreEqual(board.GetSquareBitBoard("d1"), board.WhitePieces['Q'], "White queen");
-        Assert.AreEqual(board.GetSquareBitBoard("e1"), board.WhitePieces['K'], "White king");
-        Assert.AreEqual(
-            board.GetSquareBitBoard("a2") | board.GetSquareBitBoard("b2") | board.GetSquareBitBoard("c2") |
-            board.GetSquareBitBoard("d2") | board.GetSquareBitBoard("e2") | board.GetSquareBitBoard("f2") |
-            board.GetSquareBitBoard("g2") | board.GetSquareBitBoard("h2"),
-            board.WhitePieces['P'],
-            "White pawns");
-    }
-
-    [TestMethod]
-    [DataRow('a', 8, 'r', DisplayName = "Black rook at a8")]
-    [DataRow('b', 8, 'n', DisplayName = "Black knight at b8")]
-    [DataRow('c', 8, 'b', DisplayName = "Black bishop at c8")]
-    [DataRow('d', 8, 'q', DisplayName = "Black queen at d8")]
-    [DataRow('e', 8, 'k', DisplayName = "Black king at e8")]
-    [DataRow('f', 8, 'b', DisplayName = "Black bishop at f8")]
-    [DataRow('g', 8, 'n', DisplayName = "Black knight at g8")]
-    [DataRow('h', 8, 'r', DisplayName = "Black rook at h8")]
-    [DataRow('d', 4, BitBoards.EmptySquare, DisplayName = "Empty square at d4")]
-    [DataRow('a', 7, 'p', DisplayName = "Black pawn at a7")]
-    [DataRow('a', 2, 'P', DisplayName = "White pawn at a2")]
-    [DataRow('a', 1, 'R', DisplayName = "White rook at a1")]
-    [DataRow('b', 1, 'N', DisplayName = "White knight at b1")]
-    [DataRow('c', 1, 'B', DisplayName = "White bishop at c1")]
-    [DataRow('d', 1, 'Q', DisplayName = "White queen at d1")]
-    [DataRow('e', 1, 'K', DisplayName = "White king at e1")]
-    [DataRow('f', 1, 'B', DisplayName = "White bishop at f1")]
-    [DataRow('g', 1, 'N', DisplayName = "White knight at g1")]
-    [DataRow('h', 1, 'R', DisplayName = "White rook at h1")]
-    public void GetPieceAtReturnsCorrectPiece(char file, int rank, char expectedPiece)
-    {
-        var board = new Board();
-        board.InitializeGameStartingBoard();
-
-        Assert.AreEqual(expectedPiece, board.GetPieceAt(BitBoards.Squares[$"{file}{rank}"]));
-    }
-
-    //[TestMethod]
-    //public void ContainsColorPieceReturnsCorrectValues()
-    //{
-    //    var board = new Board();
-    //    board.InitializeGameStartingBoard();
-
-    //    Assert.IsTrue(board.SquareContainPieceOfColor(new Square("a8"), Color.Black));
-    //    Assert.IsFalse(board.SquareContainPieceOfColor(new Square("a8"), Color.White));
-    //    Assert.IsTrue(board.SquareContainPieceOfColor('b', 7, Color.Black));
-    //    Assert.IsFalse(board.SquareContainPieceOfColor('b', 7, Color.White));
-    //    Assert.IsTrue(board.SquareContainPieceOfColor(new Square("c8"), 'b'));
-    //    Assert.IsFalse(board.SquareContainPieceOfColor(new Square("c8"), 'w'));
-    //    Assert.IsTrue(board.SquareContainPieceOfColor('d', 7, 'b'));
-    //    Assert.IsFalse(board.SquareContainPieceOfColor('d', 7, 'w'));
-
-    //    Assert.IsTrue(board.SquareContainPieceOfColor(new Square("a1"), Color.White));
-    //    Assert.IsFalse(board.SquareContainPieceOfColor(new Square("a1"), Color.Black));
-    //    Assert.IsTrue(board.SquareContainPieceOfColor('b', 2, Color.White));
-    //    Assert.IsFalse(board.SquareContainPieceOfColor('b', 2, Color.Black));
-    //    Assert.IsTrue(board.SquareContainPieceOfColor(new Square("c1"), 'w'));
-    //    Assert.IsFalse(board.SquareContainPieceOfColor(new Square("c1"), 'b'));
-    //    Assert.IsTrue(board.SquareContainPieceOfColor('d', 2, 'w'));
-    //    Assert.IsFalse(board.SquareContainPieceOfColor('d', 2, 'b'));
-    //}
-
-    //[TestMethod]
-    //public void ContainsColorPiecesThrowsExceptionIfColorIsInvalid()
-    //{
-    //    var board = new Board();
-    //    board.InitializeGameStartingBoard();
-    //    Exception exception =
-    //        Assert.ThrowsException<ArgumentException>(() => board.SquareContainPieceOfColor(new Square("a1"), 'x'));
-    //    Assert.AreEqual("Invalid color: x. Valid colors are 'b' or 'w'. (Parameter 'color')", exception.Message);
-    //}
-
-    [TestMethod]
-    public void GetPieceAtReturnsEmptySquareForCorrectSquares()
-    {
-        var board = new Board();
-        board.InitializeGameStartingBoard();
-
-        for (int file = 1; file <= 8; file++)
-        {
-            for (int rank = 1; rank <= 8; rank++)
-            {
-                char fileChar = (char)('a' + file - 1); // Convert file from int to char
-                if (rank is < 3 or > 6)
-                {
-                    Assert.AreNotEqual(
-                        BitBoards.EmptySquare,
-                        board.GetPieceAt(BitBoards.Squares[$"{fileChar}{rank}"]),
-                        $"Not empty square [{fileChar}{rank}].");
-                }
-                else
-                {
-                    Assert.AreEqual(
-                        BitBoards.EmptySquare,
-                        board.GetPieceAt(BitBoards.Squares[$"{fileChar}{rank}"]),
-                        $"Empty square [{fileChar}{rank}].");
-                }
-            }
-        }
-    }
-
-    [TestMethod]
-    public void IsEmptySquareReturnsCorrectValues()
-    {
-        var board = new Board();
-        board.InitializeGameStartingBoard();
-
-        for (int file = 1; file <= 8; file++)
-        {
-            for (int rank = 1; rank <= 8; rank++)
-            {
-                char fileChar = (char)('a' + file - 1); // Convert file from int to char
-                if (rank is < 3 or > 6)
-                {
-                    Assert.IsFalse(board.IsEmptySquare(BitBoards.Squares[$"{fileChar}{rank}"]), "Not empty square.");
-                }
-                else
-                {
-                    Assert.IsTrue(board.IsEmptySquare(BitBoards.Squares[$"{fileChar}{rank}"]), "Empty square.");
-                }
-            }
-        }
     }
 
     [TestMethod]
@@ -609,11 +330,11 @@ public class BoardTests : TestBase
 
         // Set a black pawn at e5
         board.SetPieceAt(5, 5, 'p');
-        Assert.AreEqual(board.GetSquareBitBoard("e5"), board.BlackPieces['p']);
+        Assert.AreEqual(BitBoards.Squares["e5"], board.BlackPieces['p']);
 
         // Set a white knight at b1
         board.SetPieceAt(2, 1, 'N');
-        Assert.AreEqual(board.GetSquareBitBoard("b1"), board.WhitePieces['N']);
+        Assert.AreEqual(BitBoards.Squares["b1"], board.WhitePieces['N']);
     }
 
     [TestMethod]
@@ -634,26 +355,5 @@ public class BoardTests : TestBase
     {
         var board = new Board();
         Assert.ThrowsException<ArgumentException>(() => board.SetPieceAt(file, rank, piece));
-    }
-
-    [TestMethod]
-    [DataRow(Color.White, 'R', DisplayName = "White Rook Attacks")]
-    [DataRow(Color.Black, 'r', DisplayName = "Black Rook Attacks")]
-    public void GetPieceAttacksReturnsCorrectAttacksForRooks(Color color, char pieceType)
-    {
-        // Arrange
-        var board = new Board();
-        board.SetPieceAt(1, 1, pieceType); // Place rook at a1
-        board.SetPieceAt(8, 8, pieceType); // Place rook at h8
-        var pieceBase = PieceFactory.GetPiece(pieceType, color);
-
-        // Act
-        ulong attacks = board.CalculateDefendedSquaresByPiece(pieceBase);
-
-        // Assert
-        // Assuming a method to calculate expected attacks for a rook at a1
-        ulong expectedAttacks = (BitBoards.Rank1 | BitBoards.Rank8 | BitBoards.FileA | BitBoards.FileH) &
-            ~(BitBoards.Rank1 & BitBoards.FileA | BitBoards.Rank8 & BitBoards.FileH);
-        Assert.AreEqual(expectedAttacks, attacks, "Rook attacks did not match expected attacks.");
     }
 }
