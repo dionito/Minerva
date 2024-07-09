@@ -7,14 +7,14 @@ namespace Minerva.Extensions;
 /// </summary>
 public static class UlongExtensions
 {
-    private const ulong NotFileA = ~Board.FileA;
-    private const ulong NotFileB = ~Board.FileB;
-    private const ulong NotFileG = ~Board.FileG;
-    private const ulong NotFileH = ~Board.FileH;
-    private const ulong NotRank1 = ~Board.Rank1;
-    private const ulong NotRank2 = ~Board.Rank2;
-    private const ulong NotRank7 = ~Board.Rank7;
-    private const ulong NotRank8 = ~Board.Rank8;
+    private const ulong NotFileA = ~BitBoards.FileA;
+    private const ulong NotFileB = ~BitBoards.FileB;
+    private const ulong NotFileG = ~BitBoards.FileG;
+    private const ulong NotFileH = ~BitBoards.FileH;
+    private const ulong NotRank1 = ~BitBoards.Rank1;
+    private const ulong NotRank2 = ~BitBoards.Rank2;
+    private const ulong NotRank7 = ~BitBoards.Rank7;
+    private const ulong NotRank8 = ~BitBoards.Rank8;
 
     /// <summary>
     /// Gets the indices of all set bits in the bitboard.

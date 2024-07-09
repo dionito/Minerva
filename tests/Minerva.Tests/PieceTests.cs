@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+using Minerva.Extensions;
 using Minerva.Pieces;
 using System.Reflection;
 
@@ -34,23 +35,24 @@ public class PieceTests
     [TestMethod]
     public void BishopGetPossibleMovesAndAttacksBitBoardsAreTheSameOnEmptyBoard()
     {
-        var bishop = PieceFactory.GetPiece(PieceType.Bishop, Color.White);
-        var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/3B4/8/8/7K w - - 0 1"); // Bishop in d4
-        var position = new Square("d4");
+        PieceBase bishop = PieceFactory.GetPiece(PieceType.Bishop, Color.White);
+        Board board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/3B4/8/8/7K w - - 0 1"); // Bishop in d4
+        string position = "d4";
+        ulong bitBoard = BitBoards.Squares[position];
 
-        ulong possibleMoves = bishop.GetPieceMoves(position.BitBoard, board);
-        ulong attacks = bishop.GetPieceAttacks(position.BitBoard, board);
-        ulong exptectedMoves = new Square("c3").BitBoard | new Square("b2").BitBoard |
-            new Square("a1").BitBoard | new Square("e5").BitBoard | new Square("f6").BitBoard |
-            new Square("g7").BitBoard | new Square("h8").BitBoard | new Square("c5").BitBoard |
-            new Square("b6").BitBoard | new Square("a7").BitBoard | new Square("e3").BitBoard |
-            new Square("f2").BitBoard | new Square("g1").BitBoard;
+        ulong possibleMoves = bishop.GetPieceMoves(bitBoard, board);
+        ulong attacks = bishop.GetPieceAttacks(bitBoard, board);
+        ulong exptectedMoves = BitBoards.Squares["c3"] | BitBoards.Squares["b2"] |
+            BitBoards.Squares["a1"] | BitBoards.Squares["e5"] | BitBoards.Squares["f6"] |
+            BitBoards.Squares["g7"] | BitBoards.Squares["h8"] | BitBoards.Squares["c5"] |
+            BitBoards.Squares["b6"] | BitBoards.Squares["a7"] | BitBoards.Squares["e3"] |
+            BitBoards.Squares["f2"] | BitBoards.Squares["g1"];
 
         Assert.AreEqual(exptectedMoves, possibleMoves, "Moves missmatch.");
         Assert.AreEqual(exptectedMoves, attacks, "Attacks missmatch.");
 
         // test that the bishop can't move to the same square
-        Assert.IsTrue((position.BitBoard & possibleMoves) == 0, "Can't move to same square");
+        Assert.IsTrue((bitBoard & possibleMoves) == 0, "Can't move to same square");
     }
 
     [TestMethod]
@@ -66,21 +68,21 @@ public class PieceTests
     [TestMethod]
     public void KingGetPossibleMovesAndAttacksBitBoardsAreTheSameOnEmptyBoard()
     {
-        var king = PieceFactory.GetPiece(PieceType.King, Color.White);
-        var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/3K4/8/8/8 w - - 0 1"); // King in d4
-        var position = new Square("d4");
+        PieceBase king = PieceFactory.GetPiece(PieceType.King, Color.White);
+        Board board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/3K4/8/8/8 w - - 0 1"); // King in d4
+        ulong position = BitBoards.Squares["d4"];
 
-        ulong possibleMoves = king.GetPieceMoves(position.BitBoard, board);
-        ulong attacks = king.GetPieceAttacks(position.BitBoard, board);
-        ulong expectedMoves = new Square("c3").BitBoard | new Square("d3").BitBoard |
-            new Square("e3").BitBoard | new Square("c4").BitBoard | new Square("e4").BitBoard |
-            new Square("c5").BitBoard | new Square("d5").BitBoard | new Square("e5").BitBoard;
+        ulong possibleMoves = king.GetPieceMoves(position, board);
+        ulong attacks = king.GetPieceAttacks(position, board);
+        ulong expectedMoves = BitBoards.Squares["c3"] | BitBoards.Squares["d3"] |
+            BitBoards.Squares["e3"] | BitBoards.Squares["c4"] | BitBoards.Squares["e4"] |
+            BitBoards.Squares["c5"] | BitBoards.Squares["d5"] | BitBoards.Squares["e5"];
 
         Assert.AreEqual(expectedMoves, possibleMoves, "Moves missmatch.");
         Assert.AreEqual(expectedMoves, attacks, "Attacks mismatch.");
 
         // test that the king can't move to the same square
-        Assert.IsTrue((position.BitBoard & possibleMoves) == 0, "Can't move to same square");
+        Assert.IsTrue((position & possibleMoves) == 0, "Can't move to same square");
     }
 
     [TestMethod]
@@ -98,19 +100,19 @@ public class PieceTests
     {
         var knight = PieceFactory.GetPiece(PieceType.Knight, Color.White);
         var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/3N4/8/8/7K w - - 0 1"); // Knigth in d4
-        var position = new Square("d4");
+        var position = BitBoards.Squares["d4"];
 
-        ulong possibleMoves = knight.GetPieceMoves(position.BitBoard, board);
-        ulong attacks = knight.GetPieceAttacks(position.BitBoard, board);
-        ulong expectedMoves = new Square("b3").BitBoard | new Square("b5").BitBoard |
-            new Square("c2").BitBoard | new Square("c6").BitBoard | new Square("e2").BitBoard |
-            new Square("e6").BitBoard | new Square("f3").BitBoard | new Square("f5").BitBoard;
+        ulong possibleMoves = knight.GetPieceMoves(position, board);
+        ulong attacks = knight.GetPieceAttacks(position, board);
+        ulong expectedMoves = BitBoards.Squares["b3"] | BitBoards.Squares["b5"] |
+            BitBoards.Squares["c2"] | BitBoards.Squares["c6"] | BitBoards.Squares["e2"] |
+            BitBoards.Squares["e6"] | BitBoards.Squares["f3"] | BitBoards.Squares["f5"];
 
         Assert.AreEqual(expectedMoves, possibleMoves, "Moves missmatch.");
         Assert.AreEqual(expectedMoves, attacks, "Attacks mismatch.");
 
         // test that the knight can't move to the same square
-        Assert.IsTrue((position.BitBoard & possibleMoves) == 0, "Can't move to same square");
+        Assert.IsTrue((position & possibleMoves) == 0, "Can't move to same square");
     }
 
     [TestMethod]
@@ -144,15 +146,15 @@ public class PieceTests
     {
         var pawn = PieceFactory.GetPiece(PieceType.Pawn, Color.White);
         var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/8/8/3P4/7K w - - 0 1"); // Knigth in d4
-        var position = new Square("d2");
+        var position = BitBoards.Squares["d2"];
 
-        ulong attacks = pawn.GetPieceAttacks(position.BitBoard, board);
-        ulong expectedMoves = new Square("c3").BitBoard | new Square("e3").BitBoard;
+    ulong attacks = pawn.GetPieceAttacks(position, board);
+        ulong expectedMoves = BitBoards.Squares["c3"] | BitBoards.Squares["e3"];
 
         Assert.AreEqual(expectedMoves, attacks, "Attacks missmatch.");
 
         // test that the pawn can't move to the same square
-        Assert.IsTrue((position.BitBoard & attacks) == 0, "Can't move to same square");
+        Assert.IsTrue((position & attacks) == 0, "Can't move to same square");
     }
 
     [TestMethod]
@@ -160,15 +162,15 @@ public class PieceTests
     {
         var pawn = PieceFactory.GetPiece(PieceType.Pawn, Color.White);
         var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/8/8/3P4/7K w - - 0 1"); // Knigth in d4
-        var position = new Square("d2");
+        var position = BitBoards.Squares["d2"];
 
-        ulong possibleMoves = pawn.GetPieceMoves(position.BitBoard, board);
-        ulong expectedMoves = new Square("d3").BitBoard | new Square("d4").BitBoard;
+        ulong possibleMoves = pawn.GetPieceMoves(position, board);
+        ulong expectedMoves = BitBoards.Squares["d3"] | BitBoards.Squares["d4"];
 
         Assert.AreEqual(expectedMoves, possibleMoves, "Moves missmatch.");
 
         // test that the pawn can't move to the same square
-        Assert.IsTrue((position.BitBoard & possibleMoves) == 0, "Can't move to same square");
+        Assert.IsTrue((position & possibleMoves) == 0, "Can't move to same square");
     }
 
     [TestMethod]
@@ -192,125 +194,125 @@ public class PieceTests
             {
                 Name = "Black bishop",
                 Piece = PieceFactory.GetPiece(PieceType.Bishop, Color.Black),
-                Position = new Square("c8"),
-                ExpectedAttacks = new Square("b7").BitBoard | new Square("d7").BitBoard,
+                Position = BitBoards.Squares["c8"],
+                ExpectedAttacks = BitBoards.Squares["b7"] | BitBoards.Squares["d7"],
             },
             new
             {
                 Name = "Black king",
                 Piece = PieceFactory.GetPiece(PieceType.King, Color.Black),
-                Position = new Square("e8"),
-                ExpectedAttacks = new Square("d7").BitBoard | new Square("d8").BitBoard |
-                    new Square("e7").BitBoard | new Square("f7").BitBoard |
-                    new Square("f8").BitBoard,
+                Position = BitBoards.Squares["e8"],
+                ExpectedAttacks = BitBoards.Squares["d7"] | BitBoards.Squares["d8"] |
+                    BitBoards.Squares["e7"] | BitBoards.Squares["f7"] |
+                    BitBoards.Squares["f8"],
             },
             new
             {
                 Name = "Black knight",
                 Piece = PieceFactory.GetPiece(PieceType.Knight, Color.Black),
-                Position = new Square("b8"),
-                ExpectedAttacks = new Square("a6").BitBoard | 
-                    new Square("c6").BitBoard |
-                    new Square("d7").BitBoard,
+                Position = BitBoards.Squares["b8"],
+                ExpectedAttacks = BitBoards.Squares["a6"] | 
+                    BitBoards.Squares["c6"] |
+                    BitBoards.Squares["d7"],
             },
             new
             {
                 Name = "Black queen",
                 Piece = PieceFactory.GetPiece(PieceType.Queen, Color.Black),
-                Position = new Square("d8"),
-                ExpectedAttacks = new Square("c7").BitBoard | new Square("c8").BitBoard |
-                    new Square("d7").BitBoard | new Square("e7").BitBoard |
-                    new Square("e8").BitBoard,
+                Position = BitBoards.Squares["d8"],
+                ExpectedAttacks = BitBoards.Squares["c7"] | BitBoards.Squares["c8"] |
+                    BitBoards.Squares["d7"] | BitBoards.Squares["e7"] |
+                    BitBoards.Squares["e8"],
             },
             new
             {
                 Name = "Black rook",
                 Piece = PieceFactory.GetPiece(PieceType.Rook, Color.Black),
-                Position = new Square("a8"),
-                ExpectedAttacks = new Square("a7").BitBoard | new Square("b8").BitBoard,
+                Position = BitBoards.Squares["a8"],
+                ExpectedAttacks = BitBoards.Squares["a7"] | BitBoards.Squares["b8"],
             },
             new
             {
                 Name = "File A black pawn",
                 Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.Black),
-                Position = new Square("a7"),
-                ExpectedAttacks = new Square("b6").BitBoard,
+                Position = BitBoards.Squares["a7"],
+                ExpectedAttacks = BitBoards.Squares["b6"],
             },
             new
             {
                 Name = "File A white pawn",
                 Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.White),
-                Position = new Square("a2"),
-                ExpectedAttacks = new Square("b3").BitBoard,
+                Position = BitBoards.Squares["a2"],
+                ExpectedAttacks = BitBoards.Squares["b3"],
             },
             new
             {
                 Name = "File B black pawn",
                 Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.Black),
-                Position = new Square("b7"),
-                ExpectedAttacks = new Square("a6").BitBoard | new Square("c6").BitBoard,
+                Position = BitBoards.Squares["b7"],
+                ExpectedAttacks = BitBoards.Squares["a6"] | BitBoards.Squares["c6"],
             },
             new
             {
                 Name = "File B white pawn",
                 Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.White),
-                Position = new Square("b2"),
-                ExpectedAttacks = new Square("a3").BitBoard | new Square("c3").BitBoard,
+                Position = BitBoards.Squares["b2"],
+                ExpectedAttacks = BitBoards.Squares["a3"] | BitBoards.Squares["c3"],
             },
             new
             {
                 Name = "File H black pawn",
                 Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.Black),
-                Position = new Square("h7"),
-                ExpectedAttacks = new Square("g6").BitBoard,
+                Position = BitBoards.Squares["h7"],
+                ExpectedAttacks = BitBoards.Squares["g6"],
             },
             new
             {
                 Name = "File H white pawn",
                 Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.White),
-                Position = new Square("h2"),
-                ExpectedAttacks = new Square("g3").BitBoard,
+                Position = BitBoards.Squares["h2"],
+                ExpectedAttacks = BitBoards.Squares["g3"],
             },
             new
             {
                 Name = "White bishop",
                 Piece = PieceFactory.GetPiece(PieceType.Bishop, Color.White),
-                Position = new Square("c1"),
-                ExpectedAttacks = new Square("b2").BitBoard | new Square("d2").BitBoard,
+                Position = BitBoards.Squares["c1"],
+                ExpectedAttacks = BitBoards.Squares["b2"] | BitBoards.Squares["d2"],
             },
             new
             {
                 Name = "White king",
                 Piece = PieceFactory.GetPiece(PieceType.King, Color.White),
-                Position = new Square("e1"),
-                ExpectedAttacks = new Square("d1").BitBoard | new Square("d2").BitBoard |
-                    new Square("e2").BitBoard | new Square("f1").BitBoard |
-                    new Square("f2").BitBoard,
+                Position = BitBoards.Squares["e1"],
+                ExpectedAttacks = BitBoards.Squares["d1"] | BitBoards.Squares["d2"] |
+                    BitBoards.Squares["e2"] | BitBoards.Squares["f1"] |
+                    BitBoards.Squares["f2"],
             },
             new
             {
                 Name = "White knight",
                 Piece = PieceFactory.GetPiece(PieceType.Knight, Color.White),
-                Position = new Square("b1"),
-                ExpectedAttacks = new Square("a3").BitBoard |
-                    new Square("c3").BitBoard |
-                    new Square("d2").BitBoard,
+                Position = BitBoards.Squares["b1"],
+                ExpectedAttacks = BitBoards.Squares["a3"] |
+                    BitBoards.Squares["c3"] |
+                    BitBoards.Squares["d2"],
             },
             new
             {
                 Name = "White queen",
                 Piece = PieceFactory.GetPiece(PieceType.Queen, Color.White),
-                Position = new Square("d1"),
-                ExpectedAttacks = new Square("c1").BitBoard | new Square("c2").BitBoard |
-                    new Square("d2").BitBoard | new Square("e1").BitBoard |
-                    new Square("e2").BitBoard,
+                Position = BitBoards.Squares["d1"],
+                ExpectedAttacks = BitBoards.Squares["c1"] | BitBoards.Squares["c2"] |
+                    BitBoards.Squares["d2"] | BitBoards.Squares["e1"] |
+                    BitBoards.Squares["e2"],
             },
             new
             {
                 Name = "White rook",
                 Piece = PieceFactory.GetPiece(PieceType.Rook, Color.White),
-                Position = new Square("a1"),
-                ExpectedAttacks = new Square("a2").BitBoard | new Square("b1").BitBoard,
+                Position = BitBoards.Squares["a1"],
+                ExpectedAttacks = BitBoards.Squares["a2"] | BitBoards.Squares["b1"],
             },
         };
 
@@ -319,7 +321,7 @@ public class PieceTests
             Console.WriteLine($"Starting: {scenario.Name}.");
             Board board = new Board();
             board.InitializeGameStartingBoard();
-            ulong attacks = scenario.Piece.GetPieceAttacks(scenario.Position.BitBoard, board);
+            ulong attacks = scenario.Piece.GetPieceAttacks(scenario.Position, board);
             Assert.AreEqual(scenario.ExpectedAttacks, attacks, scenario.Name);
         }
     }
@@ -383,128 +385,128 @@ public class PieceTests
                 Name = "White queen can take black pieces, but not white ones",
                 Fen = "3k4/8/8/8/5K2/8/qB6/Qn6 w - - 0 1",
                 Piece = PieceFactory.GetPiece(PieceType.Queen, Color.White),
-                Position = new Square("a1"),
+                Position = BitBoards.Squares["a1"],
                 ExpectedMoves =
-                    new Square("a2").BitBoard |
-                    new Square("b1").BitBoard,
+                    BitBoards.Squares["a2"] |
+                    BitBoards.Squares["b1"],
             },
             new
             {
                 Name = "Black queen can take black pieces, but not black ones",
                 Fen = "3K4/8/8/8/5k2/8/Qb6/qN6 b - - 0 1",
                 Piece = PieceFactory.GetPiece(PieceType.Queen, Color.Black),
-                Position = new Square("a1"),
+                Position = BitBoards.Squares["a1"],
                 ExpectedMoves =
-                    new Square("a2").BitBoard |
-                    new Square("b1").BitBoard,
+                    BitBoards.Squares["a2"] |
+                    BitBoards.Squares["b1"],
             },
             new
             {
                 Name = "White king can take black pieces, but not white ones",
                 Fen = "3k4/8/8/8/5Q2/8/qB6/Kn6 w - - 0 1",
                 Piece = PieceFactory.GetPiece(PieceType.King, Color.White),
-                Position = new Square("a1"),
+                Position = BitBoards.Squares["a1"],
                 ExpectedMoves =
-                    new Square("a2").BitBoard |
-                    new Square("b1").BitBoard,
+                    BitBoards.Squares["a2"] |
+                    BitBoards.Squares["b1"],
             },
             new
             {
                 Name = "Black king can take black pieces, but not white ones",
                 Fen = "3K4/8/8/8/5q2/8/Qb6/kN6 b - - 0 1",
                 Piece = PieceFactory.GetPiece(PieceType.King, Color.Black),
-                Position = new Square("a1"),
+                Position = BitBoards.Squares["a1"],
                 ExpectedMoves =
-                    new Square("a2").BitBoard |
-                    new Square("b1").BitBoard,
+                    BitBoards.Squares["a2"] |
+                    BitBoards.Squares["b1"],
             },
             new
             {
                 Name = "White knight can take black pieces, but not white ones",
                 Fen = "rnbqkbnr/pppppppp/8/2N5/8/1P1P4/P1P1PPPP/R1BQKBNR w KQkq - 0 1",
                 Piece = PieceFactory.GetPiece(PieceType.Knight, Color.White),
-                Position = new Square("c5"),
+                Position = BitBoards.Squares["c5"],
                 ExpectedMoves =
-                    new Square("a4").BitBoard |
-                    new Square("a6").BitBoard |
-                    new Square("b7").BitBoard |
-                    new Square("d7").BitBoard |
-                    new Square("e4").BitBoard |
-                    new Square("e6").BitBoard,
+                    BitBoards.Squares["a4"] |
+                    BitBoards.Squares["a6"] |
+                    BitBoards.Squares["b7"] |
+                    BitBoards.Squares["d7"] |
+                    BitBoards.Squares["e4"] |
+                    BitBoards.Squares["e6"],
             },
             new
             {
                 Name = "Black knight can take white pieces, but not black ones",
                 Fen = "r1bqkbnr/pppppppp/8/2n5/8/1P1P4/P1P1PPPP/RNBQKBNR b KQkq - 0 1",
                 Piece = PieceFactory.GetPiece(PieceType.Knight, Color.Black),
-                Position = new Square("c5"),
+                Position = BitBoards.Squares["c5"],
                 ExpectedMoves =
-                    new Square("a4").BitBoard |
-                    new Square("a6").BitBoard |
-                    new Square("b3").BitBoard |
-                    new Square("d3").BitBoard |
-                    new Square("e4").BitBoard |
-                    new Square("e6").BitBoard,
+                    BitBoards.Squares["a4"] |
+                    BitBoards.Squares["a6"] |
+                    BitBoards.Squares["b3"] |
+                    BitBoards.Squares["d3"] |
+                    BitBoards.Squares["e4"] |
+                    BitBoards.Squares["e6"],
             },
             new
             {
                 Name = "White pawn can take black pieces, but not white ones",
                 Fen = "rnbqkbnr/ppp1pppp/8/8/8/3p1N2/PPPPPPPP/RNBQKB1R w KQkq - 0 1",
                 Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.White),
-                Position = new Square("e2"),
+                Position = BitBoards.Squares["e2"],
                 ExpectedMoves =
-                    new Square("d3").BitBoard |
-                    new Square("e3").BitBoard |
-                    new Square("e4").BitBoard,
+                    BitBoards.Squares["d3"] |
+                    BitBoards.Squares["e3"] |
+                    BitBoards.Squares["e4"],
             },
             new
             {
                 Name = "Black pawn can take white pieces, but not black ones",
                 Fen = "rnbqkb1r/pppppppp/3P1n2/8/8/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
                 Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.Black),
-                Position = new Square("e7"),
+                Position = BitBoards.Squares["e7"],
                 ExpectedMoves =
-                    new Square("d6").BitBoard |
-                    new Square("e6").BitBoard |
-                    new Square("e5").BitBoard,
+                    BitBoards.Squares["d6"] |
+                    BitBoards.Squares["e6"] |
+                    BitBoards.Squares["e5"],
             },
             new
             {
                 Name = "White pawn can take black pieces, but not white ones, opposite side",
                 Fen = "rnbqkbnr/pppp1ppp/8/8/8/2N1p3/PPPPPPPP/R1BQKBNR w KQkq - 0 1",
                 Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.White),
-                Position = new Square("d2"),
+                Position = BitBoards.Squares["d2"],
                 ExpectedMoves =
-                    new Square("d3").BitBoard |
-                    new Square("d4").BitBoard |
-                    new Square("e3").BitBoard,
+                    BitBoards.Squares["d3"] |
+                    BitBoards.Squares["d4"] |
+                    BitBoards.Squares["e3"],
             },
             new
             {
                 Name = "Black pawn can take white pieces, but not black ones, opposite side",
                 Fen = "r1bqkbnr/pppppppp/2n1P3/8/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
                 Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.Black),
-                Position = new Square("d7"),
+                Position = BitBoards.Squares["d7"],
                 ExpectedMoves =
-                    new Square("d5").BitBoard |
-                    new Square("d6").BitBoard |
-                    new Square("e6").BitBoard,
+                    BitBoards.Squares["d5"] |
+                    BitBoards.Squares["d6"] |
+                    BitBoards.Squares["e6"],
             },
             new
             {
                 Name = "White pawn can take black pawn en passant",
                 Fen = "rnbqkbnr/pppp1ppp/8/3Pp3/4P3/8/PPP2PPP/RNBQKBNR w KQkq e6 0 2",
                 Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.White),
-                Position = new Square("d5"),
-                ExpectedMoves = new Square("e6").BitBoard | new Square("d6").BitBoard,
+                Position = BitBoards.Squares["d5"],
+                ExpectedMoves = BitBoards.Squares["e6"] | BitBoards.Squares["d6"],
             },
             new
             {
                 Name = "Black pawn can take white pawn en passant",
                 Fen = "rnbqkbnr/pp1ppppp/8/8/2pPPP2/8/PPP3PP/RNBQKBNR b KQkq d3 0 3",
                 Piece = PieceFactory.GetPiece(PieceType.Pawn, Color.Black),
-                Position = new Square("c4"),
-                ExpectedMoves = new Square("c3").BitBoard | new Square("d3").BitBoard,
+                Position = BitBoards.Squares["c4"],
+                ExpectedMoves = BitBoards.Squares["c3"] | BitBoards.Squares["d3"],
             },
         };
 
@@ -512,7 +514,7 @@ public class PieceTests
         {
             Console.WriteLine($"Starting: {scenario.Name}.");
             Board board = ForsythEdwardsNotation.GenerateBoard(scenario.Fen);
-            ulong possibleMoves = scenario.Piece.GetPieceMoves(scenario.Position.BitBoard, board);
+            ulong possibleMoves = scenario.Piece.GetPieceMoves(scenario.Position, board);
             Assert.AreEqual(scenario.ExpectedMoves, possibleMoves, scenario.Name);
         }
     }
@@ -532,22 +534,22 @@ public class PieceTests
     {
         var queen = PieceFactory.GetPiece(PieceType.Queen, Color.White);
         var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/3Q4/8/8/7K w - - 0 1"); // Queen in d4
-        var position = new Square("d4");
+        var position = BitBoards.Squares["d4"];
 
-        ulong possibleMoves = queen.GetPieceMoves(position.BitBoard, board);
-        ulong attacks = queen.GetPieceAttacks(position.BitBoard, board);
-        ulong expectedMoves = (Board.FileD | Board.Rank4 | new Square("c3").BitBoard |
-            new Square("b2").BitBoard | new Square("a1").BitBoard | new Square("e5").BitBoard |
-            new Square("f6").BitBoard | new Square("g7").BitBoard | new Square("h8").BitBoard |
-            new Square("c5").BitBoard | new Square("b6").BitBoard | new Square("a7").BitBoard |
-            new Square("e3").BitBoard | new Square("f2").BitBoard | new Square("g1").BitBoard)
-            ^ position.BitBoard;
+        ulong possibleMoves = queen.GetPieceMoves(position, board);
+        ulong attacks = queen.GetPieceAttacks(position, board);
+        ulong expectedMoves = (BitBoards.FileD | BitBoards.Rank4 | BitBoards.Squares["c3"] |
+            BitBoards.Squares["b2"] | BitBoards.Squares["a1"] | BitBoards.Squares["e5"] |
+            BitBoards.Squares["f6"] | BitBoards.Squares["g7"] | BitBoards.Squares["h8"] |
+            BitBoards.Squares["c5"] | BitBoards.Squares["b6"] | BitBoards.Squares["a7"] |
+            BitBoards.Squares["e3"] | BitBoards.Squares["f2"] | BitBoards.Squares["g1"])
+            ^ position;
 
         Assert.AreEqual(expectedMoves, possibleMoves, "Moves missmatch.");
         Assert.AreEqual(expectedMoves, attacks, "Attacks mismatch.");
 
         // test that the queen can't move to the same square
-        Assert.IsTrue((position.BitBoard & possibleMoves) == 0, "Can't move to same square");
+        Assert.IsTrue((position & possibleMoves) == 0, "Can't move to same square");
     }
 
     [TestMethod]
@@ -565,17 +567,17 @@ public class PieceTests
     {
         var rook = PieceFactory.GetPiece(PieceType.Rook, Color.Black);
         var board = ForsythEdwardsNotation.GenerateBoard("k7/8/8/8/3r4/8/8/7K w - - 0 1"); // rook in d4
-        var position = new Square("d4");
+        var position = BitBoards.Squares["d4"];
 
-        ulong possibleMoves = rook.GetPieceMoves(position.BitBoard, board);
-        ulong attacks = rook.GetPieceAttacks(position.BitBoard, board);
-        ulong expectedMoves = (Board.FileD | Board.Rank4) ^ position.BitBoard;
+        ulong possibleMoves = rook.GetPieceMoves(position, board);
+        ulong attacks = rook.GetPieceAttacks(position, board);
+        ulong expectedMoves = (BitBoards.FileD | BitBoards.Rank4) ^ position;
 
         Assert.AreEqual(expectedMoves, possibleMoves, "Moves mismatch");
         Assert.AreEqual(expectedMoves, attacks, "Attacks mismatch.");
 
         // test that the rook can't move to the same square
-        Assert.IsTrue((position.BitBoard & possibleMoves) == 0, "Can't move to same square");
+        Assert.IsTrue((position & possibleMoves) == 0, "Can't move to same square");
     }
 
     [TestMethod]
@@ -592,8 +594,8 @@ public class PieceTests
         var board = new Board();
         board.InitializeGameStartingBoard();
         PieceBase piece = PieceFactory.GetPiece(pieceType, pieceColor);
-        Square square = new Square(position);
-        Assert.AreEqual(0ul, piece.GetPieceMoves(square.BitBoard, board));
+        ulong square = BitBoards.Squares[position];
+        Assert.AreEqual(0ul, piece.GetPieceMoves(square, board));
     }
 
     [TestMethod]

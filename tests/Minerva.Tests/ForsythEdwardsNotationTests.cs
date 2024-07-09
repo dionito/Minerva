@@ -152,54 +152,54 @@ public class ForsythEdwardsNotationTests
         Board board = ForsythEdwardsNotation.GenerateBoard(fen);
 
         // Bitboards
-        Assert.AreEqual(Board.Rank1 | Board.Rank2, board.WhitePiecesBitBoard, "White Pieces");
-        Assert.AreEqual(Board.Rank7 | Board.Rank8, board.BlackPiecesBitBoard, "Black pieces");
+        Assert.AreEqual(BitBoards.Rank1 | BitBoards.Rank2, board.WhitePiecesBitBoard, "White Pieces");
+        Assert.AreEqual(BitBoards.Rank7 | BitBoards.Rank8, board.BlackPiecesBitBoard, "Black pieces");
         Assert.AreEqual(
-            Board.Rank1 | Board.Rank2 | Board.Rank7 | Board.Rank8,
+            BitBoards.Rank1 | BitBoards.Rank2 | BitBoards.Rank7 | BitBoards.Rank8,
             board.OccupiedBitBoard,
             "Occupied squares");
 
         // Black pieces
         Assert.AreEqual(
-            board.GetSquareBitBoard("a8") | board.GetSquareBitBoard("h8"),
+            BitBoards.Squares["a8"] | BitBoards.Squares["h8"],
             board.BlackPieces['r'],
             "Black rocks");
         Assert.AreEqual(
-            board.GetSquareBitBoard("b8") | board.GetSquareBitBoard("g8"),
+            BitBoards.Squares["b8"] | BitBoards.Squares["g8"],
             board.BlackPieces['n'],
             "Black knights");
         Assert.AreEqual(
-            board.GetSquareBitBoard("c8") | board.GetSquareBitBoard("f8"),
+            BitBoards.Squares["c8"] | BitBoards.Squares["f8"],
             board.BlackPieces['b'],
             "Black bishops");
-        Assert.AreEqual(board.GetSquareBitBoard("d8"), board.BlackPieces['q'], "Black queen");
-        Assert.AreEqual(board.GetSquareBitBoard("e8"), board.BlackPieces['k'], "Black king");
+        Assert.AreEqual(BitBoards.Squares["d8"], board.BlackPieces['q'], "Black queen");
+        Assert.AreEqual(BitBoards.Squares["e8"], board.BlackPieces['k'], "Black king");
         Assert.AreEqual(
-            board.GetSquareBitBoard("a7") | board.GetSquareBitBoard("b7") | board.GetSquareBitBoard("c7") |
-            board.GetSquareBitBoard("d7") | board.GetSquareBitBoard("e7") | board.GetSquareBitBoard("f7") |
-            board.GetSquareBitBoard("g7") | board.GetSquareBitBoard("h7"),
+            BitBoards.Squares["a7"] | BitBoards.Squares["b7"] | BitBoards.Squares["c7"] |
+            BitBoards.Squares["d7"] | BitBoards.Squares["e7"] | BitBoards.Squares["f7"] |
+            BitBoards.Squares["g7"] | BitBoards.Squares["h7"],
             board.BlackPieces['p'],
             "Black pawns");
 
         // White pieces
         Assert.AreEqual(
-            board.GetSquareBitBoard("a1") | board.GetSquareBitBoard("h1"),
+            BitBoards.Squares["a1"] | BitBoards.Squares["h1"],
             board.WhitePieces['R'],
             "White rocks");
         Assert.AreEqual(
-            board.GetSquareBitBoard("b1") | board.GetSquareBitBoard("g1"),
+            BitBoards.Squares["b1"] | BitBoards.Squares["g1"],
             board.WhitePieces['N'],
             "White knights");
         Assert.AreEqual(
-            board.GetSquareBitBoard("c1") | board.GetSquareBitBoard("f1"),
+            BitBoards.Squares["c1"] | BitBoards.Squares["f1"],
             board.WhitePieces['B'],
             "White bishops");
-        Assert.AreEqual(board.GetSquareBitBoard("d1"), board.WhitePieces['Q'], "White queen");
-        Assert.AreEqual(board.GetSquareBitBoard("e1"), board.WhitePieces['K'], "White king");
+        Assert.AreEqual(BitBoards.Squares["d1"], board.WhitePieces['Q'], "White queen");
+        Assert.AreEqual(BitBoards.Squares["e1"], board.WhitePieces['K'], "White king");
         Assert.AreEqual(
-            board.GetSquareBitBoard("a2") | board.GetSquareBitBoard("b2") | board.GetSquareBitBoard("c2") |
-            board.GetSquareBitBoard("d2") | board.GetSquareBitBoard("e2") | board.GetSquareBitBoard("f2") |
-            board.GetSquareBitBoard("g2") | board.GetSquareBitBoard("h2"),
+            BitBoards.Squares["a2"] | BitBoards.Squares["b2"] | BitBoards.Squares["c2"] |
+            BitBoards.Squares["d2"] | BitBoards.Squares["e2"] | BitBoards.Squares["f2"] |
+            BitBoards.Squares["g2"] | BitBoards.Squares["h2"],
             board.WhitePieces['P'],
             "White pawns");
         
@@ -210,7 +210,7 @@ public class ForsythEdwardsNotationTests
         Assert.AreEqual("KQkq", board.CastlingRights, "Castling rights");
 
         // En passant target
-        Assert.AreEqual("-", board.EnPassantTargetSquare.ToString(), "En passant target");
+        Assert.AreEqual("-", board.EnPassantTargetSquare, "En passant target");
 
         // Halfmove clock
         Assert.AreEqual(0, board.HalfmoveClock, "Halfmove clock");

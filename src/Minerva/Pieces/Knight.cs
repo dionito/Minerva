@@ -69,7 +69,7 @@ public class Knight : PieceBase
             if (newPosition != 0)
             {
                 if (attacks || (board.OccupiedBitBoard & newPosition) == 0 || 
-                    board.SquareContainPieceOfColor(newPosition, this.Color.Opposite()))
+                    board.SquareContainPieceOfColor(newPosition, this.Color.Opposite().ToChar()))
                 {
                     result |= newPosition;
                 }
