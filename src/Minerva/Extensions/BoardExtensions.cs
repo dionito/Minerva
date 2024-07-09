@@ -13,6 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+using Minerva.Pieces;
+using System.Collections.ObjectModel;
+
 namespace Minerva.Extensions;
 
 public static class BoardExtensions
@@ -25,6 +28,103 @@ public static class BoardExtensions
     public static ulong BlackOrEmpty(this Board board)
     {
         return ~board.WhitePiecesBitBoard;
+    }
+
+    public static ulong CalculateDefendedSquaresByPiece(this Board board, PieceBase piece)
+    {
+        Dictionary<char, ulong> pieces = piece.Color == Color.Black ? board.BlackPieces : board.WhitePieces;
+        Dictionary<ulong, ulong> preCalculatedDefenses = piece.PieceType switch
+        {
+            PieceType.Bishop => BitBoards.Bishop.ToDictionary(),
+            PieceType.King => BitBoards.King.ToDictionary(),
+            PieceType.Knight => BitBoards.Knight.ToDictionary(),
+            PieceType.Pawn => piece.Color == Color.Black
+                ? BitBoards.PawnDefendedBlack.ToDictionary()
+                : BitBoards.PawnDefendedWhite.ToDictionary(),
+            PieceType.Queen => BitBoards.Queen.ToDictionary(),
+            PieceType.Rook => BitBoards.Rook.ToDictionary(),
+            _ => throw new ArgumentOutOfRangeException(nameof(piece.PieceType), "Invalid piece type."),
+        };
+
+        ulong piecePositions = pieces[piece.PieceType.ToChar()];
+        ulong defenses = 0;
+        while (piecePositions != 0)
+        {
+            ulong position = piecePositions & ~(piecePositions - 1);
+            defenses |= preCalculatedDefenses[position];
+            piecePositions &= ~position;
+        }
+
+        return defenses;
+    }
+
+    private static ulong CalculateNonPawnMoves(PieceBase piece, ulong piecePositions, ulong enemyOrEmptyBitBoard)
+    {
+        var preCalculatedMoves = piece.PieceType switch
+        {
+            PieceType.Bishop => BitBoards.Bishop.ToDictionary(),
+            PieceType.King => BitBoards.King.ToDictionary(),
+            PieceType.Knight => BitBoards.Knight.ToDictionary(),
+            PieceType.Queen => BitBoards.Queen.ToDictionary(),
+            PieceType.Rook => BitBoards.Rook.ToDictionary(),
+            _ => throw new ArgumentOutOfRangeException(nameof(piece.PieceType), "Invalid piece type."),
+        };
+
+        ulong moves = 0;
+        while (piecePositions != 0)
+        {
+            ulong position = piecePositions & ~(piecePositions - 1);
+            moves |= preCalculatedMoves[position] & enemyOrEmptyBitBoard;
+            piecePositions &= ~position;
+        }
+
+        return moves;
+    }
+
+    private static ulong CalculatePawnMoves(this Board board, Color color, ulong piecePositions)
+    {
+        ReadOnlyDictionary<ulong, ulong> preCalculatedMoves;
+        ulong enemyPieces;
+        ReadOnlyDictionary<ulong, ulong> defendedSquares;
+        if (color == Color.Black)
+        {
+            preCalculatedMoves = BitBoards.PawnMovesBlack;
+            defendedSquares = BitBoards.PawnDefendedBlack;
+            enemyPieces = board.WhitePiecesBitBoard;
+        }
+        else
+        {
+            preCalculatedMoves = BitBoards.PawnMovesWhite;
+            defendedSquares = BitBoards.PawnDefendedWhite;
+            enemyPieces = board.BlackPiecesBitBoard;
+        }
+
+        ulong enPassantTarget = BitBoards.Squares[board.EnPassantTargetSquare];
+        ulong moves = 0;
+
+        while (piecePositions != 0)
+        {
+            ulong position = piecePositions & ~(piecePositions - 1);
+            ulong moveTargets = preCalculatedMoves[position] | (defendedSquares[position] & (enemyPieces | enPassantTarget));
+            moves |= moveTargets;
+            piecePositions &= ~position;
+        }
+
+        return moves;
+    }
+
+    public static ulong CalculatePieceMoves(this Board board, PieceBase piece)
+    {
+        Dictionary<char, ulong> pieces = piece.Color == Color.Black ? board.BlackPieces : board.WhitePieces;
+        ulong enemyOrEmptyBitBoard = piece.Color == Color.Black ? board.WhiteOrEmpty() : board.BlackOrEmpty();
+        ulong piecePositions = pieces[piece.PieceType.ToChar()];
+
+        if (piece.PieceType == PieceType.Pawn)
+        {
+            return board.CalculatePawnMoves(piece.Color, piecePositions);
+        }
+
+        return CalculateNonPawnMoves(piece, piecePositions, enemyOrEmptyBitBoard);
     }
 
     /// <summary>
@@ -40,16 +140,14 @@ public static class BoardExtensions
         var pieces = (board.BlackPiecesBitBoard & square) != 0 ? board.BlackPieces :
             (board.WhitePiecesBitBoard & square) != 0 ? board.WhitePieces : null;
 
-        if (pieces == null)
+        if (pieces != null)
         {
-            return BitBoards.EmptySquare;
-        }
-
-        foreach (var pieceType in pieces)
-        {
-            if ((pieceType.Value & square) != 0)
+            foreach (var pieceType in pieces)
             {
-                return pieceType.Key;
+                if ((pieceType.Value & square) != 0)
+                {
+                    return pieceType.Key;
+                }
             }
         }
 

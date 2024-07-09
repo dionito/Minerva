@@ -648,7 +648,7 @@ public class BoardTests : TestBase
         var pieceBase = PieceFactory.GetPiece(pieceType, color);
 
         // Act
-        ulong attacks = board.GetPieceDefenses(pieceBase);
+        ulong attacks = board.CalculateDefendedSquaresByPiece(pieceBase);
 
         // Assert
         // Assuming a method to calculate expected attacks for a rook at a1

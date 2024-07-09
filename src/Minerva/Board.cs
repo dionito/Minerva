@@ -15,6 +15,7 @@
 
 using Minerva.Extensions;
 using Minerva.Pieces;
+using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 
 namespace Minerva;
@@ -149,113 +150,6 @@ public class Board
     /// This property performs a bitwise OR operation on the bitboards of all white pieces.
     /// </summary>
     public ulong WhitePiecesBitBoard { get; private set; }
-
-    public ulong GetPieceDefenses(PieceBase piece)
-    {
-        Dictionary<char, ulong> pieces;
-        Dictionary<ulong, ulong> preCalculatedDefenses;
-        if (piece.Color == Color.Black)
-        {
-            pieces = this.BlackPieces;
-            preCalculatedDefenses = BitBoards.PawnDefendedBlack.ToDictionary();
-        }
-        else
-        {
-            pieces = this.WhitePieces;
-            preCalculatedDefenses = BitBoards.PawnDefendedWhite.ToDictionary();
-        }
-
-        preCalculatedDefenses = piece.PieceType switch
-        {
-            PieceType.Bishop => BitBoards.Bishop.ToDictionary(),
-            PieceType.King => BitBoards.King.ToDictionary(),
-            PieceType.Knight => BitBoards.Knight.ToDictionary(),
-            PieceType.Pawn => preCalculatedDefenses,
-            PieceType.Queen => BitBoards.Queen.ToDictionary(),
-            PieceType.Rook => BitBoards.Rook.ToDictionary(),
-            PieceType.None => throw new ArgumentOutOfRangeException(nameof(piece.PieceType), "Invalid piece type."),
-            _ => throw new ArgumentOutOfRangeException(nameof(piece.PieceType), "Invalid piece type."),
-        };
-
-        ulong piecePositions = pieces[piece.PieceType.ToChar()];
-
-        // find the 1s in the piecePositions bitboard and get the positions defended by the piece
-        ulong defenses = 0;
-        while (piecePositions != 0)
-        {
-            ulong position = piecePositions & (ulong)-(long)piecePositions;
-
-            // no filter here, we want to know the positions defended by the piece including where friendly pieces are
-            defenses |= preCalculatedDefenses[position];
-            piecePositions &= ~position;
-        }
-
-        return defenses;
-    }
-
-    public ulong GetPieceMoves(PieceBase piece)
-    {
-        var foo = new Dictionary<ulong, ulong>();
-
-
-        Dictionary<char, ulong> pieces;
-        Dictionary<ulong, ulong> preCalculatedMoves;
-        ulong filter;
-        if (piece.Color == Color.Black)
-        {
-            pieces = this.BlackPieces;
-            preCalculatedMoves = new Dictionary<ulong, ulong>();
-            foreach (KeyValuePair<ulong, ulong> keyValuePair in BitBoards.PawnMovesBlack)
-            {
-                preCalculatedMoves[keyValuePair.Key] = keyValuePair.Value |
-                    BitBoards.PawnDefendedBlack[keyValuePair.Key] &
-                    (this.WhitePiecesBitBoard | BitBoards.Squares[this.EnPassantTargetSquare]);
-            }
-
-            filter = this.WhiteOrEmpty();
-        }
-        else
-        {
-            pieces = this.WhitePieces;
-            preCalculatedMoves = new Dictionary<ulong, ulong>();
-            foreach (KeyValuePair<ulong, ulong> keyValuePair in BitBoards.PawnMovesWhite)
-            {
-                preCalculatedMoves[keyValuePair.Key] = keyValuePair.Value |
-                    BitBoards.PawnDefendedWhite[keyValuePair.Key] &
-                    (this.BlackPiecesBitBoard | BitBoards.Squares[this.EnPassantTargetSquare]);
-            }
-
-            filter = this.BlackOrEmpty();
-        }
-
-        preCalculatedMoves = piece.PieceType switch
-        {
-            PieceType.Bishop => BitBoards.Bishop.ToDictionary(),
-            PieceType.King => BitBoards.King.ToDictionary(),
-            PieceType.Knight => BitBoards.Knight.ToDictionary(),
-            PieceType.Pawn => preCalculatedMoves,
-            PieceType.Queen => BitBoards.Queen.ToDictionary(),
-            PieceType.Rook => BitBoards.Rook.ToDictionary(),
-            PieceType.None => throw new ArgumentOutOfRangeException(nameof(piece.PieceType), "Invalid piece type."),
-            _ => throw new ArgumentOutOfRangeException(nameof(piece.PieceType), "Invalid piece type."),
-        };
-
-
-        ulong piecePositions = pieces[piece.PieceType.ToChar()];
-
-        // find the 1s in the piecePositions bitboard and get the positions defended by the piece
-        ulong defenses = 0;
-        while (piecePositions != 0)
-        {
-            ulong position = piecePositions & (ulong)-(long)piecePositions;
-
-            // we filter here to exclude positions where the piece cannot move
-            defenses |= preCalculatedMoves[position] & filter;
-            piecePositions &= ~position;
-        }
-
-        return defenses;
-    }
 
     /// <summary>
     /// Sets the active color for the next move on the chess board.
@@ -460,21 +354,8 @@ public class Board
     /// <param name="afterMove">Indicates whether the update is happening after a move, which
     /// will toggle the active color and may increment the full move number, or after an
     /// artificial setup of the board, which will not.</param>
-    public void UpdateBoardStatus(bool afterMove = false)
+    public void UpdateBoardStatus()
     {
-        if (afterMove)
-        {
-            if (this.ActiveColor == 'w')
-            {
-                this.ActiveColor = 'b';
-            }
-            else
-            {
-                this.ActiveColor = 'w';
-                this.FullmoveNumber++;
-            }
-        }
-
         this.UpdatePiecesBitBoards();
         this.UpdateOccupiedBitBoard();
         this.UpdateAttacks();
