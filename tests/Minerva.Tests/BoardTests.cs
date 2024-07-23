@@ -235,13 +235,13 @@ public class BoardTests : TestBase
         var board = new Board();
 
         // Test setting the en passant target square to "e3" after black pawn move
-        board.SetPieceAt(5, 4, 'P'); // set white pawn to e4
+        board.SetPieceAt(BitBoards.Squares["e4"], 'P');
         board.SetActiveColor('b');
         board.SetEnPassantTargetSquare("e3");
         Assert.AreEqual("e3", board.EnPassantTargetSquare, "White en passant failed.");
 
         // Test setting the en passant target square to "e5" after black pawn move
-        board.SetPieceAt(5,5, 'p');
+        board.SetPieceAt(BitBoards.Squares["e5"], 'p');
         board.SetActiveColor('w');
         board.SetEnPassantTargetSquare("e6");
         Assert.AreEqual("e6", board.EnPassantTargetSquare, "Black en passant failed.");
@@ -329,31 +329,11 @@ public class BoardTests : TestBase
         var board = new Board();
 
         // Set a black pawn at e5
-        board.SetPieceAt(5, 5, 'p');
+        board.SetPieceAt(BitBoards.Squares["e5"], 'p');
         Assert.AreEqual(BitBoards.Squares["e5"], board.BlackPieces['p']);
 
         // Set a white knight at b1
-        board.SetPieceAt(2, 1, 'N');
+        board.SetPieceAt(BitBoards.Squares["b1"], 'N');
         Assert.AreEqual(BitBoards.Squares["b1"], board.WhitePieces['N']);
-    }
-
-    [TestMethod]
-    [DataRow(0, 1, 'p', DisplayName = "File to low")]
-    [DataRow(9, 1, 'p', DisplayName = "File to high")]
-    [DataRow(1, 0, 'p', DisplayName = "Row to low")]
-    [DataRow(1, 9, 'p', DisplayName = "Row to High")]
-    public void SetPieceAtThrowsHighWithInvalidFileOrRank(int file, int rank, char piece)
-    {
-        var board = new Board();
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => board.SetPieceAt(file, rank, piece));
-    }
-
-    [TestMethod]
-    [DataRow(1, 1, 'x', DisplayName = "Invalid black piece.")]
-    [DataRow(1, 1, 'X', DisplayName = "Invalid white piece.")]
-    public void SetPieceAtThrowsExceptionWithInvalidPiece(int file, int rank, char piece)
-    {
-        var board = new Board();
-        Assert.ThrowsException<ArgumentException>(() => board.SetPieceAt(file, rank, piece));
     }
 }

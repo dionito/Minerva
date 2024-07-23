@@ -15,6 +15,7 @@
 
 using Minerva.Pieces;
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 
 namespace Minerva.Extensions;
 
@@ -210,6 +211,34 @@ public static class BoardExtensions
     public static bool IsEmptySquare(this Board board, ulong square)
     {
         return (board.OccupiedBitBoard & square) == 0;
+    }
+
+    public static void SetPieceAt(this Board board, ulong bitBoard, char piece)
+    {
+        if (char.IsLower(piece))
+        {
+            // Clear the bit at the target location for all black pieces
+            foreach (var key in board.BlackPieces.Keys.ToList())
+            {
+                board.BlackPieces[key] &= ~bitBoard;
+            }
+
+            // Set the bit at the target location for the specified piece
+            board.BlackPieces[piece] |= bitBoard;
+        }
+        else
+        {
+            // Clear the bit at the target location for all white pieces
+            foreach (var key in board.WhitePieces.Keys.ToList())
+            {
+                board.WhitePieces[key] &= ~bitBoard;
+            }
+
+            // Set the bit at the target location for the specified piece
+            board.WhitePieces[piece] |= bitBoard;
+        }
+
+        board.UpdateBoardStatus();
     }
 
     /// <summary>

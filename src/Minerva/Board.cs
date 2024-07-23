@@ -271,80 +271,28 @@ public class Board
         this.HalfmoveClock = halfmoveClock;
     }
 
-    /// <summary>
-    /// Sets a piece at the specified location on the chess board.
-    /// </summary>
-    /// <param name="file">The file of the target location. Must be between 1 and 8 inclusive.</param>
-    /// <param name="rank">The rank of the target location. Must be between 1 and 8 inclusive.</param>
-    /// <param name="piece">The piece to set. Lowercase for black pieces, uppercase for white pieces.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the file or rank is
-    /// out of the valid range.</exception>
-    /// <exception cref="ArgumentException">Thrown when an invalid piece is provided.</exception>
-    public void SetPieceAt(int file, int rank, char piece)
-    {
-        if (file is <= 0 or > 8)
-        {
-            throw new ArgumentOutOfRangeException(nameof(file));
-        }
-
-        if (rank is <= 0 or > 8)
-        {
-            throw new ArgumentOutOfRangeException(nameof(rank));
-        }
-
-        if (!Regex.IsMatch(piece.ToString(), "^[rnbqkpRNBQKP]+$"))
-        {
-            throw new ArgumentException("Invalid piece.", nameof(piece));
-        }
-
-        ulong bitBoard = BitBoards.Files[file - 1] & BitBoards.Ranks[rank - 1];
-        this.SetPieceAt(bitBoard, piece);
-    }
-
-    public void SetPieceAt(ulong bitBoard, char piece)
-    {
-        if (char.IsLower(piece))
-        {
-            // Clear the bit at the target location for all black pieces
-            foreach (var key in this.BlackPieces.Keys.ToList())
-            {
-                this.BlackPieces[key] &= ~bitBoard;
-            }
-
-            // Set the bit at the target location for the specified piece
-            this.BlackPieces[piece] |= bitBoard;
-        }
-        else
-        {
-            // Clear the bit at the target location for all white pieces
-            foreach (var key in this.WhitePieces.Keys.ToList())
-            {
-                this.WhitePieces[key] &= ~bitBoard;
-            }
-
-            // Set the bit at the target location for the specified piece
-            this.WhitePieces[piece] |= bitBoard;
-        }
-
-        this.UpdateBoardStatus();
-    }
-
     private void UpdateAttacks()
     {
-        this.BlackAttacks = 0;
-        this.WhiteAttacks = 0;
+        this.BlackAttacks = this.UpdatePieceAttacks(this.BlackPieces);
+        this.WhiteAttacks = this.UpdatePieceAttacks(this.WhitePieces);
+    }
 
-        foreach (KeyValuePair<char, ulong> pieceKvp in this.BlackPieces.Where(p => p.Value != 0))
+    private ulong UpdatePieceAttacks(Dictionary<char, ulong> pieces)
+    {
+        ulong attacks = 0;
+        foreach (KeyValuePair<char, ulong> pieceKvp in pieces.Where(p => p.Value != 0))
         {
             var piece = PieceFactory.GetPiece(pieceKvp.Key);
-            this.BlackAttacks |= piece.GetPieceAttacks(pieceKvp.Value, this);
+            ulong bitboard = pieceKvp.Value;
+            while (bitboard != 0)
+            {
+                ulong lsb = bitboard & (~bitboard + 1);
+                attacks |= piece.GetPieceAttacks(lsb, this);
+                bitboard &= ~lsb;
+            }
         }
 
-        foreach (KeyValuePair<char, ulong> pieceKvp in this.WhitePieces.Where(p => p.Value != 0))
-        {
-            var piece = PieceFactory.GetPiece(pieceKvp.Key);
-            this.WhiteAttacks |= piece.GetPieceAttacks(pieceKvp.Value, this);
-        }
+        return attacks;
     }
 
     /// <summary>

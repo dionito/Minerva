@@ -139,7 +139,7 @@ public abstract class PieceBase
         ulong toLocations,
         Board board)
     {
-        return toLocations;
+        return toLocations; // TODO: Implement this thing or delete.
     }
 
     /// <summary>

@@ -44,12 +44,13 @@ public class Knight : PieceBase
 
     public override ulong GetPieceAttacks(ulong position, Board board)
     {
-        return this.GetKnightMovesOrAttacks(position, board, attacks: true);
+        return BitBoards.Knight[position];
     }
 
     public override ulong GetPieceMoves(ulong position, Board board)
     {
-        return this.GetKnightMovesOrAttacks(position, board);
+        var filter = this.Color == Color.White ? board.BlackOrEmpty() : board.WhiteOrEmpty();
+        return BitBoards.Knight[position] & filter;
     }
 
     /// <summary>

@@ -226,29 +226,30 @@ public static class ForsythEdwardsNotation
     static void SetPieces(this Board board, string[] ranks)
     {
         // Iterates over each rank in the FEN string (from 8 to 1)
-        for (int ranksPart = 0; ranksPart < 8; ranksPart++)
+        for (int rankIndex = 0; rankIndex < 8; rankIndex++)
         {
-            // The file is initially set to 1 (files are labeled a-h, which correspond to 1-8)
-            int file = 1;
+            int fileIndex = 0; // Use an integer for file index for direct access
 
             // The rank is calculated by subtracting the current rank part from 8
             // This is because the ranks in the FEN string are given from rank 8 to rank 1
-            int rank = 8 - ranksPart;
+            int rank = 8 - rankIndex;
 
             // Iterates over each character in the current rank part
-            foreach (char piece in ranks[ranksPart])
+            foreach (char piece in ranks[rankIndex])
             {
                 if (char.IsDigit(piece))
                 {
                     // If the character is a digit, it represents the number of empty squares
-                    // The file is incremented by this number
-                    file += piece - '0';
+                    // Directly add this number to the file index
+                    fileIndex += piece - '0';
                 }
                 else if (char.IsLetter(piece))
                 {
                     // If the character is not a digit, it represents a piece
-                    board.SetPieceAt(file, rank, piece);
-                    file++;
+                    // Calculate the square key based on file and rank
+                    string squareKey = $"{(char)('a' + fileIndex)}{rank}";
+                    board.SetPieceAt(BitBoards.Squares[squareKey], piece);
+                    fileIndex++; // Move to the next file
                 }
                 else
                 {

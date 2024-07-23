@@ -83,8 +83,8 @@ public class BoardExtensionsTests
     {
         // Arrange
         var board = new Board();
-        board.SetPieceAt(1, 1, pieceType); // Place rook at a1
-        board.SetPieceAt(8, 8, pieceType); // Place rook at h8
+        board.SetPieceAt(BitBoards.Squares["a1"], pieceType);
+        board.SetPieceAt(BitBoards.Squares["h8"], pieceType);
         var pieceBase = PieceFactory.GetPiece(pieceType, color);
 
         // Act
